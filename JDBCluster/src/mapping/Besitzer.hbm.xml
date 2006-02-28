@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="dao.Besitzer" table="BESITZER">
+		
+		<id name="id" column="BESITZER_ID" type="long">
+			<generator class="native"/>
+		</id>
+		<property name="name" type="string" column="NAME"/>
+		<property name="historical" type="boolean" column="HISTORY"/>
+	</class>
+</hibernate-mapping>

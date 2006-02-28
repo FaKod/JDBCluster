@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+  <xs:element name="cluster">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="select" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="class" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="clustertype">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cluster" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dao">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="property" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="class" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="daotype">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="dao" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="jdbcluster">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="clustertype" />
+        <xs:element ref="daotype" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="property">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="value" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="value">
+    <xs:complexType mixed="true" />
+  </xs:element>
+	
+	<xs:element name="select">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="FilterClass" minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="hql" type="xs:string" use="required" />
+      <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+	
+	<xs:element name="FilterClass">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="binding" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="class" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+	
+	<xs:element name="binding">
+    <xs:complexType>
+      <xs:attribute name="var" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="attribute" type="xs:NMTOKEN" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

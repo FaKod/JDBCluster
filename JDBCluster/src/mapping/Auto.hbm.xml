@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<joined-subclass extends="dao.Fahrzeug" name="dao.Auto" table="AUTO">
+		 <key column="AUTO_ID" />
+		<set name="ersatzteile" table="AUTO_ERSATZTEILE">
+			<key column="AUTO_ID"/>
+			<many-to-many column="ERSATZTEIL_ID" class="dao.Ersatzteile"/>
+		</set>
+		<set name="besitzer" table="AUTO_BESITZER">
+			<key column="AUTO_ID"/>
+			<many-to-many column="BESITZER_ID" class="dao.Besitzer"/>
+		</set>
+		<property name="longitude" column="LONGITUDE"/>
+		<property name="latitude" column="LATITUDE"/>
+	  </joined-subclass>
+</hibernate-mapping>
