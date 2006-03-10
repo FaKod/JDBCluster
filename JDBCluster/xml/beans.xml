@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="ClusterSelectImpl" class="org.jdbcluster.filter.ClusterSelectImpl" singleton="true">
+		<property name="configuration">
+        	<value>xml/selects.xml</value>
+        </property>      
+	</bean>
+	<bean id="FilterBase" class="org.jdbcluster.filter.CCFilterBase" singleton="true" abstract="true">
+		<property name="selection">
+			<ref bean="ClusterSelectImpl"/>
+		</property>    
+	</bean>
+	<!-- <bean id="Select" class="org.jdbcluster.filter.ClusterSelect" abstract="true"/> -->
+	<bean id="MyCCFilter" class="org.jdbcluster.filter.CCFilterImpl" singleton="true"/>
+</beans>

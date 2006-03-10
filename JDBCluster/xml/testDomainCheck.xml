@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jdbcluster.xsd">
+	<domaindependancy>
+		<!-- check the Color amd ColorType Domains-->
+		<domain domainid="ColorTypeDomain">
+			<entry value="Color" slavedomainid="ColorDomain">
+				<valid value="RED"/>
+				<valid value="GREEN"/>
+				<valid value="BLUE"/>
+			</entry>
+			<entry value="BlackWhite" slavedomainid="ColorDomain">
+				<valid value="BLACK"/>
+				<valid value="WHITE"/>
+				<valid value="GREY50%"/>
+			</entry>	
+			<entry value="Unknown" slavedomainid="ColorDomain">
+				<valid all="true" null="true"/>
+			</entry>	
+		</domain>
+		<!--domain utcc 1-->
+		<domain domainid="utcc">
+			<entry value="COMBAT" slavedomainid="utacc">
+				<valid value="AIRDEF"/>
+				<valid value="AARMOR"/>
+				<valid value="ARMANT"/>
+				<valid value="ARMOUR"/>
+			</entry>
+			<entry value="COMSPT" slavedomainid="utacc">
+				<valid value="ISFRCE"/>
+				<valid value="ENG"/>
+			</entry>
+		</domain>
+		<!--domain utacc 2-->
+		<domain domainid="utacc">
+			<entry value="AIRDEF" slavedomainid="utasc">
+				<valid null="true"/>
+				<valid value="ADCOMP"/>
+				<valid value="ADGUN"/>
+			</entry>
+			<entry value="AARMOR" slavedomainid="utasc">
+				<valid null="true"/>
+			</entry>
+		</domain>
+		<!--domain utasc 3-->
+		<domain domainid="utasc">
+			<!-- values for null entry-->
+			<entry null="true" slavedomainid="utssc">
+				<valid all="true" null="true"/>
+			</entry>
+			<entry null="true" slavedomainid="utgmc">
+				<valid all="true" null="true"/>
+			</entry>
+			<entry null="true" slavedomainid="utqc">
+				<invalid value="CORPS"/>
+				<invalid value="DIV"/>
+				<invalid value="FORCE"/>
+				<invalid value="HMAD"/>
+			</entry>
+			<!-- values fpr ADCOMP entry -->
+			<entry value="ADCOMP" slavedomainid="utssc">
+				<valid all="true" null="true"/>
+			</entry>
+			<entry value="ADCOMP" slavedomainid="utgmc">
+				<valid all="true" null="true"/>
+			</entry>
+			<entry value="ADCOMP" slavedomainid="utqc">
+				<invalid value="CORPS"/>
+				<invalid value="DIV"/>
+				<invalid value="FORCE"/>
+			</entry>
+		</domain>
+	</domaindependancy>
+</jdbcluster>
