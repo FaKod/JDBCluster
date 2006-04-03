@@ -20,8 +20,11 @@ import java.lang.reflect.Method;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
+import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
+import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
-import org.jdbcluster.service.*;
+import org.jdbcluster.service.PrivilegedService;
+import org.jdbcluster.service.ServiceBase;
 
 /**
  * used to check privileges
@@ -33,9 +36,9 @@ public privileged aspect PrivilegeAspect {
 		execution(* @PrivilegesCluster PrivilegedCluster+.*(..)) &&
 		target(c);
 	
-	pointcut execServiceMethod(ServiceBase c):
+	pointcut execServiceMethod(PrivilegedService ser):
 		execution(* PrivilegedService+.*(..)) &&
-		target(c);
+		target(ser);
 	
 	before(ClusterBase c) : execClusterMethod(c) {
 		PrivilegeCheckerImpl pc = new PrivilegeCheckerImpl();
@@ -50,8 +53,14 @@ public privileged aspect PrivilegeAspect {
 					m.getName());
 	}
 	
-	before(ServiceBase c) : execServiceMethod(c) {
+	before(PrivilegedService ser) : execServiceMethod(ser) {
+		PrivilegeCheckerImpl pc = new PrivilegeCheckerImpl();
 		
+		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
+		Method m = sig.getMethod();	
+		
+		PrivilegesService ps = ser.getClass().getAnnotation(PrivilegesService.class);
+		PrivilegesMethod pm = m.getAnnotation(PrivilegesMethod.class);
 	}
 
 }
