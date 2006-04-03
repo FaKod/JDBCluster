@@ -17,7 +17,7 @@ public class TestPrivilege extends TestCase {
 		// configuring logging
 		PropertyConfigurator.configure("xml/logging.properties");
 
-		JDBClusterSimpleConfig.setConfiguration("test/test/domain/jdbcluster.conf.xml");
+		JDBClusterSimpleConfig.setConfiguration("test/test/domain/jdbcluster.conf.TestDomainCheck.xml");
 		//JDBClusterSimpleConfig.setHibernateConfiguration(null, "mapping/hibernate.cfg.xml");
 		super.setUp();
 	}
