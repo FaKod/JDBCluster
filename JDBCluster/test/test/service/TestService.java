@@ -18,7 +18,7 @@ public class TestService extends TestCase {
 		// configuring logging
 		PropertyConfigurator.configure("xml/logging.properties");
 
-		JDBClusterSimpleConfig.setConfiguration("test/test/domain/jdbcluster.conf.xml");
+		JDBClusterSimpleConfig.setConfiguration("test/test/domain/jdbcluster.conf.TestDomainCheck.xml");
 		super.setUp();
 	}
 
