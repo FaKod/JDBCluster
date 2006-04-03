@@ -1,0 +1,6 @@
+<aspectj>
+	<aspects>
+		<include within="org.jdbcluster..*"/>
+    </aspects>
+    <weaver options="-showWeaveInfo"/>
+</aspectj>

@@ -1,0 +1,60 @@
+/*
+ * Copyright 2002-2005 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jdbcluster.template.hibernate;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.jdbcluster.template.ConfigurationTemplate;
+import org.jdbcluster.template.SessionFactoryTemplate;
+
+/**
+ * 
+ * @author Philipp Noggler
+ * HBMConfiguration is an implementation of ConfigurationTemplate
+ * and provides Hibernate specific information about sessions, sessionfactory
+ * and Hibernate configuration (e.g. config file)
+ *
+ */
+public class HibernateConfiguration implements ConfigurationTemplate {
+
+	//Hibernate configuration
+	private Configuration cfg = null;
+
+	private SessionFactory hibernateFactory;
+	
+	
+	/**
+	 * getter of configuration
+	 * @return
+	 */
+	public Configuration getConfiguration() {
+		return cfg;
+	}
+
+	/**
+	 * setter of configuration
+	 * @param config
+	 */
+	public void setConfiguration(Object config) {
+		cfg = new Configuration().configure((String)config);	
+	}
+	
+	public SessionFactoryTemplate buildSessionFactory() {
+		hibernateFactory = cfg.buildSessionFactory();
+		return new HibernateSessionFactory(hibernateFactory);
+	}
+
+}
