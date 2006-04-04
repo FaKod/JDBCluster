@@ -100,13 +100,13 @@ public abstract class DomainBase {
 				}
 			}
 			else {
-				if (v.valid) { // is it a valid tag or an invalid tag
-					if (v.nullValue) // check if null value is allowed
+				if (v.valid) {
+					if (v.nullValue)
 						return slaveValue == null;
 					else
 						return slaveValue != null;
-				} else { // its a invalid tag
-					if (v.nullValue) { // check if null value is allowed
+				} else { 
+					if (v.nullValue) {
 						return slaveValue != null;
 					}
 					else
