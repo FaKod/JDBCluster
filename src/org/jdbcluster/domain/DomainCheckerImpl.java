@@ -156,6 +156,8 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			if (validDomEntry != null) {
 				return validDomEntry.valid;
 			}
+			if(!ved.isEmpty())
+				return validate(ved, slaveValue);
 		}
 		return false;
 	}
