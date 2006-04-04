@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import org.aspectj.lang.reflect.FieldSignature;
 import org.jdbcluster.exception.DomainException;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
+import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.aspects.ClusterAttribute;
 import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
@@ -36,18 +37,45 @@ public aspect DomainCheck {
 	
 	declare precedence: DomainCheck, ClusterAttribute, *;
 	
+	pointcut setDepAttribute(ClusterBase c, String s):
+		(set(* Cluster+.*) || set(* AssocCluster+.*)) && 
+		!set(CSet+ Cluster+.*) && 
+		@annotation(DomainDependancy) && 
+		!@annotation(Domain) &&
+		target(c) && args(s);
+	
 	pointcut setAttribute(ClusterBase c, String s):
 		(set(* Cluster+.*) || set(* AssocCluster+.*)) && 
-		!set(CSet+ Cluster+.*) && @annotation(DomainDependancy) && target(c) && args(s);
+		!set(CSet+ Cluster+.*) && 
+		@annotation(Domain) &&
+		!@annotation(DomainDependancy) && 
+		target(c) && args(s);
 	
-	Object around(ClusterBase c, String s):setAttribute(c, s) {
+	Object around(ClusterBase c, String s):setDepAttribute(c, s) {
 		DomainCheckerImpl dc = new DomainCheckerImpl();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();
 		DomainDependancy dd = fField.getAnnotation(DomainDependancy.class);
 		
 		if(!dc.check(c, fField, s, dd))
-			throw new DomainException("Value: " + s + " is not valid for slave domain " + dd.domainId());
+			throw new DomainException("Value: " + s + " is not valid for slave domain " + dd.domainId() + 
+					" in Class " + c.getClass().getName() +
+					" in Field " + fField.getName());
+		
+		Object o = proceed(c, s);
+		return o;
+	}
+	
+	Object around(ClusterBase c, String s):setAttribute(c, s) {
+		DomainCheckerImpl dc = new DomainCheckerImpl();
+		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
+		Field fField = sig.getField();
+		Domain d = fField.getAnnotation(Domain.class);
+		
+		if(!dc.checkAgainstPossibleDomainEntries(d.domainId(), s))
+			throw new DomainException("Value: " + s + " is not valid for domain " + d.domainId()+ 
+					" in Class " + c.getClass().getName() +
+					" in Field " + fField.getName());
 		
 		Object o = proceed(c, s);
 		return o;
