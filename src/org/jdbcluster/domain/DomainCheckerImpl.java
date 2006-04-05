@@ -113,6 +113,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		if (es == null)
 			throw new ConfigurationException("master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
+		if(masterValue==null)
+			masterValue = "";
+		
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			if (es.get("*") == null)
@@ -141,6 +144,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		if (es == null)
 			throw new ConfigurationException("master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
+		if(masterValue==null)
+			masterValue = "";
+		
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			if (es.get("*") == null)
@@ -148,6 +154,8 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			else
 				return true; // wildcard match
 		}
+		boolean hadInvalidEntries = false;
+		boolean hadValidEntries = false;
 		ValidEntryList vel = slaveEntries.get(slaveDomainId);
 		ArrayList<ValidEntryList> v = vel.getValidFromDomainEntry(addMasterDomainId, addMasterValue);
 		for(int i=v.size(); i>0; ) {
@@ -158,7 +166,20 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			}
 			if(!ved.isEmpty())
 				return validate(ved, slaveValue);
+			
+			if(ved.isContainsInValidElements())
+				hadInvalidEntries=true;
+			if(ved.isContainsValidElements())
+				hadValidEntries=true;
 		}
+		if(hadInvalidEntries && !hadValidEntries)
+			return true;
+		if(!hadInvalidEntries && !hadValidEntries)
+			return true;
+		if(!hadInvalidEntries && hadValidEntries)
+			return false;
+		if(hadInvalidEntries && hadValidEntries)
+			return false;
 		return false;
 	}
 	
