@@ -16,16 +16,15 @@
 package org.jdbcluster.dao;
 
 /**
- * 
- * @author Christopher Schmidt
  * Basic Dao class
+ * @author Christopher Schmidt
  */
 public class Dao {
 
 	protected long id;
 	private static DaoConfig daoConfig;
 
-	public DaoConfig getDaoConfig() {
+	public static DaoConfig getDaoConfig() {
 		return daoConfig;
 	}
 
