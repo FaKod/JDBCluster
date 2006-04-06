@@ -1,5 +1,3 @@
 src.includes = src/,\
                example/,\
                test/
-src.excludes = src/org/jdbcluster/tracing/FilterTracing.aj,\
-               src/test/TestFilter.java
