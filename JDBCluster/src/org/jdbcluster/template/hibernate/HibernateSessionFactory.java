@@ -15,19 +15,25 @@
  */
 package org.jdbcluster.template.hibernate;
 
+import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.jdbcluster.template.SessionFactoryTemplate;
 
 /**
  * 
  * @author Philipp Noggler
- *
+ * @author FaKod
  */
 public class HibernateSessionFactory implements SessionFactoryTemplate {
 
 	private org.hibernate.SessionFactory factory;
 	private HibernateSession session;
-
+	
+	/*
+	 * HIBERNATE Special teatment
+	 * use standard method getNativeSessionFactory
+	 */
+	private Interceptor interceptor = null;
 
 	public HibernateSessionFactory(SessionFactory hibernateFactory) {
 		factory = hibernateFactory;
@@ -35,7 +41,11 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 
 	public HibernateSession openSession() {
 		session = new HibernateSession();
-		session.setHibernateSession(factory.openSession());
+
+		if(interceptor==null)
+			session.setHibernateSession(factory.openSession());
+		else
+			session.setHibernateSession(factory.openSession(interceptor));
 		return session;
 	}
 	
@@ -54,7 +64,16 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	public void setSession(HibernateSession session) {
 		this.session = session;
 	}
-	
-	
 
+	public Object getNativeSessionFactory() {
+		return this;
+	}
+	
+	public Interceptor getInterceptor() {
+		return interceptor;
+	}
+
+	public void setInterceptor(Interceptor interceptor) {
+		this.interceptor = interceptor;
+	}
 }
