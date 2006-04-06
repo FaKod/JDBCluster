@@ -21,11 +21,11 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.BindingException;
 
 /**
- * 
+ * class CCFilterImpl implements functionality to
+ * get bindings from XML file, to get a HQL String from XML file and to
+ * append a filter.
  * @author Philipp Noggler
- * @author Christopher Schmidt class CCFilterImpl implements functionality to
- *         get bindings from XML file, to get a HQL String from XML file and to
- *         append a filter.
+ * @author Christopher Schmidt 
  */
 
 public class CCFilterImpl extends CCFilterBase implements CCFilter {
