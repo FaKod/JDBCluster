@@ -28,30 +28,23 @@ import org.jdbcluster.template.SessionTemplate;
 import org.jdbcluster.template.TransactionTemplate;
 
 /**
- * 
+ * implements SessionTemplate to use HIBERNATE
  * @author Christopher Schmidt
  * @author Philipp Noggler
- * implements SessionTemplate to use HIBERNATE
  */
 public class HibernateSession implements SessionTemplate{
-
-
 	//Hibernate session
 	private Session hibernateSession;
 	private HibernateSessionFactory factory;
-	private static HibernateTransaction tx;
-	private HibernateQuery queryTemplate;
-	
 
 	public HibernateSession() {}
 
 	public TransactionTemplate beginTransaction() {
-		tx = new HibernateTransaction();
+		HibernateTransaction tx = new HibernateTransaction();
 		tx.setTransaction(hibernateSession.beginTransaction());
 		return tx;
 	}
 	
-
 	public void save(Object o) {
 		hibernateSession.save(o);
 		
@@ -84,14 +77,12 @@ public class HibernateSession implements SessionTemplate{
 
 	public QueryTemplate createQuery(String queryString) {
 		Query query = hibernateSession.createQuery(queryString);
-		queryTemplate.setQuery(query);
-		return queryTemplate;
+		return new HibernateQuery(query);
 	}
 	
 	public QueryTemplate getNamedQuery(String queryName) {
 		Query query = hibernateSession.getNamedQuery(queryName);
-		queryTemplate.setQuery(query);
-		return queryTemplate;
+		return new HibernateQuery(query);
 	}
 
 	public void delete(Object o) {
@@ -119,15 +110,24 @@ public class HibernateSession implements SessionTemplate{
 	 */
 	public QueryTemplate createQuery(CCFilter ccf) {
 		Query query;
-		queryTemplate = new HibernateQuery();
+		HibernateQuery queryTemplate = new HibernateQuery();
 		queryTemplate.setClusterType(ccf.getClusterType());
 		// create the query with given selectstring and wherestring
-		query = hibernateSession.createQuery(
-				" from " + ccf.getSelectStatementDAO() +
-				" where "+ ccf.getWhereStatement());
-		queryTemplate.setQuery(query);
-		getAppendedBindings(ccf);
-
+		String whereStatement = ccf.getWhereStatement();
+		if(whereStatement != null && whereStatement.length()>0) {
+			query = hibernateSession.createQuery(
+					" from " + ccf.getSelectStatementDAO() +
+					" where "+ ccf.getWhereStatement());
+			queryTemplate.setQuery(query);
+			getAppendedBindings(ccf, queryTemplate);
+		}
+		else {
+			query = hibernateSession.createQuery(
+					" from " + ccf.getSelectStatementDAO() );
+			queryTemplate.setQuery(query);
+		}
+		
+		
 		// return the whole object
 		return queryTemplate;
 	}
@@ -137,7 +137,7 @@ public class HibernateSession implements SessionTemplate{
 	 * bindings
 	 * @param ccf CCFilter that contains the binding
 	 */
-	public void getAppendedBindings(CCFilter ccf) {
+	public void getAppendedBindings(CCFilter ccf, HibernateQuery queryTemplate) {
 		Class clazz = null;
 		Method meth = null;
 		//while there are appended filters
@@ -190,7 +190,7 @@ public class HibernateSession implements SessionTemplate{
 				
 			}
 			//call the method recursive with the appended filter as an argument
-			getAppendedBindings(ccf.getAppendedFilter());
+			getAppendedBindings(ccf.getAppendedFilter(), queryTemplate);
 			return;
 		}
 		
