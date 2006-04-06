@@ -21,11 +21,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jdbcluster.exception.ConfigurationException;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 
 /**
  * 
  * @author Christopher Schmdt
+ * @author Thomas Bitzer
  * Utility class mainly for reflection stuff
  */
 public class JDBClusterUtil {
@@ -78,6 +78,28 @@ public class JDBClusterUtil {
 			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
 		}
 	}
+	
+	static public void invokeSetPropertyMethod(String propName, Object propValue, Object obj) {
+        String setMethName = "set" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
+        Object[] args = {propValue};
+        Class[] paramType = {propValue.getClass()};
+        try {
+                    Method mSet = obj.getClass().getMethod(setMethName, paramType);
+                    mSet.invoke(obj, args);
+        } catch (SecurityException e) {
+                    throw new ConfigurationException("cant access property [" + propName + "] with the specified name", e);
+        } catch (IllegalArgumentException e) {
+                    throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName, e);
+        } catch (NoSuchMethodException e) {
+                    throw new ConfigurationException("method of configured property [" + propName + "]  could not be found", e);
+        } catch (IllegalAccessException e) {
+                    throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access", e);
+        } catch (InvocationTargetException e) {
+                    throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
+        }
+	}           
+
+
 	
 	static public Object getProperty(String propName, Object obj) {
 		try {
