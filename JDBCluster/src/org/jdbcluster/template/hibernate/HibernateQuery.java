@@ -42,6 +42,10 @@ public class HibernateQuery implements QueryTemplate {
 
 	public HibernateQuery() {
 	}
+	
+	public HibernateQuery(Query query) {
+		setQuery(query);
+	}
 
 
 	/**
