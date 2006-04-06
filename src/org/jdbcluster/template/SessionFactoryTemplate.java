@@ -16,13 +16,16 @@
 package org.jdbcluster.template;
 
 /**
- * 
+ * Interface of the session factory 
+ * used to create sessions
  * @author Philipp Noggler
+ * @author FaKod
  *
  */
 public interface SessionFactoryTemplate {
 
 	public SessionTemplate openSession();
 	public SessionTemplate getSession();
+	public Object getNativeSessionFactory();
 
 }
