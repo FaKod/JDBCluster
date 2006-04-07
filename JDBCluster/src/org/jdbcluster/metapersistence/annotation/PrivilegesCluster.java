@@ -39,5 +39,5 @@ public @interface PrivilegesCluster {
 	 * calculate the required privileges
 	 * @return array of property names
 	 */
-	String[] property();
+	String[] property() default {""};
 }
