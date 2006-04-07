@@ -63,23 +63,26 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		DomainCheckerImpl dc = new DomainCheckerImpl();
 		HashSet<String> priv = new HashSet<String>(getPrivilegesCluster(calledMethod, clusterObject));
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
-		for(String property : pcAnno.property() ) {
-			if(!methodProperty.equalsIgnoreCase(property)) {
-				Field f = JDBClusterUtil.getField(property, clusterObject);
-				if(f==null)
-					throw new ConfigurationException("property [" + property + "] does not exist");
-				
-				String domId = getDomainIdFromField(f);
-				String value = (String) JDBClusterUtil.invokeGetPropertyMethod(property, clusterObject);
-				DomainPrivilegeList dpl;
-				try {
-					dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+		
+		if(pcAnno.property().length>0 && pcAnno.property()[0].length()>0) { 
+			for(String property : pcAnno.property() ) {
+				if(!methodProperty.equalsIgnoreCase(property)) {
+					Field f = JDBClusterUtil.getField(property, clusterObject);
+					if(f==null)
+						throw new ConfigurationException("property [" + property + "] does not exist");
+					
+					String domId = getDomainIdFromField(f);
+					String value = (String) JDBClusterUtil.invokeGetPropertyMethod(property, clusterObject);
+					DomainPrivilegeList dpl;
+					try {
+						dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+					}
+					catch(ClassCastException e) {
+						throw new ConfigurationException("privileged domain needs implemented DomainPrivilegeList Interface",e);
+					}
+					
+					priv.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 				}
-				catch(ClassCastException e) {
-					throw new ConfigurationException("privileged domain needs implemented DomainPrivilegeList Interface",e);
-				}
-				
-				priv.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 			}
 		}
 		return userPrivilegeIntersect(priv);
