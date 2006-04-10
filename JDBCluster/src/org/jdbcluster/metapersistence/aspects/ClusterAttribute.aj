@@ -35,10 +35,12 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 
 	pointcut getAttribute(ClusterBase c):
 		(get(* Cluster+.*) || get(* AssocCluster+.*)) && 
+		!adviceexecution() &&
 		!get(CSet+ Cluster+.*) && !@annotation(NoDAO) && target(c);
 
 	pointcut setAttribute(ClusterBase c):
-		(set(* Cluster+.*) || set(* AssocCluster+.*)) && 
+		(set(* Cluster+.*) || set(* AssocCluster+.*)) &&
+		!adviceexecution() &&
 		!set(CSet+ Cluster+.*) && !@annotation(NoDAO) && target(c);
 
 	Object around(ClusterBase c):getAttribute(c) {
