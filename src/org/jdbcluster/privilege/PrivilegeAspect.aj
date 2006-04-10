@@ -20,11 +20,9 @@ import java.lang.reflect.Method;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
-import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
-import org.jdbcluster.service.ServiceBase;
 
 /**
  * used to check privileges
@@ -33,11 +31,11 @@ import org.jdbcluster.service.ServiceBase;
 public privileged aspect PrivilegeAspect {
 
 	pointcut execClusterMethod(ClusterBase c):
-		execution(* @PrivilegesCluster PrivilegedCluster+.*(..)) &&
+		execution(public * @PrivilegesCluster PrivilegedCluster+.*(..)) &&
 		target(c);
 	
 	pointcut execServiceMethod(PrivilegedService ser):
-		execution(* PrivilegedService+.*(..)) &&
+		execution(public * @PrivilegesService PrivilegedService+.*(..)) &&
 		target(ser);
 	
 	before(ClusterBase c) : execClusterMethod(c) {
@@ -59,8 +57,11 @@ public privileged aspect PrivilegeAspect {
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();	
 		
-		PrivilegesService ps = ser.getClass().getAnnotation(PrivilegesService.class);
-		PrivilegesMethod pm = m.getAnnotation(PrivilegesMethod.class);
+		if(!pc.userPrivilegeIntersect(m, ser)) 
+			throw new PrivilegeException("unsufficient privileges on Service: " +
+					ser.getClass().getName()+
+					" calling service method: " +
+					m.getName());
 	}
 
 }
