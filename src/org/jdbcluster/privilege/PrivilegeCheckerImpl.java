@@ -29,6 +29,8 @@ import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
+import org.jdbcluster.metapersistence.annotation.PrivilegesService;
+import org.jdbcluster.service.PrivilegedService;
 
 /**
  * 
@@ -40,7 +42,12 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * maps: Class -> Method -> HashSet of privileges
 	 */
-	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privileges = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
+	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesClustere = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
+	
+	/**
+	 * maps: Class -> Servicce Method -> HashSet of privileges
+	 */
+	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesService = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
 
 	/**
 	 * should do an intersection between the user privileges and
@@ -89,21 +96,52 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	}
 	
 	/**
+	 * intersects required privileges against given privileges
+	 * @param calledServiceMethod the service method called
+	 * @param serObject service instance
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean userPrivilegeIntersect(Method calledServiceMethod, PrivilegedService serObject) {
+		HashSet<String> priv = new HashSet<String>(getPrivilegesService(calledServiceMethod, serObject));
+		return userPrivilegeIntersect(priv);
+	}
+	
+	/**
 	 * calculates and stores static required privileges
 	 * @param calledMethod the method called
 	 * @param clusterObject cluster object instance
 	 * @return return reqired privileges
 	 */
 	private HashSet<String> getPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
-		HashMap<Method, HashSet<String>> mp = privileges.get(clusterObject.getClass());
+		HashMap<Method, HashSet<String>> mp = privilegesClustere.get(clusterObject.getClass());
 		if(mp==null) {
 			mp = new HashMap<Method, HashSet<String>>();
-			privileges.put(clusterObject.getClass(),mp);
+			privilegesClustere.put(clusterObject.getClass(),mp);
 		}
 		HashSet<String> hs = mp.get(calledMethod);
 		if(hs==null) {
 			hs = calcClusterPrivileges(calledMethod, clusterObject);
 			mp.put(calledMethod, hs);
+		}
+		return hs;	
+	}
+	
+	/**
+	 * calculates and stores static required privileges
+	 * @param calledServiceMethod the service method called
+	 * @param serObject service object instance
+	 * @return reqired privileges
+	 */
+	private HashSet<String> getPrivilegesService(Method calledServiceMethod, PrivilegedService serObject) {
+		HashMap<Method, HashSet<String>> mp = privilegesService.get(serObject.getClass());
+		if(mp==null) {
+			mp = new HashMap<Method, HashSet<String>>();
+			privilegesClustere.put(serObject.getClass(),mp);
+		}
+		HashSet<String> hs = mp.get(calledServiceMethod);
+		if(hs==null) {
+			hs = calcServicePrivileges(calledServiceMethod, serObject);
+			mp.put(calledServiceMethod, hs);
 		}
 		return hs;	
 	}
@@ -121,6 +159,30 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		
 		if(pcAnno!=null) {
 			for(String s : pcAnno.required()) {
+				hs.add(s);
+			}
+		}
+		if(pmAnno!=null) {
+			for(String s : pmAnno.required()) {
+				hs.add(s);
+			}
+		}
+		return hs;
+	}
+	
+	/**
+	 * calculates static required privileges
+	 * @param calledServiceMethod the service method called
+	 * @param serObject service instance
+	 * @return reqired privileges
+	 */
+	private HashSet<String> calcServicePrivileges(Method calledServiceMethod, PrivilegedService serObject) {
+		HashSet<String> hs = new HashSet<String>();
+		PrivilegesMethod pmAnno = calledServiceMethod.getAnnotation(PrivilegesMethod.class);
+		PrivilegesService psAnno = serObject.getClass().getAnnotation(PrivilegesService.class);
+		
+		if(psAnno!=null) {
+			for(String s : psAnno.required()) {
 				hs.add(s);
 			}
 		}
