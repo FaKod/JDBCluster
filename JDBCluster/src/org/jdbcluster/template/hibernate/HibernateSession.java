@@ -195,5 +195,12 @@ public class HibernateSession implements SessionTemplate{
 		}
 		
 	}
+
+	/**
+	 * returns native session object
+	 */
+	public <T> T getNativeSession() {
+		return (T) hibernateSession;
+	}
 	
 }
