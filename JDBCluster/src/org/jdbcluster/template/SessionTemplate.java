@@ -41,4 +41,5 @@ public interface SessionTemplate {
 	public void close();
 	public void update(Object o);
 	public void save(String id, Object o);
+	public <T> T getNativeSession();
 }
