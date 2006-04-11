@@ -50,7 +50,7 @@ final class ValidEntryList extends ArrayList<Valid> {
 	private HashMap<String, Valid> mapValuesToValid = new HashMap<String, Valid>();
 	
 	/**
-	 * should map MasterDomainId -> Value -> ValidEntryList
+	 * maps AddMasterDomEntryValue -> MasterDomainID -> ValidEntryList
 	 */
 	private HashMap<String,HashMap<String, ValidEntryList>> addMasterMap;
 
@@ -83,6 +83,9 @@ final class ValidEntryList extends ArrayList<Valid> {
 	 * @param addMasterEntries 1st level of tags
 	 */
 	private void fillAddMasterEntries(List<Node> addMasterEntries) {
+		/**
+		 * maps AddMasterDomEntryValue -> MasterDomainID -> ValidEntryList
+		 */
 		addMasterMap = new HashMap<String,HashMap<String, ValidEntryList>>();
 		
 		for( Node n : addMasterEntries) {
