@@ -35,12 +35,10 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 
 	pointcut getAttribute(ClusterBase c):
 		(get(* Cluster+.*) || get(* AssocCluster+.*)) && 
-		!adviceexecution() &&
 		!get(CSet+ Cluster+.*) && !@annotation(NoDAO) && target(c);
 
 	pointcut setAttribute(ClusterBase c):
 		(set(* Cluster+.*) || set(* AssocCluster+.*)) &&
-		!adviceexecution() &&
 		!set(CSet+ Cluster+.*) && !@annotation(NoDAO) && target(c);
 
 	Object around(ClusterBase c):getAttribute(c) {
@@ -51,7 +49,7 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 
 		try {
 			// and invoke it and set Clusters field
-			fField.set(c, JDBClusterUtil.invokeGetPropertyMethod(fName, c.dao));
+			fField.set(c, JDBClusterUtil.invokeGetPropertyMethod(fName, c.getDao()));
 		}
 		catch (IllegalAccessException e) {
 			throw new ConfigurationException("the currently executed ctor for Field [" + fName + "] does not have access", e);
@@ -71,7 +69,7 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 			String setMethName = "set" + fName.substring(0, 1).toUpperCase() + fName.substring(1);
 			Method mSet = c.daoClass.getMethod(setMethName, fField.getType());
 			// read clusters field and invoke DAOs SetMethod
-			mSet.invoke(c.dao, fField.get(c));
+			mSet.invoke(c.getDao(), fField.get(c));
 		} catch (Exception e) {
 			throw new SoftException(e);
 		}
