@@ -29,7 +29,7 @@ public aspect ClusterSessionAspect extends ClusterBaseAspect {
 	
 	Object around(Object o): sessionOperation(o) {
 		if(o instanceof ClusterBase) {
-			return proceed(((ClusterBase)o).dao);
+			return proceed(((ClusterBase)o).getDao());
 		}
 		throw new IllegalArgumentException("Please use only ClusterBase Objects"); 
     }
