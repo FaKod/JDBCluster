@@ -37,7 +37,7 @@ public aspect ClusterNew extends ClusterBaseAspect {
 		//get the Class Annotations
 		DaoLink classAnno = c.getClass().getAnnotation(DaoLink.class);
 		if (classAnno != null) {
-			c.dao = (Dao) JDBClusterUtil.createClassObject(classAnno.dAOClass());
+			c.setDao( (Dao) JDBClusterUtil.createClassObject(classAnno.dAOClass()));
 			c.daoClass = classAnno.dAOClass();
 		}
 	}
