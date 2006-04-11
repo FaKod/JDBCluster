@@ -65,8 +65,8 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 		this.session = session;
 	}
 
-	public Object getNativeSessionFactory() {
-		return this;
+	public <T> T getNativeSessionFactory() {
+		return (T) this;
 	}
 	
 	public Interceptor getInterceptor() {
