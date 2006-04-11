@@ -17,6 +17,8 @@ package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeBase;
+import org.jdbcluster.clustertype.ClusterTypeFactory;
+import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.ClusterTypeException;
 
 /**
@@ -34,6 +36,36 @@ public class ClusterFactory {
 	 * @return Cluster
 	 */
 	public static <T extends Cluster> T newInstance(ClusterType ct) {
+		return newInstance(ct, null);
+	}
+	
+	/**
+	 * no need to create ClusterType instance
+	 * @param clusterType cluster type string as configured
+	 * @return cluster instance
+	 */
+	public static <T extends Cluster> T newInstance(String clusterType) {
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
+		return newInstance(ct, null);
+	}
+	
+	/**
+	 * no need to create ClusterType instance
+	 * @param clusterType cluster type string as configured
+	 * @return cluster instance
+	 */
+	public static <T extends Cluster> T newInstance(String clusterType, Dao dao) {
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
+		return newInstance(ct, dao);
+	}
+	
+	/**
+	 * creates an instance of a Cluster
+	 * @param ct specifies the ClusterType class that should be returned
+	 * @param dao dao object to be presetted
+	 * @return Cluster
+	 */
+	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());
 		if (className == null) {
 			return (T) new ClusterImpl(); //if no classname was defined, return empty object
@@ -45,6 +77,8 @@ public class ClusterFactory {
 			//create a new instance with given classname
 			clusterClass = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
 			cluster = (Cluster) clusterClass.newInstance();
+			if(dao!=null)
+				cluster.setDao(dao);
 		} catch (InstantiationException e) {
 			throw new ClusterTypeException("specified class [" + className + "] object cannot be instantiated because it is an interface or is an abstract class", e);
 		} catch (IllegalAccessException e) {
