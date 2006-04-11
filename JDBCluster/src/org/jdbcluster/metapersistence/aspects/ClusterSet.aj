@@ -85,7 +85,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 			// getting DAO Set
 			String daoGetSetMethName = "get" + fieldAnno.dAOClass().getSimpleName();
 			Method mDaoGetSet = c.daoClass.getMethod(daoGetSetMethName);
-			Set dAOSet = (Set) mDaoGetSet.invoke(c.dao);
+			Set dAOSet = (Set) mDaoGetSet.invoke(c.getDao());
 
 			// copy DAO Set to Cluster Set
 			cSet.daoSet = dAOSet;
@@ -94,7 +94,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 			// copy elements from DAO to Cluster
 			for (Object daoElement : dAOSet) {
 				Cluster cSetElement = (Cluster) argTypeClass.newInstance();
-				cSetElement.dao = (Dao) daoElement;
+				cSetElement.setDao( (Dao) daoElement);
 				cSet.add(cSetElement);
 			}
 
@@ -116,8 +116,8 @@ public aspect ClusterSet extends ClusterBaseAspect {
 		try {
 			// get DAO Class
 				Dao dAO = (Dao) s.dAOClass.newInstance();
-				if(objectToAdd.dao==null) {
-					objectToAdd.dao = dAO;
+				if(objectToAdd.getDao()==null) {
+					objectToAdd.setDao(dAO);
 					objectToAdd.daoClass = s.dAOClass;
 				}
 				s.daoSet.add(dAO);
@@ -131,7 +131,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 		Object[] args = thisJoinPoint.getArgs();
 		AssocCluster objectToRemove = (AssocCluster) args[0];
 
-		s.daoSet.remove(objectToRemove.dao);
-		objectToRemove.dao = null;
+		s.daoSet.remove(objectToRemove.getDao());
+		objectToRemove.setDao(null);
 	}
 }
