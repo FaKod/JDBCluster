@@ -16,11 +16,22 @@
 package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.dao.Dao;
 
 public abstract class ClusterBase implements ICluster{
+	
+	private Dao dao;
 
 	private ClusterType clusterType;
 	
+	public Dao getDao() {
+		return dao;
+	}
+
+	public void setDao(Dao dao) {
+		this.dao = dao;
+	}
+
 	public void setClusterType(ClusterType ct) {
 		clusterType = ct;
 	}
