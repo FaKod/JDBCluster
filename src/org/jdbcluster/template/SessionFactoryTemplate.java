@@ -26,6 +26,6 @@ public interface SessionFactoryTemplate {
 
 	public SessionTemplate openSession();
 	public SessionTemplate getSession();
-	public Object getNativeSessionFactory();
+	public <T> T getNativeSessionFactory();
 
 }
