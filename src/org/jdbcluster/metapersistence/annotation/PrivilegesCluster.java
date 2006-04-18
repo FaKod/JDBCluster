@@ -37,6 +37,16 @@ public @interface PrivilegesCluster {
 	/**
 	 * array of properties. Their contents will be used to
 	 * calculate the required privileges
+	 * 
+	 * Path separator for nested properties.
+	 * Follows normal Java conventions: getFoo().getBar() would be "foo.bar".
+	 * 
+	 * Marker that indicates the start of a property key for an
+	 * indexed or mapped property like "person.addresses[0]".
+	 * 
+	 * Marker that indicates the end of a property key for an
+	 * indexed or mapped property like "person.addresses[0]".
+	 * 
 	 * @return array of property names
 	 */
 	String[] property() default {""};
