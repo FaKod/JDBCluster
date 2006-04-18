@@ -133,4 +133,22 @@ public class JDBClusterUtil {
 		}
 		return f;
 	}
+	
+	/**
+	 * returns Filed object for Properties
+	 * @param propName path to property
+	 * @param c Class object
+	 * @return Field instance
+	 */
+	static public Field getField(String propName, Class c) {
+		Field f = null;
+		try {
+			f = c.getDeclaredField(propName);
+		} catch (SecurityException e) {
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
+		} catch (NoSuchFieldException e) {
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
+		}
+		return f;
+	}
 }
