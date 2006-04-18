@@ -20,7 +20,7 @@ import org.hibernate.Transaction;
 /**
  * 
  * @author Philipp Noggler
- *
+ * @author FaKod
  */
 public class HibernateTransaction implements org.jdbcluster.template.TransactionTemplate {
 
@@ -30,12 +30,15 @@ public class HibernateTransaction implements org.jdbcluster.template.Transaction
 		tx.commit();
 	}
 	public void setTransaction(Transaction transaction) {
-		tx = transaction;
-		
+		tx = transaction;	
 	}
 	
 	public Transaction getTransaction() {
 		return tx;
+	}
+	
+	public void rollback() {
+		tx.rollback();
 	}
 
 
