@@ -19,7 +19,9 @@ import java.util.HashMap;
 
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.exception.CCFilterException;
+import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.annotation.DaoLink;
 
 /**
@@ -31,7 +33,17 @@ import org.jdbcluster.metapersistence.annotation.DaoLink;
  */
 public class CCFilterFactory extends CCFilterBase{
 	
-	
+	/**
+	 * creates an Instance of a CCFilter object by passing the Clustertype as String and the select String
+	 * @param clusterType as String not as object
+	 * @param selId selects the SelectID
+	 * @return filter a template which extends CCFilterBase
+	 * @throws CCFilterException
+	 */
+	static public <T extends CCFilterBase> T newInstance(String clusterType, String selId) throws CCFilterException {
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
+		return newInstance(ct, selId);
+	}
 	/**
 	 * creates an Instance of a CCFilter object by passing the Clustertype and the select String
 	 * @param ct identifies the ClusterType
@@ -39,7 +51,6 @@ public class CCFilterFactory extends CCFilterBase{
 	 * @return filter a template which extends CCFilterBase
 	 * @throws CCFilterException
 	 */
-	@SuppressWarnings("unchecked")
 	static public <T extends CCFilterBase> T newInstance(ClusterType ct, String selId) throws CCFilterException {
 		//get the classname of the object
 		String filterClassName = CCFilterBase.getSelect().getClassName(ct, selId);
@@ -51,7 +62,15 @@ public class CCFilterFactory extends CCFilterBase{
 			impl.setBinding(new HashMap<String, String>());
 			impl.setClassName(CCFilterImpl.class.getName());
 			impl.setWhereStatement("");
-			return (T) impl; //if no classname was defined, return empty object
+			
+			T tImpl;
+			try {
+				tImpl = (T) impl;
+			}
+			catch (ClassCastException ex) {
+				throw new ConfigurationException("can't cast unconfigured filter from CCFilterImpl to <T extends CCFilterBase>", ex);
+			}
+			return tImpl; //if no classname was defined, return empty object
 		}
 		
 		String hql = CCFilterBase.getSelect().getWhere(ct, selId);
