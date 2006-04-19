@@ -1,6 +1,7 @@
 package test.privilege;
 
 import mycluster.CBicycle;
+import mycluster.NestedPropertyForPrivTest;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jdbcluster.JDBClusterSimpleConfig;
@@ -32,9 +33,16 @@ public class TestPrivilege extends TestCase {
 		/**
 		 * 
 		 */
+		
+		rad.setNested(new NestedPropertyForPrivTest());
+		
 		rad.setColorType("Color");
 		
 		rad.setColor("RED");
+		
+		rad.setColorShading("LightRED");
+		
+		
 		
 		rad.setColorShading("LightRED");
 		
