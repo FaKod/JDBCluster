@@ -15,12 +15,14 @@
  */
 package org.jdbcluster.clustertype;
 
+import java.util.List;
+
 /**
- * 
- * @author Philipp Noggler
- * @author Christopher Schmidt
  * interface ClusterTypeConfig is defining methods to execute
  * queries on XML file.
+ * @author Philipp Noggler
+ * @author Christopher Schmidt
+ * @author Tobi
  */
 
 public interface ClusterTypeConfig {
@@ -39,5 +41,11 @@ public interface ClusterTypeConfig {
 	 * @return cluster class name as string
 	 */
 	public String getClusterClassName(String clusterTypeName);
+	
+	/**
+	 * returns a list of all cluster ids
+	 * @return List<String>
+	 */
+	public List<String> getClusterIDs();
 	
 }
