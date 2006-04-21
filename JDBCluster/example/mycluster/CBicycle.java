@@ -5,6 +5,7 @@ import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.NoDAO;
+import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
@@ -53,11 +54,13 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 	public void setColorShading(String colorShading) {
 		this.colorShading = colorShading;
 	}
-
+	
+	@NoPrivilegeCheck
 	public double getDurchmesser() {
 		return durchmesser;
 	}
 
+	@NoPrivilegeCheck
 	public void setDurchmesser(double durchmesser) {
 		this.durchmesser = durchmesser;
 	}
