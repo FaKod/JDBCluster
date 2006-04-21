@@ -15,6 +15,9 @@
  */
 package org.jdbcluster.clustertype;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -25,6 +28,7 @@ import org.dom4j.io.SAXReader;
  * It saves the location of the configuration file and
  * exexutes some queries on that XML file.
  * @author Philipp Noggler
+ * @author Tobi
  */
 
 public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfig{
@@ -32,6 +36,7 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	//path to config file
 	private String configuration;
 	private Document document;
+	private ArrayList<String> clusterIDs = null;
 	
 	
 	/**
@@ -125,5 +130,25 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 			//returns the classname as a String
 			return node.valueOf("@class");	
 		}
+	}
+	
+	/**
+	 * returns a list of all cluster ids
+	 * @return List<String>
+	 */
+	public List<String> getClusterIDs() {
+		if(clusterIDs == null) {
+			//xPath expression to get the classname
+			String xPath = "//jdbcluster/clustertype/cluster";
+
+			List<Node> nodes = document.selectNodes(xPath);
+			if(nodes != null) {
+				clusterIDs = new ArrayList<String>();
+				for(Node n : nodes){
+					clusterIDs.add(n.valueOf("@id"));
+				}
+			}
+		}
+		return clusterIDs;
 	}
 }
