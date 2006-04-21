@@ -13,7 +13,7 @@ import org.jdbcluster.privilege.PrivilegedCluster;
 
 import dao.Bicycle;
 
-@PrivilegesCluster(required={"BIKE"},property={"nested.nestedDomain"})
+@PrivilegesCluster(required={"BIKE"},property={"colorType", "nested.nestedDomain"})
 @DaoLink(dAOClass = Bicycle.class)
 public class CBicycle extends Cluster implements PrivilegedCluster {
 	
@@ -36,6 +36,7 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 	@NoDAO
 	NestedPropertyForPrivTest nested;
 
+	@PrivilegesMethod(required={"GETNESTED"})
 	public NestedPropertyForPrivTest getNested() {
 		return nested;
 	}
@@ -48,7 +49,7 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 		return colorShading;
 	}
 
-	@PrivilegesMethod(required={"COLSHADE"})
+	@PrivilegesMethod(required={"SETCOLSHADE"})
 	public void setColorShading(String colorShading) {
 		this.colorShading = colorShading;
 	}
@@ -69,6 +70,7 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 		this.noDAOElement = noDAOElement;
 	}
 
+	@PrivilegesMethod(required={"GETCOLOR"})
 	public String getColor() {
 		return color;
 	}
@@ -77,6 +79,7 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 		this.color = color;
 	}
 
+	@PrivilegesMethod(required={"GETCOLTYPE"})
 	public String getColorType() {
 		return colorType;
 	}
