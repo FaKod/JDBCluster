@@ -25,7 +25,8 @@ import org.jdbcluster.exception.BindingException;
  * get bindings from XML file, to get a HQL String from XML file and to
  * append a filter.
  * @author Philipp Noggler
- * @author Christopher Schmidt 
+ * @author FaKod
+ * @author Tobi 
  */
 
 public class CCFilterImpl extends CCFilterBase implements CCFilter {
@@ -61,18 +62,31 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 		HashMap<String, String> temp = new HashMap<String, String>();
 
 		while (filter != null) {
-			temp.putAll(getBinding());
-			temp.putAll(filter.getBinding());
-
-			setWhereStatement(getWhereStatement() + " and "
-					+ filter.getWhereStatement());
-			// add the binding from appended filter to root-filter
-			if (temp.size() == (getBinding().size() + filter.getBinding().size())) {
-				getBinding().putAll(filter.getBinding());
-			} else {
-				throw new BindingException(
-						"Cannot bind variables with the same name! Change binding 'var' in 'selects.xml'!",
-						new Throwable());
+			HashMap<String, String> hm = getBinding();
+			if(hm == null) {
+				setBinding(new HashMap<String, String>());
+				hm = getBinding();
+			}
+			temp.putAll(hm);
+			HashMap<String, String> filterHm = filter.getBinding();
+			if(filterHm != null) {
+				temp.putAll(filterHm);
+				// add the binding from appended filter to root-filter
+				if (temp.size() == (getBinding().size() + filter.getBinding().size())) {
+					getBinding().putAll(filter.getBinding());
+				} else {
+					throw new BindingException(
+							"Cannot bind variables with the same name! Change binding 'var' in 'selects.xml'!",
+							new Throwable());
+				}
+			}
+			if(filter.getWhereStatement() != null && filter.getWhereStatement().length() > 0) {
+				if(getWhereStatement() != null && getWhereStatement().length() < 0) {
+					setWhereStatement(getWhereStatement() + " and "
+							+ filter.getWhereStatement());
+				} else {
+					setWhereStatement(filter.getWhereStatement());
+				}
 			}
 			setAppendedFilter(filter);
 			System.out.println("Filter appended");
