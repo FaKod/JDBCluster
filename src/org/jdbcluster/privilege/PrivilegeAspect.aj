@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
+import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
@@ -31,11 +32,11 @@ import org.jdbcluster.service.PrivilegedService;
 public privileged aspect PrivilegeAspect {
 
 	pointcut execClusterMethod(ClusterBase c):
-		execution(public * @PrivilegesCluster PrivilegedCluster+.*(..)) &&
+		execution( !@NoPrivilegeCheck public * @PrivilegesCluster PrivilegedCluster+.*(..)) &&
 		target(c);
 	
 	pointcut execServiceMethod(PrivilegedService ser):
-		execution(public * @PrivilegesService PrivilegedService+.*(..)) &&
+		execution( !@NoPrivilegeCheck public * @PrivilegesService PrivilegedService+.*(..)) &&
 		target(ser);
 	
 	before(ClusterBase c) : execClusterMethod(c) {
