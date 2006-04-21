@@ -91,38 +91,23 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
 			beanWrapper.setWrappedInstance(clusterObject);
 			if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
-				for (String property : pcAnno.property()) {
+				for (String propertyPath : pcAnno.property()) {
 					PropertyDescriptor pd = null;
 					try {
-						pd = beanWrapper.getPropertyDescriptor(property);
+						pd = beanWrapper.getPropertyDescriptor(propertyPath);
 					} catch (Exception e1) {
 						if (logger.isInfoEnabled())
-							logger.info("property [" + property + "] is not accessable. Skipping Priv test");
+							logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
 					}
 					
 					if (pd != null) {
 						if (!pd.getReadMethod().equals(calledMethod) && !pd.getWriteMethod().equals(calledMethod)) {
 	
-							// get property field
-							Method propertyReadMethod = pd.getReadMethod();
-							String mName = propertyReadMethod.getName();
-							String pName = mName.substring(3,4).toLowerCase() + mName.substring(4);
-							Class clazzContainingProperty = propertyReadMethod.getDeclaringClass();
-							Field f = JDBClusterUtil.getField(pName, clazzContainingProperty);
-							if (f == null)
-								throw new ConfigurationException("property [" + property + "] does not exist");
+							Field f = getPropertyField(propertyPath, pd);
 	
 							String domId = getDomainIdFromField(f);
 	
-							String value = null;
-							try {
-								value = (String) beanWrapper.getPropertyValue(property);
-							} catch (ClassCastException e) {
-								throw new ConfigurationException("property [" + property + "] is not a string property", e);
-							} catch (Exception e) {
-								if (logger.isDebugEnabled())
-									logger.debug("property [" + property + "] is not accessable. Skipping Priv test");
-							}
+							String value = getPropertyValue(propertyPath);
 	
 							DomainPrivilegeList dpl;
 							try {
@@ -138,6 +123,41 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 			}
 		}
 		return userPrivilegeIntersect(priv);
+	}
+
+	/**
+	 * gets Field instance of property path
+	 * @param propertyPath property path
+	 * @param propDesc PropertyDescriptor
+	 * @return Field instance
+	 */
+	private Field getPropertyField(String propertyPath, PropertyDescriptor propDesc) {
+		Method propertyReadMethod = propDesc.getReadMethod();
+		String mName = propertyReadMethod.getName();
+		String pName = mName.substring(3,4).toLowerCase() + mName.substring(4);
+		Class clazzContainingProperty = propertyReadMethod.getDeclaringClass();
+		Field f = JDBClusterUtil.getField(pName, clazzContainingProperty);
+		if (f == null)
+			throw new ConfigurationException("property [" + propertyPath + "] does not exist");
+		return f;
+	}
+
+	/**
+	 * returns the property value
+	 * @param propertyPath property path
+	 * @return property value
+	 */
+	private String getPropertyValue(String propertyPath) {
+		String value = null;
+		try {
+			value = (String) beanWrapper.getPropertyValue(propertyPath);
+		} catch (ClassCastException e) {
+			throw new ConfigurationException("property [" + propertyPath + "] is not a string property", e);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled())
+				logger.debug("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+		}
+		return value;
 	}
 
 	/**
