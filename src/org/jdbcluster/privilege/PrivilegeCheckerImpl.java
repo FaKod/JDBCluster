@@ -86,36 +86,35 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		DomainCheckerImpl dc = new DomainCheckerImpl();
 		HashSet<String> priv = new HashSet<String>(getPrivilegesCluster(calledMethod, clusterObject));
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
+		if(pcAnno != null) {
+			if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
+				beanWrapper.setWrappedInstance(clusterObject);
+				if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
+					for (String propertyPath : pcAnno.property()) {
+						PropertyDescriptor pd = null;
+						try {
+							pd = beanWrapper.getPropertyDescriptor(propertyPath);
+						} catch (Exception e1) {
+							if (logger.isInfoEnabled())
+								logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+						}
+						
+						if (pd != null) {
+							if (!pd.getReadMethod().equals(calledMethod) && !pd.getWriteMethod().equals(calledMethod)) {
 		
-		if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
-			beanWrapper.setWrappedInstance(clusterObject);
-			if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
-				for (String propertyPath : pcAnno.property()) {
-					PropertyDescriptor pd = null;
-					try {
-						pd = beanWrapper.getPropertyDescriptor(propertyPath);
-					} catch (Exception e1) {
-						if (logger.isInfoEnabled())
-							logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
-					}
-					
-					if (pd != null) {
-						if (!pd.getReadMethod().equals(calledMethod) && !pd.getWriteMethod().equals(calledMethod)) {
-	
-							Field f = getPropertyField(propertyPath, pd);
-	
-							String domId = getDomainIdFromField(f);
-	
-							String value = getPropertyValue(propertyPath);
-	
-							DomainPrivilegeList dpl;
-							try {
-								dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
-							} catch (ClassCastException e) {
-								throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+								Field f = getPropertyField(propertyPath, pd);
+								String domId = getDomainIdFromField(f);
+								String value = getPropertyValue(propertyPath);
+		
+								DomainPrivilegeList dpl;
+								try {
+									dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+								} catch (ClassCastException e) {
+									throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+								}
+		
+								priv.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 							}
-	
-							priv.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 						}
 					}
 				}
