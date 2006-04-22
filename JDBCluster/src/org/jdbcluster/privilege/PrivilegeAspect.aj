@@ -19,9 +19,7 @@ import java.lang.reflect.Method;
 
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
-import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
 import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
-import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
 
