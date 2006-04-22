@@ -32,11 +32,11 @@ import org.jdbcluster.service.PrivilegedService;
 public privileged aspect PrivilegeAspect {
 
 	pointcut execClusterMethod(ClusterBase c):
-		execution( !@NoPrivilegeCheck public * @PrivilegesCluster PrivilegedCluster+.*(..)) &&
+		execution( !@NoPrivilegeCheck public * PrivilegedCluster+.*(..)) &&
 		target(c);
 	
 	pointcut execServiceMethod(PrivilegedService ser):
-		execution( !@NoPrivilegeCheck public * @PrivilegesService PrivilegedService+.*(..)) &&
+		execution( !@NoPrivilegeCheck public * PrivilegedService+.*(..)) &&
 		target(ser);
 	
 	before(ClusterBase c) : execClusterMethod(c) {
