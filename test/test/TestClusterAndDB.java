@@ -64,6 +64,10 @@ public class TestClusterAndDB extends TestCase {
 		session.save(bmw);
 		tx.commit();
 		
+		bmw.setName("BMW False");
+		session.refresh(bmw);
+		assertTrue(bmw.getName().equals("BMW"));
+		
 		//we want get our BMW back from DB
 		NameFilter nameFilter = CCFilterFactory.newInstance(cAutoType, "name");
 		nameFilter.setName("BMW");
