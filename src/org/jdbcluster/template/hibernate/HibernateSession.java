@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.filter.CCFilter;
@@ -29,8 +30,9 @@ import org.jdbcluster.template.TransactionTemplate;
 
 /**
  * implements SessionTemplate to use HIBERNATE
- * @author Christopher Schmidt
+ * @author FaKod
  * @author Philipp Noggler
+ * @author thobi
  */
 public class HibernateSession implements SessionTemplate{
 	//Hibernate session
@@ -153,41 +155,43 @@ public class HibernateSession implements SessionTemplate{
 			}
 			
 			Object args[] = new Object[0];
-			Iterator keyIter = ccf.getBinding().keySet().iterator();
-			Iterator valueIter = ccf.getBinding().values().iterator();
-
-			//while HashMaps has bindings
-			while (keyIter.hasNext()) {
-				String key = (String) keyIter.next();
-				String value = (String) valueIter.next();
-			
-				/*
-				 * change the first letter of the attribute defined in the
-				 * xml "selects.xml" to an uppercase letter because of
-				 * setter method
-				 */
+			if(ccf.getBinding() != null) {
+				Iterator keyIter = ccf.getBinding().keySet().iterator();
+				Iterator valueIter = ccf.getBinding().values().iterator();
+	
+				//while HashMaps has bindings
+				while (keyIter.hasNext()) {
+					String key = (String) keyIter.next();
+					String value = (String) valueIter.next();
 				
-				String att = value.substring(1);
-				String firstLetter = value.substring(0, 1).toUpperCase();
-				try {
+					/*
+					 * change the first letter of the attribute defined in the
+					 * xml "selects.xml" to an uppercase letter because of
+					 * setter method
+					 */
 					
-					// get the getter via reflection
-					meth = clazz.getMethod(("get" + firstLetter + att), (Class[])null);
+					String att = value.substring(1);
+					String firstLetter = value.substring(0, 1).toUpperCase();
+					try {
+						
+						// get the getter via reflection
+						meth = clazz.getMethod(("get" + firstLetter + att), (Class[])null);
+						
+						// set the binding to the query
+						queryTemplate.getQuery().setParameter(key, meth.invoke(ccf, args));
+				
+					} catch (IllegalArgumentException e) {
+						throw new org.jdbcluster.exception.ConfigurationException("number of actual and formal parameters differ for the method " + "get" + firstLetter + att, e);
+					} catch (IllegalAccessException e) {
+						throw new org.jdbcluster.exception.ConfigurationException("no access to method " + "get" + firstLetter + att, e);
+					} catch (InvocationTargetException e) {
+						throw new org.jdbcluster.exception.ConfigurationException("the underlaying method throws exeption", e);
+					} catch (SecurityException e) {
+						throw new org.jdbcluster.exception.ConfigurationException("cant access method " + "get" + firstLetter + att, e);
+					} catch (NoSuchMethodException e) {
+					}
 					
-					// set the binding to the query
-					queryTemplate.getQuery().setParameter(key, meth.invoke(ccf, args));
-			
-				} catch (IllegalArgumentException e) {
-					throw new org.jdbcluster.exception.ConfigurationException("number of actual and formal parameters differ for the method " + "get" + firstLetter + att, e);
-				} catch (IllegalAccessException e) {
-					throw new org.jdbcluster.exception.ConfigurationException("no access to method " + "get" + firstLetter + att, e);
-				} catch (InvocationTargetException e) {
-					throw new org.jdbcluster.exception.ConfigurationException("the underlaying method throws exeption", e);
-				} catch (SecurityException e) {
-					throw new org.jdbcluster.exception.ConfigurationException("cant access method " + "get" + firstLetter + att, e);
-				} catch (NoSuchMethodException e) {
 				}
-				
 			}
 			//call the method recursive with the appended filter as an argument
 			getAppendedBindings(ccf.getAppendedFilter(), queryTemplate);
@@ -201,6 +205,23 @@ public class HibernateSession implements SessionTemplate{
 	 */
 	public <T> T getNativeSession() {
 		return (T) hibernateSession;
+	}
+
+	/**
+	 * Re-read the state of the given instance from the underlying database. It is
+	 * inadvisable to use this to implement long-running sessions that span many
+	 * business tasks. This method is, however, useful in certain special circumstances.
+	 * For example
+	 * <ul>
+	 * <li>where a database trigger alters the object state upon insert or update
+	 * <li>after executing direct SQL (eg. a mass update) in the same session
+	 * <li>after inserting a <tt>Blob</tt> or <tt>Clob</tt>
+	 * </ul>
+	 *
+	 * @param object a persistent or detached cluster instance
+	 */
+	public void refresh(Object object) {
+		hibernateSession.refresh(object);
 	}
 	
 }
