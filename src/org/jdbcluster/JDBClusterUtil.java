@@ -152,6 +152,13 @@ public class JDBClusterUtil {
 		return f;
 	}
 	
+	/**
+	 * calculates method object
+	 * @param o Object
+	 * @param methodName method name
+	 * @param parameterTypes parameter types of method
+	 * @return Method
+	 */
 	static public Method getMethod(Object o, String methodName, Class... parameterTypes) {
 		Method m = null;
 		try {
