@@ -151,4 +151,16 @@ public class JDBClusterUtil {
 		}
 		return f;
 	}
+	
+	static public Method getMethod(Object o, String methodName, Class... parameterTypes) {
+		Method m = null;
+		try {
+			m = o.getClass().getDeclaredMethod(methodName, parameterTypes);
+		} catch (SecurityException e) {
+			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
+		} catch (NoSuchMethodException e) {
+			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
+		}
+		return m;
+	}
 }
