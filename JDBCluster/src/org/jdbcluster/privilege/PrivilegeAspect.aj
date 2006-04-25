@@ -15,13 +15,15 @@
  */
 package org.jdbcluster.privilege;
 
-import java.lang.reflect.Method;
+import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 
+import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
+import java.lang.reflect.Method;
 
 /**
  * used to check privileges
@@ -36,6 +38,14 @@ public privileged aspect PrivilegeAspect {
 	pointcut execServiceMethod(PrivilegedService ser):
 		execution( !@NoPrivilegeCheck public * PrivilegedService+.*(..)) &&
 		target(ser);
+	
+	pointcut execServiceMethod1Param(PrivilegedService ser, PrivilegedCluster pc):
+		execution( !@NoPrivilegeCheck public * PrivilegedService+.*( @PrivilegesParameter PrivilegedCluster+)) &&
+		target(ser) && args(pc);
+	
+	before(PrivilegedService ser, PrivilegedCluster pc) : execServiceMethod1Param(ser, pc) {
+		
+	}
 	
 	before(ClusterBase c) : execClusterMethod(c) {
 		PrivilegeCheckerImpl pc = new PrivilegeCheckerImpl();
