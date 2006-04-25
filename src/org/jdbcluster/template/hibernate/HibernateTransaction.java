@@ -40,6 +40,8 @@ public class HibernateTransaction implements org.jdbcluster.template.Transaction
 	public void rollback() {
 		tx.rollback();
 	}
-
-
+	
+	public void begin() {
+		tx.begin();
+	}
 }
