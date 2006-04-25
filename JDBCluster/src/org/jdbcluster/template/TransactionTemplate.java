@@ -25,4 +25,6 @@ public interface TransactionTemplate {
 	public void commit();
 	
 	public void rollback();
+	
+	public void begin();
 }
