@@ -72,6 +72,17 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
 		return getUserPrivilege().userPrivilegeIntersect(requiredPrivileges);
 	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
+	 * @param calledMethod the method called
+	 * @param parameterTypes parameter of calledMethod
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, String calledMethod, Class... parameterTypes) {
+		return userPrivilegeIntersect(JDBClusterUtil.getMethod(clusterObject, calledMethod, parameterTypes), clusterObject);
+	}
 
 	/**
 	 * intersects required privileges against given privileges
