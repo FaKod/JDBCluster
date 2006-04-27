@@ -41,7 +41,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * @author FaKod
  * 
  */
-public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChecker {
+public class PrivilegeCheckerImpl extends PrivilegeBase {
 
 	/** Logger available to subclasses */
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -49,7 +49,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * always reused instance of springs internal bean wrapper class
 	 */
-	static private BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
+	private static BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
 
 	/**
 	 * maps: Class -> Method -> HashSet of privileges
@@ -60,7 +60,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * maps: Class -> Servicce Method -> HashSet of privileges
 	 */
 	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesService = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
-
+	
 	/**
 	 * should do an intersection between the user privileges and the privileges
 	 * given through requiredPrivileges
@@ -72,18 +72,19 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
 		return getUserPrivilege().userPrivilegeIntersect(requiredPrivileges);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
-	 * @param clusterObject cluster object instance
-	 * @param calledMethod the method called
-	 * @param parameterTypes parameter of calledMethod
+	 * @param clusterObject
+	 * @param methodName method name to check
+	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, String calledMethod, Class... parameterTypes) {
-		return userPrivilegeIntersect(JDBClusterUtil.getMethod(clusterObject, calledMethod, parameterTypes), clusterObject);
+	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args) {
+		Method calledMethod = getMethod(clusterObject, methodName, args);
+		return userPrivilegeIntersect(clusterObject, calledMethod, args);
 	}
-
+	
 	/**
 	 * intersects required privileges against given privileges
 	 * 
@@ -93,14 +94,78 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 *            cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(Method calledMethod, PrivilegedCluster clusterObject) {
-		DomainCheckerImpl dc = new DomainCheckerImpl();
-		HashSet<String> priv = new HashSet<String>(getPrivilegesCluster(calledMethod, clusterObject));
+	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args) {
+		HashSet<String> privileges = getStaticPrivilegesCluster(calledMethod, clusterObject);
+		privileges.addAll(getDynamicPrivilegesCluster(clusterObject, calledMethod, args));
+		return userPrivilegeIntersect(privileges);
+	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param serviceObject service object to check
+	 * @param serviceMethodName method name to check
+	 * @param args of method parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object... args) {
+		Method calledMethod = getMethod(serviceObject, serviceMethodName, args);
+		return userPrivilegeIntersect(serviceObject, calledMethod, args);
+	}
+	
+	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
+		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
+		privileges.addAll(getDynamicPrivileges(calledMethod, args));
+		return userPrivilegeIntersect(privileges);
+	}
+	
+	// ------------------------------------------------------
+	
+	private Method getMethod(Object object, String methodName, Object... args) {
+		Class[] paramTypes = new Class[args.length];
+		for (int i = args.length-1; i >= 0; i--) {
+			paramTypes[i] = args[i].getClass();
+		}
+		return JDBClusterUtil.getMethod(object, methodName, paramTypes);
+	}
+	
+	/**
+	 * calculates and stores static required privileges
+	 * 
+	 * @param calledMethod
+	 *            the method called
+	 * @param clusterObject
+	 *            cluster object instance
+	 * @return return reqired privileges
+	 */
+	private HashSet<String> getStaticPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
+		HashMap<Method, HashSet<String>> mp = privilegesClustere.get(clusterObject.getClass());
+		if (mp == null) {
+			mp = new HashMap<Method, HashSet<String>>();
+			privilegesClustere.put(clusterObject.getClass(), mp);
+		}
+		HashSet<String> hs = mp.get(calledMethod);
+		if (hs == null) {
+			hs = calcClusterPrivileges(calledMethod, clusterObject);
+			mp.put(calledMethod, hs);
+		}
+		return hs;
+	}
+		
+	/**
+	 * calculates instance and parameter specific privileges
+	 * @param clusterObject cluster object instance
+	 * @param calledMethod the method called
+	 * @param args method parameters
+	 * @return return reqired privileges
+	 */
+	private Set<String> getDynamicPrivilegesCluster(PrivilegedCluster clusterObject, Method calledMethod, Object[] args) {
+		Set<String> result = new HashSet<String>();
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
 		if(pcAnno != null) {
 			if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
 				beanWrapper.setWrappedInstance(clusterObject);
 				if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
+					DomainCheckerImpl dc = new DomainCheckerImpl();
 					for (String propertyPath : pcAnno.property()) {
 						PropertyDescriptor pd = null;
 						try {
@@ -124,16 +189,29 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 									throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 								}
 		
-								priv.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 							}
 						}
 					}
 				}
 			}
 		}
-		return userPrivilegeIntersect(priv);
+		result.addAll(getDynamicPrivileges(calledMethod, args));
+		return result;
 	}
-
+	
+	/**
+	 * calculates parameter specific privileges
+	 * @param calledMethod the method called
+	 * @param args method parameters
+	 * @return
+	 */
+	private Set<String> getDynamicPrivileges(Method calledMethod, Object[] args) {
+		Set<String> result = new HashSet<String>();
+		// TODO
+		return result;
+	}		
+	
 	/**
 	 * gets Field instance of property path
 	 * @param propertyPath property path
@@ -188,43 +266,6 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	}
 
 	/**
-	 * intersects required privileges against given privileges
-	 * 
-	 * @param calledServiceMethod
-	 *            the service method called
-	 * @param serObject
-	 *            service instance
-	 * @return true if the privileges are sufficient
-	 */
-	public boolean userPrivilegeIntersect(Method calledServiceMethod, PrivilegedService serObject) {
-		HashSet<String> priv = new HashSet<String>(getPrivilegesService(calledServiceMethod, serObject));
-		return userPrivilegeIntersect(priv);
-	}
-
-	/**
-	 * calculates and stores static required privileges
-	 * 
-	 * @param calledMethod
-	 *            the method called
-	 * @param clusterObject
-	 *            cluster object instance
-	 * @return return reqired privileges
-	 */
-	private HashSet<String> getPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
-		HashMap<Method, HashSet<String>> mp = privilegesClustere.get(clusterObject.getClass());
-		if (mp == null) {
-			mp = new HashMap<Method, HashSet<String>>();
-			privilegesClustere.put(clusterObject.getClass(), mp);
-		}
-		HashSet<String> hs = mp.get(calledMethod);
-		if (hs == null) {
-			hs = calcClusterPrivileges(calledMethod, clusterObject);
-			mp.put(calledMethod, hs);
-		}
-		return hs;
-	}
-
-	/**
 	 * calculates and stores static required privileges
 	 * 
 	 * @param calledServiceMethod
@@ -233,7 +274,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 *            service object instance
 	 * @return reqired privileges
 	 */
-	private HashSet<String> getPrivilegesService(Method calledServiceMethod, PrivilegedService serObject) {
+	private HashSet<String> getStaticPrivilegesService(Method calledServiceMethod, PrivilegedService serObject) {
 		HashMap<Method, HashSet<String>> mp = privilegesService.get(serObject.getClass());
 		if (mp == null) {
 			mp = new HashMap<Method, HashSet<String>>();

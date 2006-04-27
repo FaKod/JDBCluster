@@ -18,6 +18,8 @@ package org.jdbcluster.privilege;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import org.jdbcluster.service.PrivilegedService;
+
 /**
  * Main interface for handling privileges
  * @author FaKod
@@ -40,4 +42,22 @@ public interface PrivilegeChecker {
 	 * @return true if the privileges are sufficient
 	 */
 	public abstract boolean userPrivilegeIntersect(Method calledMethod, PrivilegedCluster clusterObject);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param serviceObject service object to check
+	 * @param serviceMethodName method name to check
+	 * @param args of method parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object... args);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject
+	 * @param methodName method name to check
+	 * @param args of method parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args);
 }

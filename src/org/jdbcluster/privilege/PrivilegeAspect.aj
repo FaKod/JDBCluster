@@ -53,7 +53,7 @@ public privileged aspect PrivilegeAspect {
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();	
 		
-		if(!pc.userPrivilegeIntersect(m, (PrivilegedCluster) c)) 
+		if(!pc.userPrivilegeIntersect((PrivilegedCluster) c, m, new Object[0])) 
 			throw new PrivilegeException("unsufficient privileges on Cluster: " +
 					c.getClass().getName()+
 					" calling method: " +
@@ -66,7 +66,7 @@ public privileged aspect PrivilegeAspect {
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();	
 		
-		if(!pc.userPrivilegeIntersect(m, ser)) 
+		if(!pc.userPrivilegeIntersect(ser, m, new Object[0])) 
 			throw new PrivilegeException("unsufficient privileges on Service: " +
 					ser.getClass().getName()+
 					" calling service method: " +
