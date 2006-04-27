@@ -16,31 +16,37 @@
 package org.jdbcluster.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Helper class for DomainChecker mainly for special nullAllowed value
+ * 
  * @author FaKod
- *
+ * 
  */
 public final class ValidDomainEntries<T> extends ArrayList<T> {
-	
+
 	private boolean nullAllowed = false;
-	
+
 	/**
-	 * prefilles entries with list elememts
-	 * @param list valid list elements (you can use null element)
+	 * prefilles entries a list containing the elements of the specified 
+	 * collection, in the order they are returned by the collection's iterator.
+	 * 
+	 * @param c valid list elements (you can use null element)
+	 * @throws NullPointerException if the specified collection is null.
 	 */
-	public ValidDomainEntries(List<T> list) {
-		this.addAll(list);
-		if(this.contains(null)) {
+	public ValidDomainEntries(Collection<? extends T> c) {
+		super(c);
+		if (this.contains(null)) {
 			setNullAllowed(true);
 			this.remove(null);
-		}	
+		}
 	}
-	
+
 	/**
 	 * prefilles entries with list elememts
+	 * 
 	 * @param list valid list elements
 	 * @param nullAllowed overwrites existing null element in list parameter
 	 */
@@ -48,22 +54,24 @@ public final class ValidDomainEntries<T> extends ArrayList<T> {
 		this(list);
 		setNullAllowed(nullAllowed);
 	}
-	
+
 	/**
 	 * prefilles entries with list elememts
+	 * 
 	 * @param arg valid list elements(you can use null element)
 	 */
 	public ValidDomainEntries(T... arg) {
-		for(T o: arg) {
-			if(o!=null)
+		for (T o : arg) {
+			if (o != null)
 				this.add(o);
 			else
 				setNullAllowed(true);
 		}
 	}
-	
+
 	/**
 	 * prefilles entries with list elememts
+	 * 
 	 * @param nullAllowed overwrites existing null element in list parameter
 	 * @param arg valid list elements
 	 */
@@ -71,16 +79,17 @@ public final class ValidDomainEntries<T> extends ArrayList<T> {
 		this(arg);
 		setNullAllowed(nullAllowed);
 	}
-	
+
 	/**
 	 * creates empty object
-	 *
+	 * 
 	 */
 	public ValidDomainEntries() {
 	}
-	
+
 	/**
 	 * is null value a allowed value
+	 * 
 	 * @return true if domain includes null value
 	 */
 	public boolean isNullAllowed() {
@@ -89,6 +98,7 @@ public final class ValidDomainEntries<T> extends ArrayList<T> {
 
 	/**
 	 * sets allow null value
+	 * 
 	 * @param nullAllowed true if domain includes null value
 	 */
 	public void setNullAllowed(boolean nullAllowed) {
