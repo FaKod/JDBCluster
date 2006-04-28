@@ -20,6 +20,11 @@ import org.jdbcluster.clustertype.ClusterTypeBase;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.ClusterTypeException;
+import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.exception.PrivilegeException;
+import org.jdbcluster.privilege.PrivilegeChecker;
+import org.jdbcluster.privilege.PrivilegeCheckerImpl;
+import org.jdbcluster.privilege.PrivilegedCluster;
 
 /**
  * 
@@ -66,9 +71,10 @@ public class ClusterFactory {
 	 * @return Cluster
 	 */
 	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
+		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());
 		if (className == null) {
-			return (T) new ClusterImpl(); //if no classname was defined, return empty object
+			throw new ConfigurationException("unknown ClusterType [" + ct.getName() + "]");
 		}
 
 		Class<?> clusterClass;
@@ -85,6 +91,10 @@ public class ClusterFactory {
 			throw new ClusterTypeException("the currently executed ctor for class [" + className + "] does not have access", e);
 		} catch (ClassNotFoundException e) {
 			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
+		}
+		if(cluster instanceof PrivilegedCluster) {
+			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
+				throw new PrivilegeException("Nop sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
 		}
 		return (T) cluster;
 	}
