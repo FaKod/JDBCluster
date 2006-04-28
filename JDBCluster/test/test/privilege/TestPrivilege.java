@@ -44,9 +44,12 @@ public class TestPrivilege extends TestCase {
 		rad.setColorType("Color");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==2);
+		assertTrue(lastPrivSet.size()==5);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
+		assertTrue(lastPrivSet.contains("PRIV1"));
+		assertTrue(lastPrivSet.contains("PRIV2"));
+		assertTrue(lastPrivSet.contains("PRIV3"));
 		
 		UserPrivilege.clearLastprivSet();
 		
@@ -139,6 +142,5 @@ public class TestPrivilege extends TestCase {
 		assertTrue(lastPrivSet.contains("NestedPRIV3"));
 		
 		UserPrivilege.clearLastprivSet();
-		
 	}
 }
