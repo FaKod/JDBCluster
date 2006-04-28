@@ -15,21 +15,19 @@
  */
 package org.jdbcluster.privilege;
 
-import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
+import java.lang.reflect.Method;
 
-import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
-import java.lang.reflect.Method;
 
 /**
  * used to check privileges
  * @author FaKod
  */
-public privileged aspect PrivilegeAspect {
+public aspect PrivilegeAspect {
 
 	pointcut execClusterMethod(ClusterBase c):
 		execution( !@NoPrivilegeCheck public * PrivilegedCluster+.*(..)) &&
@@ -39,21 +37,13 @@ public privileged aspect PrivilegeAspect {
 		execution( !@NoPrivilegeCheck public * PrivilegedService+.*(..)) &&
 		target(ser);
 	
-	pointcut execServiceMethod1Param(PrivilegedService ser, PrivilegedCluster pc):
-		execution( !@NoPrivilegeCheck public * PrivilegedService+.*( @PrivilegesParameter PrivilegedCluster+)) &&
-		target(ser) && args(pc);
-	
-	before(PrivilegedService ser, PrivilegedCluster pc) : execServiceMethod1Param(ser, pc) {
-		
-	}
-	
 	before(ClusterBase c) : execClusterMethod(c) {
-		PrivilegeCheckerImpl pc = new PrivilegeCheckerImpl();
+		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
 		
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
-		Method m = sig.getMethod();	
+		Method m = sig.getMethod();
 		
-		if(!pc.userPrivilegeIntersect((PrivilegedCluster) c, m, new Object[0])) 
+		if(!pc.userPrivilegeIntersect((PrivilegedCluster) c, m, thisJoinPoint.getArgs()))
 			throw new PrivilegeException("unsufficient privileges on Cluster: " +
 					c.getClass().getName()+
 					" calling method: " +
@@ -61,12 +51,12 @@ public privileged aspect PrivilegeAspect {
 	}
 	
 	before(PrivilegedService ser) : execServiceMethod(ser) {
-		PrivilegeCheckerImpl pc = new PrivilegeCheckerImpl();
+		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
 		
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();	
 		
-		if(!pc.userPrivilegeIntersect(ser, m, new Object[0])) 
+		if(!pc.userPrivilegeIntersect(ser, m, thisJoinPoint.getArgs())) 
 			throw new PrivilegeException("unsufficient privileges on Service: " +
 					ser.getClass().getName()+
 					" calling service method: " +

@@ -33,7 +33,7 @@ public interface PrivilegeChecker {
 	 * @param requiredPrivileges the required privileges
 	 * @return true if the privileges are sufficient
 	 */
-	public abstract boolean userPrivilegeIntersect(Set<String> requiredPrivileges);
+	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges);
 
 	/**
 	 * intersects required privileges against given privileges
@@ -41,7 +41,22 @@ public interface PrivilegeChecker {
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public abstract boolean userPrivilegeIntersect(Method calledMethod, PrivilegedCluster clusterObject);
+	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param calledMethod the method called
+	 * @param serviceObject service object instance
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args);
+	
+	/**
+	 * intersects required privileges without a method call (new(..)) against given privileges
+	 * @param clusterObject cluster object instance
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject);
 	
 	/**
 	 * intersects required privileges against given privileges

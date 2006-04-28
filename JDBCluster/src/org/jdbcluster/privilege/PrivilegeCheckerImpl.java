@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jdbcluster.JDBClusterUtil;
+import org.jdbcluster.domain.DomainChecker;
 import org.jdbcluster.domain.DomainCheckerImpl;
 import org.jdbcluster.domain.DomainPrivilegeList;
 import org.jdbcluster.exception.ConfigurationException;
@@ -41,7 +42,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * @author FaKod
  * 
  */
-public class PrivilegeCheckerImpl extends PrivilegeBase {
+public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChecker {
 
 	/** Logger available to subclasses */
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -60,6 +61,29 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 	 * maps: Class -> Servicce Method -> HashSet of privileges
 	 */
 	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesService = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
+
+	/**
+	 * C-Tor to use Factory method
+	 *
+	 */
+	private PrivilegeCheckerImpl() {	
+	}
+	
+	/**
+	 * public intance gettet
+	 * @return PrivilegeChecker
+	 */
+	public static PrivilegeChecker getInstance() {
+		return getImplInstance();
+	}
+	
+	/**
+	 * package instance getter
+	 * @return PrivilegeCheckerImpl
+	 */
+	static PrivilegeCheckerImpl getImplInstance() {
+		return new PrivilegeCheckerImpl();
+	}
 	
 	/**
 	 * should do an intersection between the user privileges and the privileges
@@ -101,6 +125,15 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 	}
 	
 	/**
+	 * intersects required privileges without a method call (new(..)) against given privileges
+	 * @param clusterObject cluster object instance
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject) {
+		return userPrivilegeIntersect(calcStaticClusterPrivileges(clusterObject));
+	}
+	
+	/**
 	 * intersects required privileges against given privileges
 	 * @param serviceObject service object to check
 	 * @param serviceMethodName method name to check
@@ -112,14 +145,25 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 		return userPrivilegeIntersect(serviceObject, calledMethod, args);
 	}
 	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param calledMethod the method called
+	 * @param serviceObject service object instance
+	 * @return true if the privileges are sufficient
+	 */
 	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
 		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
 		privileges.addAll(getDynamicPrivileges(calledMethod, args));
 		return userPrivilegeIntersect(privileges);
 	}
 	
-	// ------------------------------------------------------
-	
+	/**
+	 * extract method instance from name and parameter type
+	 * @param object object to check
+	 * @param methodName the method name
+	 * @param args the arguments as objects
+	 * @return Method
+	 */	
 	private Method getMethod(Object object, String methodName, Object... args) {
 		Class[] paramTypes = new Class[args.length];
 		for (int i = args.length-1; i >= 0; i--) {
@@ -165,7 +209,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 			if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
 				beanWrapper.setWrappedInstance(clusterObject);
 				if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
-					DomainCheckerImpl dc = new DomainCheckerImpl();
+					DomainChecker dc = DomainCheckerImpl.getInstance();
 					for (String propertyPath : pcAnno.property()) {
 						PropertyDescriptor pd = null;
 						try {
@@ -176,20 +220,24 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 						}
 						
 						if (pd != null) {
+							Field f = getPropertyField(propertyPath, pd);
+							String domId = getDomainIdFromField(f);
+							DomainPrivilegeList dpl;
+							try {
+								dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+							} catch (ClassCastException e) {
+								throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+							}
 							if (!pd.getReadMethod().equals(calledMethod) && !pd.getWriteMethod().equals(calledMethod)) {
-		
-								Field f = getPropertyField(propertyPath, pd);
-								String domId = getDomainIdFromField(f);
 								String value = getPropertyValue(propertyPath);
-		
-								DomainPrivilegeList dpl;
-								try {
-									dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
-								} catch (ClassCastException e) {
-									throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
-								}
-		
 								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+							}
+							else {
+								if(pd.getWriteMethod().equals(calledMethod)) {
+									if(args.length!=1 || !(args[0] instanceof String))
+										throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
+									result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
+								}
 							}
 						}
 					}
@@ -300,15 +348,28 @@ public class PrivilegeCheckerImpl extends PrivilegeBase {
 	private HashSet<String> calcClusterPrivileges(Method calledMethod, PrivilegedCluster clusterObject) {
 		HashSet<String> hs = new HashSet<String>();
 		PrivilegesMethod pmAnno = calledMethod.getAnnotation(PrivilegesMethod.class);
+
+		hs.addAll(calcStaticClusterPrivileges(clusterObject));
+		
+		if (pmAnno != null) {
+			for (String s : pmAnno.required()) {
+				hs.add(s);
+			}
+		}
+		return hs;
+	}
+	
+	/**
+	 * calculates static required privileges without  method
+	 * @param clusterObject
+	 * @return
+	 */
+	private HashSet<String> calcStaticClusterPrivileges(PrivilegedCluster clusterObject) {
+		HashSet<String> hs = new HashSet<String>();
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
 
 		if (pcAnno != null) {
 			for (String s : pcAnno.required()) {
-				hs.add(s);
-			}
-		}
-		if (pmAnno != null) {
-			for (String s : pmAnno.required()) {
 				hs.add(s);
 			}
 		}
