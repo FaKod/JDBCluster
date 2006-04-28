@@ -39,15 +39,25 @@ import org.jdbcluster.metapersistence.cluster.ClusterBase;
 public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 
 	/**
-	 * singelton instance
+	 * private ctor
 	 */
-	private static DomainChecker dc;
+	private DomainCheckerImpl() {
+	}
 	
 	/**
-	 * its singelton
-	 *
+	 * public instance getter
+	 * @return DomainChecker
 	 */
-	public DomainCheckerImpl() {
+	public static DomainChecker getInstance() {
+		return getImplInstance();
+	}
+	
+	/**
+	 * package instance getter
+	 * @return DomainCheckerImpl
+	 */
+	static DomainCheckerImpl getImplInstance() {
+		return new DomainCheckerImpl();
 	}
 	
 	/* (non-Javadoc)

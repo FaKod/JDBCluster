@@ -52,7 +52,7 @@ public aspect DomainCheck {
 		target(c) && args(s);
 	
 	Object around(ClusterBase c, String s):setDepAttribute(c, s) {
-		DomainCheckerImpl dc = new DomainCheckerImpl();
+		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();
 		DomainDependancy dd = fField.getAnnotation(DomainDependancy.class);
@@ -67,7 +67,7 @@ public aspect DomainCheck {
 	}
 	
 	Object around(ClusterBase c, String s):setAttribute(c, s) {
-		DomainCheckerImpl dc = new DomainCheckerImpl();
+		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();
 		Domain d = fField.getAnnotation(Domain.class);
