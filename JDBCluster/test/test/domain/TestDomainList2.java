@@ -24,13 +24,13 @@ public class TestDomainList2 extends TestCase {
 	}
 
 	public void testDomainList() {
-		DomainChecker dc = new DomainCheckerImpl();
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		ValidDomainEntries<String> domList = dc.getPossibleDomainEntries("ColorTypeDomain");
 		assertEquals(4, domList.size());
 	}
 	
 	public void testDomainListPath() {
-		DomainChecker dc = new DomainCheckerImpl();
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		ValidDomainEntries<String> domList;
 		
 		// we use cluster auto now
@@ -90,7 +90,7 @@ public class TestDomainList2 extends TestCase {
 	}
 	
 	public void testDomainListAdditionalMaster() {
-		DomainChecker dc = new DomainCheckerImpl();
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		ValidDomainEntries<String> domList;
 		
 		// we use cluster auto now
