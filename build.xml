@@ -1,59 +1,126 @@
 <project name="JDBCluster" default="dist" basedir=".">
 	<description> This is the build file for JDBCluster.jar </description>
-	
+
 	<!-- Import Tools -->
-	<property name="tools.dir" value="../Tools"/>
-	<import file="${tools.dir}/AntImport/hibernate.xml"/>
-	<import file="${tools.dir}/AntImport/commons-lang.xml"/>
-	<import file="${tools.dir}/AntImport/aspectj.xml"/>
-	<import file="${tools.dir}/AntImport/spring.xml"/>
-	
-	<property file="build.ajproperties"/>
-	
+	<property name="tools.dir" value="../Tools" />
+	<import file="${tools.dir}/AntImport/hibernate.xml" />
+	<import file="${tools.dir}/AntImport/commons-lang.xml" />
+	<import file="${tools.dir}/AntImport/aspectj.xml" />
+	<import file="${tools.dir}/AntImport/spring.xml" />
+	<import file="${tools.dir}/AntImport/jdbc.xml" />
+
+	<property file="build.ajproperties" />
+
 	<!-- AspectJ Taskdefinition -->
 	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
 		<classpath>
-			<path refid="aspectj.path"/>
+			<path refid="aspectj.path" />
 		</classpath>
 	</taskdef>
-	
+
 	<!-- set global properties for this build -->
-	<property name="src" location="src"/>
-	<property name="build" location="build"/>
-	<property name="dist" location="dist"/>
-	
+	<property name="src" location="src" />
+	<property name="example" location="example" />
+	<property name="test" location="test" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="test.reports" location="TestReports" />
+
 	<target name="init" depends="clean">
-		<tstamp/>
-		<mkdir dir="${build}"/>
+		<tstamp />
+		<mkdir dir="${build}" />
+		<mkdir dir="${test.reports}" />
 	</target>
-	
+
 	<target name="compile" depends="init" description="compile the source">
 		<iajc source="1.5" target="1.5" srcdir="${src}" destdir="${build}">
-			<exclude name="**/test/*.java"/>
-			<exclude name="${src.excludes}"/>
+			<exclude name="${src.excludes}" />
 			<classpath>
-				<path refid="hibernate3.1.class.path"/>
-				<path refid="commons-lang-2.1.class.path"/>
-				<path refid="aspectj.path"/>
-				<path refid="spring2.0-m1.path"/>
+				<path refid="hibernate3.1.class.path" />
+				<path refid="commons-lang-2.1.class.path" />
+				<path refid="aspectj.path" />
+				<path refid="spring2.0-m1.path" />
 			</classpath>
 		</iajc>
+	</target>
+
+	<target name="dist" depends="compile" description="generate the distribution">
+		<mkdir dir="${dist}/lib" />
+		<jar jarfile="${dist}/lib/JDBCluster-${DSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/lib/JDBCluster.jar" basedir="${build}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete dir="${test.reports}" />
+	</target>
+
+	<target name="compileTest" depends="dist" description="compile the tests">
+		<iajc source="1.5" target="1.5" srcdir="${example};${test}" destdir="${build}">
+			<classpath>
+				<path refid="hibernate3.1.class.path" />
+				<path refid="commons-lang-2.1.class.path" />
+				<path refid="aspectj.path" />
+				<path refid="spring2.0-m1.path" />
+			</classpath>
+			<inpath>
+				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
+			</inpath>
+		</iajc>
 		<copy todir="${build}">
-			<fileset dir="${src}">
-				<include name="**/*.hbm.xml"/>
-				<include name="META-INF/**"/>
+			<fileset dir="${example}">
+				<include name="**/*.xml" />
+				<include name="META-INF/**" />
+			</fileset>
+		</copy>
+		<copy todir="${build}">
+			<fileset dir="${test}">
+				<include name="**/*.xml" />
 			</fileset>
 		</copy>
 	</target>
-	
-	<target name="dist" depends="compile" description="generate the distribution">
-		<mkdir dir="${dist}/lib"/>
-		<jar jarfile="${dist}/lib/JDBCluster-${DSTAMP}.jar" basedir="${build}"/>
-		<jar jarfile="${dist}/lib/JDBCluster.jar" basedir="${build}"/>
+
+	<target name="distTest" depends="compileTest" description="generate the distribution">
+		<jar jarfile="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/lib/JDBClusterTest.jar" basedir="${build}" />
 	</target>
-	
-	<target name="clean" description="clean up">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
+
+	<target name="JDBClusterTest" depends="distTest">
+
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+				<path refid="hibernate3.1.class.path" />
+				<path refid="commons-lang-2.1.class.path" />
+				<path refid="aspectj.path" />
+				<path refid="spring2.0-m1.path" />
+				<path refid="jdbc.class.path" />
+				<pathelement location="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" />
+				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
+			</classpath>
+
+			<formatter type="xml" />
+
+			<test name="test.TestClusterAndDB" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.domain.TestDomainCheck" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainCheck2" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainList" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainList2" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.privilege.TestPrivilege" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.service.TestService" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+		</junit>
+
+		<junitreport todir="${test.reports}">
+			<fileset dir="${test.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.reports}/html" />
+		</junitreport>
+
 	</target>
+
 </project>
