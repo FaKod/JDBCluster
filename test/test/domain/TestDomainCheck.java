@@ -130,7 +130,7 @@ public class TestDomainCheck extends TestCase {
 	}
 	
 	public void testDomainCheckWithPath() {
-		DomainChecker dc = new DomainCheckerImpl();
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		// we use cluster auto now
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
@@ -150,7 +150,7 @@ public class TestDomainCheck extends TestCase {
 	}
 	
 	public void testAdditionalMaster() {
-		DomainChecker dc = new DomainCheckerImpl();
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		// we use cluster auto now
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
