@@ -42,5 +42,12 @@ public interface DomainChecker {
 	 * @return ordered list of all domain entries
 	 */
 	public abstract ValidDomainEntries<String> getPossibleDomainEntries(String domainId);
+	
+	/**
+	 * creates singelton instances of DomainList implementation as configured
+	 * @param domainId configured domain id
+	 * @return singleton instance of DomainList
+	 */
+	public DomainList getDomainListInstance(String domainId);
 
 }
