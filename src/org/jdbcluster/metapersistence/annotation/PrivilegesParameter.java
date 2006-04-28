@@ -12,9 +12,9 @@ import java.lang.annotation.Target;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER})
+@Target({ElementType.METHOD})
 public @interface PrivilegesParameter {
-
+	
 	/**
 	 * array of properties. Their contents will be used to
 	 * calculate the required privileges
@@ -28,7 +28,7 @@ public @interface PrivilegesParameter {
 	 * Marker that indicates the end of a property key for an
 	 * indexed or mapped property like "person.addresses[0]".
 	 * 
-	 * @return array of property names
+	 * @return String[] array of property names
 	 */
 	String[] property() default {""};
 }
