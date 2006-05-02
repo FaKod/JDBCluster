@@ -44,12 +44,10 @@ public class TestPrivilege extends TestCase {
 		rad.setColorType("Color");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==5);
+		assertTrue(lastPrivSet.size()==3);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
-		assertTrue(lastPrivSet.contains("PRIV1"));
-		assertTrue(lastPrivSet.contains("PRIV2"));
-		assertTrue(lastPrivSet.contains("PRIV3"));
+		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
 		
 		UserPrivilege.clearLastprivSet();
 		
@@ -60,13 +58,11 @@ public class TestPrivilege extends TestCase {
 		rad.setColor("RED");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==6);
+		assertTrue(lastPrivSet.size()==4);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
-		assertTrue(lastPrivSet.contains("PRIV1"));
-		assertTrue(lastPrivSet.contains("PRIV2"));
-		assertTrue(lastPrivSet.contains("PRIV3"));
+		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
 		
 		UserPrivilege.clearLastprivSet();
 				
@@ -77,15 +73,14 @@ public class TestPrivilege extends TestCase {
 		rad.setColorShading("LightRED");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==8);
+		assertTrue(lastPrivSet.size()==6);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("SETCOLSHADE"));
 		assertTrue(lastPrivSet.contains("GETCOLOR"));
-		assertTrue(lastPrivSet.contains("PRIV1"));
-		assertTrue(lastPrivSet.contains("PRIV2"));
-		assertTrue(lastPrivSet.contains("PRIV3"));
+		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+
 		
 		UserPrivilege.clearLastprivSet();
 		
@@ -96,13 +91,11 @@ public class TestPrivilege extends TestCase {
 		rad.setNested(new NestedPropertyForPrivTest());
 				
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==6);
+		assertTrue(lastPrivSet.size()==4);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
-		assertTrue(lastPrivSet.contains("PRIV1"));
-		assertTrue(lastPrivSet.contains("PRIV2"));
-		assertTrue(lastPrivSet.contains("PRIV3"));
+		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
 		
 		UserPrivilege.clearLastprivSet();
 				
@@ -128,15 +121,13 @@ public class TestPrivilege extends TestCase {
 		rad.setColorShading("LightRED");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==11);
+		assertTrue(lastPrivSet.size()==9);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("SETCOLSHADE"));
 		assertTrue(lastPrivSet.contains("GETCOLOR"));
-		assertTrue(lastPrivSet.contains("PRIV1"));
-		assertTrue(lastPrivSet.contains("PRIV2"));
-		assertTrue(lastPrivSet.contains("PRIV3"));
+		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
 		assertTrue(lastPrivSet.contains("NestedPRIV1"));
 		assertTrue(lastPrivSet.contains("NestedPRIV2"));
 		assertTrue(lastPrivSet.contains("NestedPRIV3"));
