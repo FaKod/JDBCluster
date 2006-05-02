@@ -15,7 +15,7 @@
 				</FilterClass>
 			</select>
 			<!--select for coordinates-->
-			<select id="position" hql="LATITUDE=:LAT and LONGITUDE=:LONG">
+			<select id="position" alias="car" hql="LATITUDE=:LAT and LONGITUDE=:LONG">
 				<FilterClass class="test.testfilter.PositionFilter">
 					<binding var="LONG" attribute="longitude"/>
 					<binding var="LAT" attribute="latitude"/>
