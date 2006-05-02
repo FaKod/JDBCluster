@@ -116,9 +116,10 @@ public class HibernateSession implements SessionTemplate{
 		queryTemplate.setClusterType(ccf.getClusterType());
 		// create the query with given selectstring and wherestring
 		String whereStatement = ccf.getWhereStatement();
+		String alias = ccf.getAlias();
 		if(whereStatement != null && whereStatement.length()>0) {
 			query = hibernateSession.createQuery(
-					" from " + ccf.getSelectStatementDAO() +
+					" from " + ccf.getSelectStatementDAO() + " " + alias + " " +
 					" where "+ ccf.getWhereStatement());
 			queryTemplate.setQuery(query);
 			getAppendedBindings(ccf, queryTemplate);

@@ -33,6 +33,7 @@ public abstract class CCFilterBase {
 	private String className;
 	private CCFilter appendedFilter = null;
 	private String whereStatement;
+	private String alias;
 	private String selectStatementDAO;
 	private ClusterType clusterType;
 
@@ -152,5 +153,13 @@ public abstract class CCFilterBase {
 	 */
 	protected void setClusterType(ClusterType clusterType) {
 		this.clusterType = clusterType;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 }
