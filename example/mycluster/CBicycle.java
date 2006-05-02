@@ -22,6 +22,7 @@ public class CBicycle extends Cluster implements PrivilegedCluster {
 	@Domain(domainId="ColorTypeDomain")
 	String colorType;
 	
+	@PrivilegesDomain
 	@DomainDependancy(domainId="ColorDomain", dependsFromProperty="colorType")
 	String color;
 	
