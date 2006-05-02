@@ -71,6 +71,7 @@
 				<xs:element ref="FilterClass" minOccurs="0"/>
 			</xs:sequence>
 			<xs:attribute name="hql" type="xs:string" use="optional"/>
+			<xs:attribute name="alias" type="xs:string" use="optional"/>
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>
