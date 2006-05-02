@@ -74,6 +74,7 @@ public class CCFilterFactory extends CCFilterBase{
 		}
 		
 		String hql = CCFilterBase.getSelect().getWhere(ct, selId);
+		String alias = CCFilterBase.getSelect().getAlias(ct, selId);
 		HashMap<String, String> binding = CCFilterBase.getSelect().getBinding(ct, selId, filterClassName);
 
 		Class<?> filterClass;
@@ -98,6 +99,7 @@ public class CCFilterFactory extends CCFilterBase{
 		filter.setBinding(binding);
 		filter.setClassName(filterClassName);
 		filter.setWhereStatement(hql);
+		filter.setAlias(alias);
 		filter.setSelectStatementDAO(selectDAO);
 		return (T) filter;
 	}

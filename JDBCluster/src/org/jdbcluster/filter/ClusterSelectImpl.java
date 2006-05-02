@@ -75,7 +75,28 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 			//returns the select String
 			return node.valueOf("@hql");	
 		}
+	}
+	
+	/**
+	 * returns the alias setting
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID selects the SelectID
+	 * @return String
+	 */
+	public String getAlias(ClusterType clusterType, String SelectID) {
+//		get the name e.g. unit
+		String clusterId = clusterType.getName();
+		//xPath expression to get the select statement
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
+		
+		Node node = document.selectSingleNode(xPath);
 
+		if (node == null) {
+			return null;
+		} else {
+			//returns the select String
+			return node.valueOf("@alias");	
+		}
 	}
 	
 	/**

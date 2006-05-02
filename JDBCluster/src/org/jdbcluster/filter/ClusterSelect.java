@@ -37,6 +37,14 @@ public interface ClusterSelect {
 	public String getWhere(ClusterType clusterType, String SelectID);
 	
 	/**
+	 * returns the alias setting
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID selects the SelectID
+	 * @return String
+	 */
+	public String getAlias(ClusterType clusterType, String SelectID);
+	
+	/**
 	 * gets the classname from "selects.xml"
 	 * @param clusterType identifies the ClusterType
 	 * @param SelectID selects the SelectID

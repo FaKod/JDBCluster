@@ -59,6 +59,12 @@ public interface CCFilter {
 	public String getWhereStatement();
 	
 	/**
+	 * get database alias
+	 * @return String
+	 */
+	public String getAlias();
+	
+	/**
 	 * returns the selectstatement (without the where clause) of a filter
 	 * @return selectStatement the select statement
 	 */
