@@ -33,9 +33,11 @@ import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
+import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.service.PrivilegedService;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.NullValueInNestedPathException;
 
 /**
  * 
@@ -153,7 +155,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
 		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
-		privileges.addAll(getDynamicPrivileges(calledMethod, args));
+		privileges.addAll(getParameterPrivileges(calledMethod, args));
 		return userPrivilegeIntersect(privileges);
 	}
 	
@@ -203,48 +205,55 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return return reqired privileges
 	 */
 	private Set<String> getDynamicPrivilegesCluster(PrivilegedCluster clusterObject, Method calledMethod, Object[] args) {
+		DomainChecker dc = DomainCheckerImpl.getInstance();
 		Set<String> result = new HashSet<String>();
+		
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
-		if(pcAnno != null) {
-			if(!isRequiredPropertyInGetMethod(pcAnno.property(), calledMethod)) {
+		if(pcAnno != null && pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
+				
+			if(!isGetMethodInRequiredProperty(pcAnno.property(), calledMethod)) {
 				beanWrapper.setWrappedInstance(clusterObject);
-				if (pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
-					DomainChecker dc = DomainCheckerImpl.getInstance();
-					for (String propertyPath : pcAnno.property()) {
-						PropertyDescriptor pd = null;
+				
+				for (String propertyPath : pcAnno.property()) {
+					PropertyDescriptor pd = null;
+					
+					try {
+						pd = beanWrapper.getPropertyDescriptor(propertyPath);
+					} catch (NullValueInNestedPathException nve) {
+						if (logger.isInfoEnabled())
+							logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+					}
+					catch (Exception e1) {
+						throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
+					}
+					
+					
+					if (pd != null) {
+						Field f = getPropertyField(propertyPath, pd);
+						String domId = getDomainIdFromField(f);
+						DomainPrivilegeList dpl;
 						try {
-							pd = beanWrapper.getPropertyDescriptor(propertyPath);
-						} catch (Exception e1) {
-							if (logger.isInfoEnabled())
-								logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+							dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+						} catch (ClassCastException e) {
+							throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 						}
-						
-						if (pd != null) {
-							Field f = getPropertyField(propertyPath, pd);
-							String domId = getDomainIdFromField(f);
-							DomainPrivilegeList dpl;
-							try {
-								dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
-							} catch (ClassCastException e) {
-								throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
-							}
-							if (!pd.getReadMethod().equals(calledMethod) && !pd.getWriteMethod().equals(calledMethod)) {
-								String value = getPropertyValue(propertyPath);
-								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
-							}
-							else {
-								if(pd.getWriteMethod().equals(calledMethod)) {
-									if(args.length!=1 || !(args[0] instanceof String))
-										throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
-									result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
-								}
+						if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod)) ) {
+							String value = getPropertyValue(propertyPath);
+							result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+						}
+						else {
+							if(pd.getWriteMethod().equals(calledMethod)) {
+								if(args.length!=1 || !(args[0] instanceof String))
+									throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
+								result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
 							}
 						}
 					}
 				}
+				
 			}
 		}
-		result.addAll(getDynamicPrivileges(calledMethod, args));
+		result.addAll(getParameterPrivileges(calledMethod, args));
 		return result;
 	}
 	
@@ -252,11 +261,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * calculates parameter specific privileges
 	 * @param calledMethod the method called
 	 * @param args method parameters
-	 * @return
+	 * @return Set<String>
 	 */
-	private Set<String> getDynamicPrivileges(Method calledMethod, Object[] args) {
+	private Set<String> getParameterPrivileges(Method calledMethod, Object[] args) {
 		Set<String> result = new HashSet<String>();
-		// TODO
+		PrivilegesParameter pp = (PrivilegesParameter)calledMethod.getAnnotation(PrivilegesParameter.class);
+		if(pp!=null) {
+			
+		}
 		return result;
 	}		
 	
@@ -296,11 +308,12 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	}
 
 	/**
-	 * checks wether get method call is part of privileged properties
+	 * checks wether get method call is part of required properties
 	 * @param property array of properties
 	 * @param calledMethod called method
+	 * @return boolean true if it is a getter and in required properties
 	 */
-	private boolean isRequiredPropertyInGetMethod(String[] properties, Method calledMethod) {
+	private boolean isGetMethodInRequiredProperty(String[] properties, Method calledMethod) {
 		String mName = calledMethod.getName();
 		if(mName.startsWith("set"))
 			return false;
