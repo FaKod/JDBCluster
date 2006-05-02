@@ -206,54 +206,54 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 */
 	private Set<String> getDynamicPrivilegesCluster(PrivilegedCluster clusterObject, Method calledMethod, Object[] args) {
 		DomainChecker dc = DomainCheckerImpl.getInstance();
-		Set<String> result = new HashSet<String>();
-		
+		Set<String> result = new HashSet<String>(getParameterPrivileges(calledMethod, args));
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
-		if(pcAnno != null && pcAnno.property().length > 0 && pcAnno.property()[0].length() > 0) {
+		
+		if(pcAnno == null || pcAnno.property().length == 0 || pcAnno.property()[0].length() == 0)
+			return result;
 				
-			if(!isGetMethodInRequiredProperty(pcAnno.property(), calledMethod)) {
-				beanWrapper.setWrappedInstance(clusterObject);
-				
-				for (String propertyPath : pcAnno.property()) {
-					PropertyDescriptor pd = null;
-					
-					try {
-						pd = beanWrapper.getPropertyDescriptor(propertyPath);
-					} catch (NullValueInNestedPathException nve) {
-						if (logger.isInfoEnabled())
-							logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
-					}
-					catch (Exception e1) {
-						throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
-					}
-					
-					
-					if (pd != null) {
-						Field f = getPropertyField(propertyPath, pd);
-						String domId = getDomainIdFromField(f);
-						DomainPrivilegeList dpl;
-						try {
-							dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
-						} catch (ClassCastException e) {
-							throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
-						}
-						if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod)) ) {
-							String value = getPropertyValue(propertyPath);
-							result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
-						}
-						else {
-							if(pd.getWriteMethod().equals(calledMethod)) {
-								if(args.length!=1 || !(args[0] instanceof String))
-									throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
-								result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
-							}
-						}
+		if(isGetMethodInRequiredProperty(pcAnno.property(), calledMethod))
+			return result;
+		
+		beanWrapper.setWrappedInstance(clusterObject);
+		
+		for (String propertyPath : pcAnno.property()) {
+			PropertyDescriptor pd = null;
+			
+			try {
+				pd = beanWrapper.getPropertyDescriptor(propertyPath);
+			} catch (NullValueInNestedPathException nve) {
+				if (logger.isInfoEnabled())
+					logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+			}
+			catch (Exception e1) {
+				throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
+			}
+			
+			
+			if (pd != null) {
+				Field f = getPropertyField(propertyPath, pd);
+				String domId = getDomainIdFromField(f);
+				DomainPrivilegeList dpl;
+				try {
+					dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+				} catch (ClassCastException e) {
+					throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+				}
+				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod)) ) {
+					String value = getPropertyValue(propertyPath);
+					result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+				}
+				else {
+					if(pd.getWriteMethod().equals(calledMethod)) {
+						if(args.length!=1 || !(args[0] instanceof String))
+							throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
+						result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
 					}
 				}
-				
 			}
 		}
-		result.addAll(getParameterPrivileges(calledMethod, args));
+			
 		return result;
 	}
 	
