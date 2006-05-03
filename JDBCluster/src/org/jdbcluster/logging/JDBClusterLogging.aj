@@ -15,11 +15,11 @@
  */
 package org.jdbcluster.logging;
 
-import org.jdbcluster.logging.LoggingAspect;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Before;
 import org.jdbcluster.exception.JDBClusterException;
 import org.jdbcluster.tracing.TracingAspect;
-import org.apache.log4j.Logger;
 
 /**
  * abstract aspect for JDBCluster logging
@@ -31,8 +31,6 @@ public abstract aspect JDBClusterLogging extends LoggingAspect {
 	
 	public pointcut exceptionsToBeLogged( ) :
 		handler(org.jdbcluster.exception.JDBClusterException);
-
-	protected abstract Logger getLogger();
 	
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
 		getLogger().info("Called " + joinPoint.getSignature( ));
