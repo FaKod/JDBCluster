@@ -6,10 +6,9 @@ import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.service.PrivilegedService;
-import org.jdbcluster.service.ServiceBase;
 
 @PrivilegesService(required="BIKESERVCIE")
-public class CBicycleService extends ServiceBase implements ICBicycleService, PrivilegedService {
+public class CBicycleService implements ICBicycleService, PrivilegedService {
 
 	@PrivilegesMethod(required="BIKEPAINT")
 	public void makeBicycleRED(@PrivilegesParameter(property={"color"}) CBicycle bike) {
