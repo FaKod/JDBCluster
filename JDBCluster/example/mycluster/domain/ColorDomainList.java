@@ -32,10 +32,13 @@ public class ColorDomainList implements DomainList, DomainPrivilegeList {
 			hs.add("NeedsRight4[Color]DomainValue[" + dom + "]");
 			privDom.put(dom, hs);
 		}
+		HashSet<String> hs = new HashSet<String>();
+		hs.add("NeedsRight4[Color]DomainValue[NULL]");
+		privDom.put("NULL", hs);
 	}
 
 	public Set<String> getDomainEntryPivilegeList(String domainId, String value) {
-		return privDom.get(value);
+		return privDom.get(value==null?"NULL":value);
 	}
 
 }
