@@ -16,6 +16,7 @@
 package org.jdbcluster.privilege;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
+import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -50,9 +52,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	protected final Logger logger = Logger.getLogger(getClass());
 
 	/**
-	 * always reused instance of springs internal bean wrapper class
+	 * always reused instance of springs internal bean wrapper class for Cluster stuff
 	 */
 	private static BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
+	
+	/**
+	 * always reused instance of springs internal bean wrapper class for Service stuff
+	 */
+	private static BeanWrapperImpl serviceBeanWrapper = new BeanWrapperImpl(true);
 
 	/**
 	 * maps: Class -> Method -> HashSet of privileges
@@ -155,7 +162,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
 		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
-		privileges.addAll(getParameterPrivileges(calledMethod, args));
+		privileges.addAll(getServiceMethodParameterPrivileges(calledMethod, args));
 		return userPrivilegeIntersect(privileges);
 	}
 	
@@ -206,7 +213,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 */
 	private Set<String> getDynamicPrivilegesCluster(PrivilegedCluster clusterObject, Method calledMethod, Object[] args) {
 		DomainChecker dc = DomainCheckerImpl.getInstance();
-		Set<String> result = new HashSet<String>(getParameterPrivileges(calledMethod, args));
+		Set<String> result = new HashSet<String>();
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
 		
 		if(pcAnno == null || pcAnno.property().length == 0 || pcAnno.property()[0].length() == 0)
@@ -218,18 +225,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		beanWrapper.setWrappedInstance(clusterObject);
 		
 		for (String propertyPath : pcAnno.property()) {
-			PropertyDescriptor pd = null;
-			
-			try {
-				pd = beanWrapper.getPropertyDescriptor(propertyPath);
-			} catch (NullValueInNestedPathException nve) {
-				if (logger.isInfoEnabled())
-					logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
-			}
-			catch (Exception e1) {
-				throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
-			}
-			
+
+			PropertyDescriptor pd = getPropertyDescriptor(propertyPath, beanWrapper);
 			
 			if (pd != null) {
 				Field f = getPropertyField(propertyPath, pd);
@@ -241,7 +238,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 					throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 				}
 				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod)) ) {
-					String value = getPropertyValue(propertyPath);
+					String value = getPropertyValue(propertyPath, beanWrapper);
 					result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 				}
 				else {
@@ -256,18 +253,75 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 			
 		return result;
 	}
+
+	/**
+	 * returns PropertyDescriptor from a given wrapped instance
+	 * @param propertyPath
+	 * @return PropertyDescriptor
+	 */
+	private PropertyDescriptor getPropertyDescriptor(String propertyPath, BeanWrapperImpl beanWrapper) {
+		PropertyDescriptor pd = null;	
+		try {
+			pd = beanWrapper.getPropertyDescriptor(propertyPath);
+		} catch (NullValueInNestedPathException nve) {
+			if (logger.isInfoEnabled())
+				logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
+		}
+		catch (Exception e1) {
+			throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
+		}
+		return pd;
+	}
 	
 	/**
-	 * calculates parameter specific privileges
-	 * @param calledMethod the method called
+	 * calculates parameter specific privileges for service
+	 * method calls
+	 * @param calledServiceMethod the method called
 	 * @param args method parameters
 	 * @return Set<String>
 	 */
-	private Set<String> getParameterPrivileges(Method calledMethod, Object[] args) {
+	private Set<String> getServiceMethodParameterPrivileges(Method calledServiceMethod, Object[] args) {
 		Set<String> result = new HashSet<String>();
-		PrivilegesParameter pp = (PrivilegesParameter)calledMethod.getAnnotation(PrivilegesParameter.class);
-		if(pp!=null) {
-			
+		DomainChecker dc = DomainCheckerImpl.getInstance();
+		Annotation[][] methodParameterAnnos = calledServiceMethod.getParameterAnnotations();
+		if(methodParameterAnnos == null)
+			return result;
+		
+		for(int i=0; i<args.length; i++) {
+			if(methodParameterAnnos.length>0) {
+				PrivilegesParameter pp = null;
+				for(int t=0; t<methodParameterAnnos[i].length; t++) {
+					Annotation anno = methodParameterAnnos[i][t];
+					if(anno instanceof PrivilegesParameter) {
+						pp = (PrivilegesParameter)anno;
+					}
+				}
+				if(pp!=null) {
+					Object arg = args[i];
+					if(arg instanceof PrivilegedCluster) {
+						serviceBeanWrapper.setWrappedInstance(arg);
+						for (String propertyPath : pp.property()) {
+							PropertyDescriptor pd = getPropertyDescriptor(propertyPath, serviceBeanWrapper);
+							if (pd != null) {
+								Field f = getPropertyField(propertyPath, pd);
+								String domId = getDomainIdFromField(f);
+								DomainPrivilegeList dpl;
+								try {
+									dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+								} catch (ClassCastException e) {
+									throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+								}
+								String value = getPropertyValue(propertyPath, serviceBeanWrapper);
+								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+							}
+						}
+					}
+					else
+						throw new ConfigurationException("Argument of method: " + calledServiceMethod.getName() +
+								" has @"+ PrivilegesParameter.class.getName() + " annotation but is not a instance of "+ 
+								PrivilegedCluster.class.getName());
+				}
+			}
 		}
 		return result;
 	}		
@@ -294,7 +348,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param propertyPath property path
 	 * @return property value
 	 */
-	private String getPropertyValue(String propertyPath) {
+	private String getPropertyValue(String propertyPath, BeanWrapperImpl beanWrapper) {
 		String value = null;
 		try {
 			value = (String) beanWrapper.getPropertyValue(propertyPath);
