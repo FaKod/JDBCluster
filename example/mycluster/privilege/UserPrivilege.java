@@ -34,7 +34,8 @@ public class UserPrivilege implements UserPrivilegeChecker {
 	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
 		logger.info("needed privileges: " + requiredPrivileges);
 		
-		privSet.addAll(requiredPrivileges);
+		if(requiredPrivileges!=null)
+			privSet.addAll(requiredPrivileges);
 		
 		return true;
 	}
