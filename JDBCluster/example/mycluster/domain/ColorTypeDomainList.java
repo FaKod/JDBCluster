@@ -30,7 +30,7 @@ public class ColorTypeDomainList implements DomainList, DomainPrivilegeList {
 		privDom = new HashMap<String, HashSet<String>>();
 		for(String dom: vde) {
 			HashSet<String> hs = new HashSet<String>();
-			hs.add("NeedsRight4DomainValue[" + dom + "]");
+			hs.add("NeedsRight4[ColorType]DomainValue[" + dom + "]");
 			privDom.put(dom, hs);
 		}
 	}
