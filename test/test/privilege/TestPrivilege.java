@@ -47,7 +47,7 @@ public class TestPrivilege extends TestCase {
 		assertTrue(lastPrivSet.size()==3);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
-		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[ColorType]DomainValue[Color]"));
 		
 		UserPrivilege.clearLastprivSet();
 		
@@ -58,11 +58,12 @@ public class TestPrivilege extends TestCase {
 		rad.setColor("RED");
 		
 		lastPrivSet = UserPrivilege.getPrivSet();
-		assertTrue(lastPrivSet.size()==4);
+		assertTrue(lastPrivSet.size()==5);
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
-		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[ColorType]DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[Color]DomainValue[RED]"));
 		
 		UserPrivilege.clearLastprivSet();
 				
@@ -79,7 +80,7 @@ public class TestPrivilege extends TestCase {
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("SETCOLSHADE"));
 		assertTrue(lastPrivSet.contains("GETCOLOR"));
-		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[ColorType]DomainValue[Color]"));
 
 		
 		UserPrivilege.clearLastprivSet();
@@ -95,7 +96,7 @@ public class TestPrivilege extends TestCase {
 		assertTrue(lastPrivSet.contains("BIKE"));
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("GETCOLTYPE"));
-		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[ColorType]DomainValue[Color]"));
 		
 		UserPrivilege.clearLastprivSet();
 				
@@ -127,7 +128,7 @@ public class TestPrivilege extends TestCase {
 		assertTrue(lastPrivSet.contains("GETNESTED"));
 		assertTrue(lastPrivSet.contains("SETCOLSHADE"));
 		assertTrue(lastPrivSet.contains("GETCOLOR"));
-		assertTrue(lastPrivSet.contains("NeedsRight4DomainValue[Color]"));
+		assertTrue(lastPrivSet.contains("NeedsRight4[ColorType]DomainValue[Color]"));
 		assertTrue(lastPrivSet.contains("NestedPRIV1"));
 		assertTrue(lastPrivSet.contains("NestedPRIV2"));
 		assertTrue(lastPrivSet.contains("NestedPRIV3"));
