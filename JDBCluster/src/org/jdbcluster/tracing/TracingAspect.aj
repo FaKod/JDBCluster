@@ -58,22 +58,22 @@ public abstract aspect TracingAspect {
 	}
 
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
-		getLogger().info(caller + " calling " + joinPoint.getSignature()
+		getLogger().debug(caller + " calling " + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticBefore(JoinPoint joinPoint) {
-		getLogger().info("Static code calling " + joinPoint.getSignature()
+		getLogger().debug("Static code calling " + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceAfter(JoinPoint joinPoint, Object caller) {
-		getLogger().info("Returning from call to" + joinPoint.getSignature()
+		getLogger().debug("Returning from call to" + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticAfter(JoinPoint joinPoint) {
-		getLogger().info("Returning from static call to "
+		getLogger().debug("Returning from static call to "
 				+ joinPoint.getSignature() + " @ "
 				+ joinPoint.getSourceLocation());
 	}
@@ -96,7 +96,7 @@ public abstract aspect TracingAspect {
 		}
 
 		private pointcut captureMessageOutput(String message) :
-			call(* *.info(Object)) &&
+			call(* *.debug(Object)) &&
 			args(message) &&
 			within(TracingAspect) &&
 			!within(FormatCallDepthAspect);
