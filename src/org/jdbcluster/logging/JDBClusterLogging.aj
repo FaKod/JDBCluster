@@ -33,23 +33,23 @@ public abstract aspect JDBClusterLogging extends LoggingAspect {
 		handler(org.jdbcluster.exception.JDBClusterException);
 	
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
-		getLogger().info("Called " + joinPoint.getSignature( ));
+		getLogger().debug("Called " + joinPoint.getSignature( ));
 	}
 	
 	protected void traceStaticBefore(JoinPoint joinPoint) {
-		getLogger().info("Statically Called " + joinPoint.getSignature());
+		getLogger().debug("Statically Called " + joinPoint.getSignature());
 	}
 	
 	protected void traceAfter(JoinPoint joinPoint, Object object) {
-		getLogger().info("Returned from " + joinPoint.getSignature());
+		getLogger().debug("Returned from " + joinPoint.getSignature());
 	}
 	
 	protected void traceStaticAfter(JoinPoint joinPoint) {
-		getLogger().info("Returned from static call to " + joinPoint.getSignature());
+		getLogger().debug("Returned from static call to " + joinPoint.getSignature());
 	}
 	
 	protected void logException(JoinPoint joinPoint) {
-		getLogger().info("" + joinPoint.getArgs()[0] + " exception thrown");
+		getLogger().debug("" + joinPoint.getArgs()[0] + " exception thrown");
 	}
 	
 	protected void logExceptionThrow(JoinPoint joinPoint) {
@@ -76,7 +76,7 @@ public abstract aspect JDBClusterLogging extends LoggingAspect {
 		}
 		
 		private pointcut captureMessageOutput(String message) :
-			(call(* *.info(Object)) ||
+			(call(* *.debug(Object)) ||
 			call(* *.error(Object))) &&
 			args(message) &&
 			within(JDBClusterLogging) &&
