@@ -2,6 +2,8 @@ package test.service;
 
 import java.util.Set;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import mycluster.CBicycle;
 import mycluster.privilege.UserPrivilege;
 import mycluster.service.CBicycleService;
@@ -12,11 +14,7 @@ import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.exception.ConfigurationException;
-import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class TestService extends TestCase {
 	@Override
