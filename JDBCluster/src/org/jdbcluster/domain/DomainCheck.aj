@@ -26,6 +26,12 @@ import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.privilege.PrivilegeCheckerImpl;
+import org.jdbcluster.privilege.PrivilegeChecker;
+import java.util.Set;
+import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.exception.PrivilegeException;
+import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 
 /**
  * Aspect for checking Domain values in Set Methods
@@ -57,6 +63,13 @@ public aspect DomainCheck {
 		Field fField = sig.getField();
 		DomainDependancy dd = fField.getAnnotation(DomainDependancy.class);
 		
+		if(fField.isAnnotationPresent(PrivilegesDomain.class))
+			if(!checkPrivileges(dd.domainId(), s))
+				throw new PrivilegeException("unsufficient privileges on Privileged Domain: " +
+						c.getClass().getName()+
+						" writing value "+ s + " to field: " +
+						fField.getName());
+		
 		if(!dc.check(c, fField, s, dd))
 			throw new DomainException("Value: " + s + " is not valid for slave domain " + dd.domainId() + 
 					" in Class " + c.getClass().getName() +
@@ -72,6 +85,13 @@ public aspect DomainCheck {
 		Field fField = sig.getField();
 		Domain d = fField.getAnnotation(Domain.class);
 		
+		if(fField.isAnnotationPresent(PrivilegesDomain.class))
+			if(!checkPrivileges(d.domainId(), s))
+				throw new PrivilegeException("unsufficient privileges on Privileged Domain: " +
+						c.getClass().getName()+
+						" writing value "+ s + " to field: " +
+						fField.getName());
+		
 		if(!dc.checkAgainstPossibleDomainEntries(d.domainId(), s))
 			throw new DomainException("Value: " + s + " is not valid for domain " + d.domainId()+ 
 					" in Class " + c.getClass().getName() +
@@ -79,5 +99,18 @@ public aspect DomainCheck {
 		
 		Object o = proceed(c, s);
 		return o;
+	}
+	
+	private static boolean checkPrivileges(String domainId, String value) {
+		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
+		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
+		DomainPrivilegeList dpl;
+		try {
+			dpl = (DomainPrivilegeList) dc.getDomainListInstance(domainId);
+		} catch (ClassCastException e) {
+			throw new ConfigurationException("privileged domain [" + domainId + "] needs implemented DomainPrivilegeList Interface", e);
+		}
+		Set<String> rights = dpl.getDomainEntryPivilegeList(domainId, value);
+		return pc.userPrivilegeIntersect(rights);
 	}
 }
