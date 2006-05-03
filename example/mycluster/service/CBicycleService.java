@@ -12,12 +12,11 @@ import org.jdbcluster.service.ServiceBase;
 public class CBicycleService extends ServiceBase implements ICBicycleService, PrivilegedService {
 
 	@PrivilegesMethod(required="BIKEPAINT")
-	public void makeBicycleRED(CBicycle bike) {
+	public void makeBicycleRED(@PrivilegesParameter(property={"color"}) CBicycle bike) {
 	}
 	
 	@PrivilegesMethod(required="BIKEPAINT_CP")
-	@PrivilegesParameter
-	public void makeBicycleCheckParam(CBicycle bike) {
+	public void makeBicycleCheckParam(@PrivilegesParameter(property={"color"}) CBicycle bike) {
 	}
 
 }
