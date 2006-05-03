@@ -27,7 +27,7 @@ public class UserPrivilege implements UserPrivilegeChecker {
 	 * accessors for test case
 	 */
 	public static void clearLastprivSet() {
-		logger.info("Priv list cleared");
+		logger.info("Priv list cleared -------------------------------------------------------------");
 		privSet.clear();
 	}
 
