@@ -16,11 +16,15 @@
 package org.jdbcluster.tracing;
 
 import org.aspectj.lang.JoinPoint;
+import org.apache.log4j.Logger;
 
 /**
  * @author Christopher Schmidt
  */
 public abstract aspect TracingAspect {
+	
+	protected abstract Logger getLogger();
+	
 	public abstract pointcut pointsToBeTraced();
 
 	public abstract pointcut pointsToBeExcluded();
@@ -54,22 +58,22 @@ public abstract aspect TracingAspect {
 	}
 
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
-		System.out.println(caller + " calling " + joinPoint.getSignature()
+		getLogger().info(caller + " calling " + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticBefore(JoinPoint joinPoint) {
-		System.out.println("Static code calling " + joinPoint.getSignature()
+		getLogger().info("Static code calling " + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceAfter(JoinPoint joinPoint, Object caller) {
-		System.out.println("Returning from call to" + joinPoint.getSignature()
+		getLogger().info("Returning from call to" + joinPoint.getSignature()
 				+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticAfter(JoinPoint joinPoint) {
-		System.out.println("Returning from static call to "
+		getLogger().info("Returning from static call to "
 				+ joinPoint.getSignature() + " @ "
 				+ joinPoint.getSourceLocation());
 	}
@@ -92,7 +96,7 @@ public abstract aspect TracingAspect {
 		}
 
 		private pointcut captureMessageOutput(String message) :
-			call(* *.println(String)) &&
+			call(* *.info(Object)) &&
 			args(message) &&
 			within(TracingAspect) &&
 			!within(FormatCallDepthAspect);

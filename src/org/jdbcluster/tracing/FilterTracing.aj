@@ -16,11 +16,18 @@
 package org.jdbcluster.tracing;
 
 import org.jdbcluster.tracing.TracingAspect;
+import org.apache.log4j.Logger;
 
 /**
  * @author Christopher Schmidt
  */
 public aspect FilterTracing extends TracingAspect{
+	
+	static Logger logger = Logger.getLogger(FilterTracing.class);
+
+	protected Logger getLogger() {
+		return logger;
+	}
 
 	public pointcut pointsToBeTraced( ) : call(* org.jdbcluster.filter.*.*(..));
 	public pointcut pointsToBeExcluded( ) : call(void java.io.PrintStream.*(..));
