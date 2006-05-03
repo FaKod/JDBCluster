@@ -16,7 +16,11 @@ public class CBicycleService extends ServiceBase implements ICBicycleService, Pr
 	}
 	
 	@PrivilegesMethod(required="BIKEPAINT_CP")
-	public void makeBicycleCheckParam(@PrivilegesParameter(property={"color"}) CBicycle bike) {
+	public void makeBicycleCheckParam(@PrivilegesParameter(property={"colorType"}) CBicycle bike) {
+	}
+	
+	@PrivilegesMethod(required="BIKEPAINT_CP2")
+	public void makeBicycleCheckParam2(@PrivilegesParameter(property={"colorShading"}) CBicycle bike) {
 	}
 
 }
