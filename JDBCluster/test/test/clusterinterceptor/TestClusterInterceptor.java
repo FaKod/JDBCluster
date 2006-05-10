@@ -10,6 +10,7 @@ import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class TestClusterInterceptor extends TestCase {
@@ -38,6 +39,7 @@ public class TestClusterInterceptor extends TestCase {
 		// but interceptor returning false -> exception
 		try {
 			CCar bmw = ClusterFactory.newInstance(cAutoType);
+			Assert.fail("bmw Interceptor should return false");
 		} catch (ConfigurationException e) {
 			System.out.println(e.getMessage());
 		}
