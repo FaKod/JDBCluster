@@ -76,8 +76,8 @@ public class ClusterFactory {
 			String ciStr = ClusterTypeBase.getClusterTypeConfig().getClusterInterceptorClassName();
 			if(ciStr!=null && ciStr.length()>0 )
 				clusterInterceptor = (ClusterInterceptor) JDBClusterUtil.createClassObject(ciStr);
-//			else
-//				clusterInterceptor = (ClusterInterceptor) JDBClusterUtil.createClassObject(DefaultClusterInterceptor.class.getName());
+			else
+				clusterInterceptor = (ClusterInterceptor) JDBClusterUtil.createClassObject(DefaultClusterInterceptor.class.getName());
 		}
 		return clusterInterceptor;
 	}
