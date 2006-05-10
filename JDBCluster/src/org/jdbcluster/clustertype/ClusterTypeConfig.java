@@ -48,4 +48,10 @@ public interface ClusterTypeConfig {
 	 */
 	public List<String> getClusterIDs();
 	
+	/**
+	 * class name of cluster interceptor
+	 * @return String
+	 */
+	public String getClusterInterceptorClassName();
+	
 }
