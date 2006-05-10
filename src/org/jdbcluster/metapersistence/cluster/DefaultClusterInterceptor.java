@@ -22,7 +22,7 @@ package org.jdbcluster.metapersistence.cluster;
  * @author FaKod
  *
  */
-final class DefaultClusterInterceptor implements ClusterInterceptor {
+public final class DefaultClusterInterceptor implements ClusterInterceptor {
 
 	public boolean clusterNew(Cluster cluster) {
 		return true;
