@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.metapersistence.cluster;
 
+import org.jdbcluster.metapersistence.annotation.DaoLink;
+
 /**
  * aspect to prevent new(...)
  */
@@ -22,7 +24,14 @@ public aspect ClusterUsage {
 	pointcut newCluster(): 
 		call(Cluster+.new(..)) && 
 		!withincode(* ClusterFactory.*(..));
+	
+	pointcut clusterWithoutDAOAnno(): 
+		execution(* *(..)) && 
+		within(!@DaoLink Cluster+);
 
 	declare error: newCluster(): 
 		"please use static factory method ClusterFactory.newInstance(ClusterType)";
+	
+	declare error: clusterWithoutDAOAnno(): 
+		"please use @DaoLink Annotation for Cluster Objects";
 }
