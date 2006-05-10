@@ -15,6 +15,7 @@
  */
 package org.jdbcluster.metapersistence.cluster;
 
+import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeBase;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
@@ -34,6 +35,8 @@ import org.jdbcluster.privilege.PrivilegedCluster;
  *
  */
 public class ClusterFactory {
+	
+	private static ClusterInterceptor clusterInterceptor;
 
 	/**
 	 * creates an instance of a Cluster
@@ -62,6 +65,21 @@ public class ClusterFactory {
 	public static <T extends Cluster> T newInstance(String clusterType, Dao dao) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
 		return newInstance(ct, dao);
+	}
+	
+	/**
+	 * creates and return the configured ClusterInterceptor
+	 * @return ClusterInterceptor
+	 */
+	public static ClusterInterceptor getClusterInterceptor() {
+		if(clusterInterceptor==null) {
+			String ciStr = ClusterTypeBase.getClusterTypeConfig().getClusterInterceptorClassName();
+			if(ciStr!=null && ciStr.length()>0 )
+				clusterInterceptor = (ClusterInterceptor) JDBClusterUtil.createClassObject(ciStr);
+//			else
+//				clusterInterceptor = (ClusterInterceptor) JDBClusterUtil.createClassObject(DefaultClusterInterceptor.class.getName());
+		}
+		return clusterInterceptor;
 	}
 	
 	/**
@@ -96,6 +114,8 @@ public class ClusterFactory {
 			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
 				throw new PrivilegeException("Nop sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
 		}
+		if(!getClusterInterceptor().clusterNew(cluster))
+			throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
 		return (T) cluster;
 	}
 	

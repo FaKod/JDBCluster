@@ -31,7 +31,7 @@ import org.dom4j.io.SAXReader;
  * @author Tobi
  */
 
-public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfig{
+public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfig {
 	
 	//path to config file
 	private String configuration;
@@ -150,5 +150,22 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 			}
 		}
 		return clusterIDs;
+	}
+
+	/**
+	 * class name of cluster interceptor
+	 * @return String
+	 */
+	public String getClusterInterceptorClassName() {
+		String xPath = "//jdbcluster/clustertype";
+
+		Node node = document.selectSingleNode(xPath);
+		
+		if (node == null) {
+			return null;
+		} else {
+			//returns the classname as a String
+			return node.valueOf("@clusterInterceptor");	
+		}
 	}
 }
