@@ -4,7 +4,7 @@
 		<UserPrivilegeChecker class="mycluster.privilege.UserPrivilege"/>
 	</privileges>
 	<!-- Definition of available Cluster Objects-->
-	<clustertype>
+	<clustertype clusterInterceptor="...">
 		<!--configure cluster CAuto-->
 		<cluster id="car" class="mycluster.CCar">
 			<!--special filter "name" for cluster CAuto is available-->
