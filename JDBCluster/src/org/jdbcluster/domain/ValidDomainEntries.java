@@ -25,7 +25,7 @@ import java.util.List;
  * @author FaKod
  * 
  */
-public final class ValidDomainEntries<T> extends ArrayList<T> {
+public class ValidDomainEntries<T> extends ArrayList<T> implements List<T> {
 
 	private boolean nullAllowed = false;
 
