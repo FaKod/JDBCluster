@@ -25,9 +25,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jdbcluster.JDBClusterUtil;
+import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.domain.DomainChecker;
 import org.jdbcluster.domain.DomainCheckerImpl;
 import org.jdbcluster.domain.DomainPrivilegeList;
+import org.jdbcluster.exception.ClusterTypeException;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
@@ -36,7 +39,6 @@ import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.service.PrivilegedService;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -52,12 +54,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	protected final Logger logger = Logger.getLogger(getClass());
 
 	/**
-	 * always reused instance of springs internal bean wrapper class for Cluster stuff
+	 * always reused instance of springs internal bean wrapper class for Cluster
+	 * stuff
 	 */
 	private static BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
-	
+
 	/**
-	 * always reused instance of springs internal bean wrapper class for Service stuff
+	 * always reused instance of springs internal bean wrapper class for Service
+	 * stuff
 	 */
 	private static BeanWrapperImpl serviceBeanWrapper = new BeanWrapperImpl(true);
 
@@ -73,33 +77,58 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * C-Tor to use Factory method
-	 *
+	 * 
 	 */
-	private PrivilegeCheckerImpl() {	
+	private PrivilegeCheckerImpl() {
 	}
-	
+
 	/**
 	 * public intance gettet
+	 * 
 	 * @return PrivilegeChecker
 	 */
 	public static PrivilegeChecker getInstance() {
 		return getImplInstance();
 	}
-	
+
 	/**
 	 * package instance getter
+	 * 
 	 * @return PrivilegeCheckerImpl
 	 */
 	static PrivilegeCheckerImpl getImplInstance() {
 		return new PrivilegeCheckerImpl();
 	}
-	
+
+	/**
+	 * intersects required static privileges for cluster new against given
+	 * privileges
+	 * 
+	 * @param clusterType defines the Cluster to check
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkClusterNew(String clusterType) {
+		String className = ClusterTypeFactory.newInstance(clusterType).getClusterClassName();
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
+		}
+		// if Cluster is no PrivilegedCluster creation is always possible
+		if (!clazz.isInstance(PrivilegedCluster.class))
+			return true;
+
+		Class<? extends PrivilegedCluster> clusterClass = clazz.asSubclass(PrivilegedCluster.class);
+		Set<String> requiredPrivileges = calcStaticClusterPrivileges(clusterClass);
+		return userPrivilegeIntersect(requiredPrivileges);
+	}
+
 	/**
 	 * should do an intersection between the user privileges and the privileges
 	 * given through requiredPrivileges
 	 * 
-	 * @param requiredPrivileges
-	 *            the required privileges
+	 * @param requiredPrivileges the required privileges
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
@@ -108,6 +137,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param clusterObject
 	 * @param methodName method name to check
 	 * @param args of method parameter
@@ -117,14 +147,12 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		Method calledMethod = getMethod(clusterObject, methodName, args);
 		return userPrivilegeIntersect(clusterObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
 	 * 
-	 * @param calledMethod
-	 *            the method called
-	 * @param clusterObject
-	 *            cluster object instance
+	 * @param calledMethod the method called
+	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args) {
@@ -132,18 +160,21 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		privileges.addAll(getDynamicPrivilegesCluster(clusterObject, calledMethod, args));
 		return userPrivilegeIntersect(privileges);
 	}
-	
+
 	/**
-	 * intersects required privileges without a method call (new(..)) against given privileges
+	 * intersects required privileges without a method call (new(..)) against
+	 * given privileges
+	 * 
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject) {
-		return userPrivilegeIntersect(calcStaticClusterPrivileges(clusterObject));
+		return userPrivilegeIntersect(calcStaticClusterPrivileges(clusterObject.getClass()));
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param serviceObject service object to check
 	 * @param serviceMethodName method name to check
 	 * @param args of method parameter
@@ -153,9 +184,10 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		Method calledMethod = getMethod(serviceObject, serviceMethodName, args);
 		return userPrivilegeIntersect(serviceObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param calledMethod the method called
 	 * @param serviceObject service object instance
 	 * @return true if the privileges are sufficient
@@ -165,29 +197,28 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		privileges.addAll(getServiceMethodParameterPrivileges(calledMethod, args));
 		return userPrivilegeIntersect(privileges);
 	}
-	
+
 	/**
 	 * extract method instance from name and parameter type
+	 * 
 	 * @param object object to check
 	 * @param methodName the method name
 	 * @param args the arguments as objects
 	 * @return Method
-	 */	
+	 */
 	private Method getMethod(Object object, String methodName, Object... args) {
 		Class[] paramTypes = new Class[args.length];
-		for (int i = args.length-1; i >= 0; i--) {
+		for (int i = args.length - 1; i >= 0; i--) {
 			paramTypes[i] = args[i].getClass();
 		}
 		return JDBClusterUtil.getMethod(object, methodName, paramTypes);
 	}
-	
+
 	/**
 	 * calculates and stores static required privileges
 	 * 
-	 * @param calledMethod
-	 *            the method called
-	 * @param clusterObject
-	 *            cluster object instance
+	 * @param calledMethod the method called
+	 * @param clusterObject cluster object instance
 	 * @return return reqired privileges
 	 */
 	private HashSet<String> getStaticPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
@@ -203,9 +234,10 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		}
 		return hs;
 	}
-		
+
 	/**
 	 * calculates instance and parameter specific privileges
+	 * 
 	 * @param clusterObject cluster object instance
 	 * @param calledMethod the method called
 	 * @param args method parameters
@@ -215,19 +247,19 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		DomainChecker dc = DomainCheckerImpl.getInstance();
 		Set<String> result = new HashSet<String>();
 		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
-		
-		if(pcAnno == null || pcAnno.property().length == 0 || pcAnno.property()[0].length() == 0)
+
+		if (pcAnno == null || pcAnno.property().length == 0 || pcAnno.property()[0].length() == 0)
 			return result;
-				
-		if(isGetMethodInRequiredProperty(pcAnno.property(), calledMethod))
+
+		if (isGetMethodInRequiredProperty(pcAnno.property(), calledMethod))
 			return result;
-		
+
 		beanWrapper.setWrappedInstance(clusterObject);
-		
+
 		for (String propertyPath : pcAnno.property()) {
 
 			PropertyDescriptor pd = getPropertyDescriptor(propertyPath, beanWrapper);
-			
+
 			if (pd != null) {
 				Field f = getPropertyField(propertyPath, pd);
 				String domId = getDomainIdFromField(f);
@@ -237,45 +269,44 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 				} catch (ClassCastException e) {
 					throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 				}
-				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod)) ) {
+				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod))) {
 					String value = getPropertyValue(propertyPath, beanWrapper);
 					result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
-				}
-				else {
-					if(pd.getWriteMethod().equals(calledMethod)) {
-						if(args.length!=1 || !(args[0] instanceof String))
-							throw new ConfigurationException("privilege checked property ["+ propertyPath +"] needs 1 String argument setter");
-						result.addAll(dpl.getDomainEntryPivilegeList(domId, (String)args[0]));
+				} else {
+					if (pd.getWriteMethod().equals(calledMethod)) {
+						if (args.length != 1 || !(args[0] instanceof String))
+							throw new ConfigurationException("privilege checked property [" + propertyPath + "] needs 1 String argument setter");
+						result.addAll(dpl.getDomainEntryPivilegeList(domId, (String) args[0]));
 					}
 				}
 			}
 		}
-			
+
 		return result;
 	}
 
 	/**
 	 * returns PropertyDescriptor from a given wrapped instance
+	 * 
 	 * @param propertyPath
 	 * @return PropertyDescriptor
 	 */
 	private PropertyDescriptor getPropertyDescriptor(String propertyPath, BeanWrapperImpl beanWrapper) {
-		PropertyDescriptor pd = null;	
+		PropertyDescriptor pd = null;
 		try {
 			pd = beanWrapper.getPropertyDescriptor(propertyPath);
 		} catch (NullValueInNestedPathException nve) {
 			if (logger.isInfoEnabled())
 				logger.info("property [" + propertyPath + "] is not accessable. Skipping Priv test");
-		}
-		catch (Exception e1) {
+		} catch (Exception e1) {
 			throw new ConfigurationException("property [" + propertyPath + "] is not accessable.", e1);
 		}
 		return pd;
 	}
-	
+
 	/**
-	 * calculates parameter specific privileges for service
-	 * method calls
+	 * calculates parameter specific privileges for service method calls
+	 * 
 	 * @param calledServiceMethod the method called
 	 * @param args method parameters
 	 * @return Set<String>
@@ -284,21 +315,21 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		Set<String> result = new HashSet<String>();
 		DomainChecker dc = DomainCheckerImpl.getInstance();
 		Annotation[][] methodParameterAnnos = calledServiceMethod.getParameterAnnotations();
-		if(methodParameterAnnos == null)
+		if (methodParameterAnnos == null)
 			return result;
-		
-		for(int i=0; i<args.length; i++) {
-			if(methodParameterAnnos.length>0) {
+
+		for (int i = 0; i < args.length; i++) {
+			if (methodParameterAnnos.length > 0) {
 				PrivilegesParameter pp = null;
-				for(int t=0; t<methodParameterAnnos[i].length; t++) {
+				for (int t = 0; t < methodParameterAnnos[i].length; t++) {
 					Annotation anno = methodParameterAnnos[i][t];
-					if(anno instanceof PrivilegesParameter) {
-						pp = (PrivilegesParameter)anno;
+					if (anno instanceof PrivilegesParameter) {
+						pp = (PrivilegesParameter) anno;
 					}
 				}
-				if(pp!=null) {
+				if (pp != null) {
 					Object arg = args[i];
-					if(arg instanceof PrivilegedCluster) {
+					if (arg instanceof PrivilegedCluster) {
 						serviceBeanWrapper.setWrappedInstance(arg);
 						for (String propertyPath : pp.property()) {
 							PropertyDescriptor pd = getPropertyDescriptor(propertyPath, serviceBeanWrapper);
@@ -315,19 +346,18 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 							}
 						}
-					}
-					else
-						throw new ConfigurationException("Argument of method: " + calledServiceMethod.getName() +
-								" has @"+ PrivilegesParameter.class.getName() + " annotation but is not a instance of "+ 
-								PrivilegedCluster.class.getName());
+					} else
+						throw new ConfigurationException("Argument of method: " + calledServiceMethod.getName() + " has @" + PrivilegesParameter.class.getName() + " annotation but is not a instance of "
+								+ PrivilegedCluster.class.getName());
 				}
 			}
 		}
 		return result;
-	}		
-	
+	}
+
 	/**
 	 * gets Field instance of property path
+	 * 
 	 * @param propertyPath property path
 	 * @param propDesc PropertyDescriptor
 	 * @return Field instance
@@ -335,7 +365,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	private Field getPropertyField(String propertyPath, PropertyDescriptor propDesc) {
 		Method propertyReadMethod = propDesc.getReadMethod();
 		String mName = propertyReadMethod.getName();
-		String pName = mName.substring(3,4).toLowerCase() + mName.substring(4);
+		String pName = mName.substring(3, 4).toLowerCase() + mName.substring(4);
 		Class clazzContainingProperty = propertyReadMethod.getDeclaringClass();
 		Field f = JDBClusterUtil.getField(pName, clazzContainingProperty);
 		if (f == null)
@@ -345,6 +375,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * returns the property value
+	 * 
 	 * @param propertyPath property path
 	 * @return property value
 	 */
@@ -363,18 +394,19 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * checks wether get method call is part of required properties
+	 * 
 	 * @param property array of properties
 	 * @param calledMethod called method
 	 * @return boolean true if it is a getter and in required properties
 	 */
 	private boolean isGetMethodInRequiredProperty(String[] properties, Method calledMethod) {
 		String mName = calledMethod.getName();
-		if(mName.startsWith("set"))
+		if (mName.startsWith("set"))
 			return false;
-		
-		String pName = mName.substring(3,4).toLowerCase() + mName.substring(4);
-		for(String property : properties) {
-			if(property.indexOf(pName)>-1)
+
+		String pName = mName.substring(3, 4).toLowerCase() + mName.substring(4);
+		for (String property : properties) {
+			if (property.indexOf(pName) > -1)
 				return true;
 		}
 		return false;
@@ -383,10 +415,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * calculates and stores static required privileges
 	 * 
-	 * @param calledServiceMethod
-	 *            the service method called
-	 * @param serObject
-	 *            service object instance
+	 * @param calledServiceMethod the service method called
+	 * @param serObject service object instance
 	 * @return reqired privileges
 	 */
 	private HashSet<String> getStaticPrivilegesService(Method calledServiceMethod, PrivilegedService serObject) {
@@ -406,18 +436,16 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * calculates static required privileges
 	 * 
-	 * @param calledMethod
-	 *            the method called
-	 * @param clusterObject
-	 *            cluster object instance
+	 * @param calledMethod the method called
+	 * @param clusterObject cluster object instance
 	 * @return return reqired privileges
 	 */
 	private HashSet<String> calcClusterPrivileges(Method calledMethod, PrivilegedCluster clusterObject) {
 		HashSet<String> hs = new HashSet<String>();
 		PrivilegesMethod pmAnno = calledMethod.getAnnotation(PrivilegesMethod.class);
 
-		hs.addAll(calcStaticClusterPrivileges(clusterObject));
-		
+		hs.addAll(calcStaticClusterPrivileges(clusterObject.getClass()));
+
 		if (pmAnno != null) {
 			for (String s : pmAnno.required()) {
 				hs.add(s);
@@ -425,15 +453,16 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		}
 		return hs;
 	}
-	
+
 	/**
-	 * calculates static required privileges without  method
+	 * calculates static required privileges without method
+	 * 
 	 * @param clusterObject
 	 * @return
 	 */
-	private HashSet<String> calcStaticClusterPrivileges(PrivilegedCluster clusterObject) {
+	private HashSet<String> calcStaticClusterPrivileges(Class<? extends PrivilegedCluster> clusterObject) {
 		HashSet<String> hs = new HashSet<String>();
-		PrivilegesCluster pcAnno = clusterObject.getClass().getAnnotation(PrivilegesCluster.class);
+		PrivilegesCluster pcAnno = clusterObject.getAnnotation(PrivilegesCluster.class);
 
 		if (pcAnno != null) {
 			for (String s : pcAnno.required()) {
@@ -446,10 +475,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * calculates static required privileges
 	 * 
-	 * @param calledServiceMethod
-	 *            the service method called
-	 * @param serObject
-	 *            service instance
+	 * @param calledServiceMethod the service method called
+	 * @param serObject service instance
 	 * @return reqired privileges
 	 */
 	private HashSet<String> calcServicePrivileges(Method calledServiceMethod, PrivilegedService serObject) {
@@ -474,12 +501,11 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * gets domain id from annotations
 	 * 
 	 * @see org.jdbcluster.domain.DomainBase there is nearly the same method
-	 * @param f
-	 *            the field instance
+	 * @param f the field instance
 	 * @return the domain id
 	 */
 	private String getDomainIdFromField(Field f) {
-		if(!f.isAnnotationPresent(PrivilegesDomain.class)) {
+		if (!f.isAnnotationPresent(PrivilegesDomain.class)) {
 			throw new ConfigurationException("in @PrivilegesCluster referenced domain needs annotation @PrivilegesDomain. Not found on field: " + f.getName());
 		}
 		DomainDependancy dd = f.getAnnotation(DomainDependancy.class);
