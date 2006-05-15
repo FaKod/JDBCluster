@@ -110,12 +110,20 @@ public class ClusterFactory {
 		} catch (ClassNotFoundException e) {
 			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}
+		
+		/*
+		 * call of interceptor
+		 */
+		if(!getClusterInterceptor().clusterNew(cluster))
+			throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
+		
+		/*
+		 * privilege check
+		 */
 		if(cluster instanceof PrivilegedCluster) {
 			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
 				throw new PrivilegeException("Nop sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
 		}
-		if(!getClusterInterceptor().clusterNew(cluster))
-			throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
 		return (T) cluster;
 	}
 	
