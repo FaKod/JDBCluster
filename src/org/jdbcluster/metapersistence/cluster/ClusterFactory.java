@@ -122,7 +122,7 @@ public class ClusterFactory {
 		 */
 		if(cluster instanceof PrivilegedCluster) {
 			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
-				throw new PrivilegeException("Nop sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
+				throw new PrivilegeException("No sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
 		}
 		return (T) cluster;
 	}
