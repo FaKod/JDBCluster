@@ -35,6 +35,14 @@ public interface DomainChecker {
 	 * @return ValidDomainEntries<String> with the valid domain values
 	 */
 	public abstract ValidDomainEntries<String> getValidDomainEntries(ClusterBase cluster, String propPath);
+	
+	/**
+	 * returns the corresponding domain id
+	 * @param cluster Cluster object to use
+	 * @param propPath path to the master or slave property
+	 * @return String domain id
+	 */
+	public abstract String getDomainId(ClusterBase cluster, String propPath);
 
 	/**
 	 * returns all values for domain slaveDomainId

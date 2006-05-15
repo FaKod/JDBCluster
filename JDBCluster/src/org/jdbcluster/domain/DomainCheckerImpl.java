@@ -60,6 +60,25 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		return new DomainCheckerImpl();
 	}
 	
+	/**
+	 * returns the corresponding domain id
+	 * @param cluster Cluster object to use
+	 * @param propPath path to the master or slave property
+	 * @return String domain id
+	 */
+	public String getDomainId(ClusterBase cluster, String propPath) {
+		Field fSlave = JDBClusterUtil.getField(propPath, cluster);
+		
+		DomainDependancy dd = fSlave.getAnnotation(DomainDependancy.class);
+		if(dd==null) {
+			Domain d = fSlave.getAnnotation(Domain.class);
+			if(d==null)
+				throw new ConfigurationException("no annotation @DomainDependancy or @Domain found on: " + propPath);
+			return d.domainId();
+		}
+		return dd.domainId();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.ClusterBase, java.lang.String)
 	 */
