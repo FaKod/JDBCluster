@@ -75,4 +75,13 @@ public interface PrivilegeChecker {
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args);
+	
+	/**
+	 * intersects required static privileges for cluster new against given
+	 * privileges
+	 * 
+	 * @param clusterType defines the Cluster to check
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkClusterNew(String clusterType);
 }
