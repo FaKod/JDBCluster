@@ -28,10 +28,11 @@ import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegedCluster;
 
 /**
- * 
- * @author Philipp Noggler
  * class ClusterFactory is responsible for creating instances
- * of type Cluster
+ * of type Cluster. <b>Static</b> privileges are checked <b>after</b>
+ * calling ClusterInterceptor
+ * @author Philipp Noggler
+ * @author FaKod
  *
  */
 public class ClusterFactory {
@@ -112,13 +113,13 @@ public class ClusterFactory {
 		}
 		
 		/*
-		 * call of interceptor
+		 * call of cluster interceptor
 		 */
 		if(!getClusterInterceptor().clusterNew(cluster))
 			throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
 		
 		/*
-		 * privilege check
+		 * privilege check (only static privileges are checked)
 		 */
 		if(cluster instanceof PrivilegedCluster) {
 			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
