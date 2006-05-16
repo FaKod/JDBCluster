@@ -86,9 +86,11 @@
 			<entry value="RED" slavedomainid="ColorShadingDomain">
 				<valid value="LightRED"/>
 				<valid value="DarkRED"/>
+				<valid null="true"/>
 				<additionalmaster value="All" masterdomainid="ColorTypeDomain">
 					<invalid value="LightRED"/>
 					<valid value="MiddleRED"/>
+					<invalid null="true"/>
 				</additionalmaster>
 			</entry>
 		</domain>
