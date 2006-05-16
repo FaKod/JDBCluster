@@ -38,15 +38,42 @@ public class TestDomainList extends TestCase {
 
 		// create a Cluster and persist it
 		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		
+		/*
+		 * Test for ColorType "Color"
+		 */
 		rad.setColorType("Color");
 		
 		domList = dc.getValidDomainEntries(rad, "color");
 		assertEquals(3, domList.size());
+		assertTrue(domList.contains("RED"));
+		assertTrue(domList.contains("GREEN"));
+		assertTrue(domList.contains("BLUE"));
+		assertFalse(domList.isNullAllowed());
 		
+		/*
+		 * set Color to valid value "RED" and test ColorShading
+		 * additionalmaster does not match
+		 */
 		rad.setColor("RED");
 		
 		domList = dc.getValidDomainEntries(rad, "colorShading");
-		assertEquals(2, domList.size());		
+		assertEquals(2, domList.size());
+		assertTrue(domList.contains("LightRED"));
+		assertTrue(domList.contains("DarkRED"));
+		assertTrue(domList.isNullAllowed());
+		
+		/*
+		 * Test for ColorType "BlackWhite"
+		 */
+		rad.setColorType("BlackWhite");
+		
+		domList = dc.getValidDomainEntries(rad, "color");
+		assertEquals(3, domList.size());
+		assertTrue(domList.contains("BLACK"));
+		assertTrue(domList.contains("WHITE"));
+		assertTrue(domList.contains("GREY50%"));
+		assertTrue(domList.isNullAllowed());
 	}
 	
 	public void testDomainListAdditionalMaster() {
@@ -59,6 +86,10 @@ public class TestDomainList extends TestCase {
 		// create a Cluster and persist it
 		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
 		
+		/*
+		 * test defined additional domain for "All" and "RED"
+		 * additionalmaster does match
+		 */
 		rad.setColorType("All");
 		rad.setColor("RED");
 		
@@ -66,14 +97,18 @@ public class TestDomainList extends TestCase {
 		assertEquals(2, domList.size());
 		assertTrue(domList.contains("DarkRED"));
 		assertTrue(domList.contains("MiddleRED"));
-		assertFalse(domList.contains("LightRED"));
+		assertFalse(domList.isNullAllowed());
 		
+		/*
+		 * test defined additional domain for "Color" and "RED"
+		 * additionalmaster does NOT match
+		 */
 		rad.setColorType("Color");
 		domList = dc.getValidDomainEntries(rad, "colorShading");	
 		assertEquals(2, domList.size());
 		assertTrue(domList.contains("DarkRED"));
 		assertTrue(domList.contains("LightRED"));
-		assertFalse(domList.contains("MiddleRED"));
+		assertTrue(domList.isNullAllowed());
 		
 	}
 }
