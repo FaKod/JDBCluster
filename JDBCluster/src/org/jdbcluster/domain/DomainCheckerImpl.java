@@ -316,11 +316,17 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			
 			for(Valid v : ved) {
 				if(v.valid) {
-					if(!resultList.contains(v.value))
-						resultList.add(v.value);
+					if(v.value==null)
+						resultList.setNullAllowed(v.nullValue);
+					else
+						if(!resultList.contains(v.value))
+							resultList.add(v.value);
 				}
 				else {
-					resultList.remove(v.value);
+					if(v.value==null)
+						resultList.setNullAllowed(!v.nullValue);
+					else
+						resultList.remove(v.value);
 				}
 			}
 		}
