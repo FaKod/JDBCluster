@@ -20,10 +20,10 @@ import java.util.HashMap;
 import org.jdbcluster.clustertype.ClusterType;
 
 /**
- * 
- * @author Philipp Noggler
  * abstract class CCFilterBase provides information about a filter. Since it is an
  * abstract class, it cannot be instanciatet but specific filter extends that class.
+ * 
+ * @author Philipp Noggler
  */
 
 public abstract class CCFilterBase {
@@ -34,6 +34,7 @@ public abstract class CCFilterBase {
 	private CCFilter appendedFilter = null;
 	private String whereStatement;
 	private String alias;
+	private String ext;
 	private String selectStatementDAO;
 	private ClusterType clusterType;
 
@@ -162,4 +163,14 @@ public abstract class CCFilterBase {
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
+
+	public String getExt() {
+		return ext;
+	}
+
+	public void setExt(String ext) {
+		this.ext = ext;
+	}
+
+
 }

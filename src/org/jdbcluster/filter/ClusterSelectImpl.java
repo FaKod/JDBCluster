@@ -26,12 +26,12 @@ import org.jdbcluster.clustertype.ClusterType;
 
 
 /**
- * 
- * @author Philipp Noggler
- * @author Christopher Schmidt
  * class ClusterSelectImpl keeps the location of the config file
  * "selects.xml" and is responsible for executing the queries on 
  * that file
+ * 
+ * @author Philipp Noggler
+ * @author Christopher Schmidt
  *
  */
 
@@ -96,6 +96,28 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 		} else {
 			//returns the select String
 			return node.valueOf("@alias");	
+		}
+	}
+	
+	/**
+	 * returns the alias setting
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID selects the SelectID
+	 * @return String
+	 */
+	public String getExt(ClusterType clusterType, String SelectID) {
+//		get the name e.g. unit
+		String clusterId = clusterType.getName();
+		//xPath expression to get the select statement
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
+		
+		Node node = document.selectSingleNode(xPath);
+
+		if (node == null) {
+			return null;
+		} else {
+			//returns the select String
+			return node.valueOf("@ext");	
 		}
 	}
 	
