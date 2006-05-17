@@ -21,18 +21,23 @@ import org.jdbcluster.template.ConfigurationTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 
 /**
- * 
- * @author Philipp Noggler
  * HBMConfiguration is an implementation of ConfigurationTemplate
  * and provides Hibernate specific information about sessions, sessionfactory
  * and Hibernate configuration (e.g. config file)
+ * 
+ * @author Philipp Noggler
  *
  */
 public class HibernateConfiguration implements ConfigurationTemplate {
 
-	//Hibernate configuration
+	/*
+	 * Hibernate configuration
+	 */
 	private Configuration cfg = null;
 
+	/*
+	 * Session Factory
+	 */
 	private SessionFactory hibernateFactory;
 	
 	
@@ -52,6 +57,9 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 		cfg = new Configuration().configure((String)config);	
 	}
 	
+	/**
+	 * @return SessionFactoryTemplate
+	 */
 	public SessionFactoryTemplate buildSessionFactory() {
 		hibernateFactory = cfg.buildSessionFactory();
 		return new HibernateSessionFactory(hibernateFactory);
