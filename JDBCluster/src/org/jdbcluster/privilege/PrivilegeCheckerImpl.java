@@ -271,7 +271,9 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 				}
 				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod))) {
 					String value = getPropertyValue(propertyPath, beanWrapper);
-					result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
+					Set<String> setToAdd = dpl.getDomainEntryPivilegeList(domId, value);
+					if(setToAdd!=null)
+						result.addAll(setToAdd);
 				} else {
 					if (pd.getWriteMethod().equals(calledMethod)) {
 						if (args.length != 1 || !(args[0] instanceof String))
