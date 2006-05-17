@@ -37,6 +37,15 @@ public abstract class JDBClusterSimpleConfig {
 	/**
 	 * sets configuration for HIBERNATE config file and
 	 * HIBERNATE internal template
+	 * @param hibernateConfig path to hibernate config file
+	 */
+	static public void setHibernateConfiguration(String hibernateConfig) {
+		setHibernateConfiguration(null, hibernateConfig);
+	}
+	
+	/**
+	 * sets configuration for HIBERNATE config file and
+	 * HIBERNATE internal template
 	 * @param templatePath if null then use internal template
 	 * @param hibernateConfig path to hibernate config file
 	 */
