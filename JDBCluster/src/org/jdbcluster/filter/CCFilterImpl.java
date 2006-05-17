@@ -21,12 +21,12 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.BindingException;
 
 /**
- * class CCFilterImpl implements functionality to
- * get bindings from XML file, to get a HQL String from XML file and to
- * append a filter.
+ * class CCFilterImpl implements functionality to get bindings from XML file, to
+ * get a HQL String from XML file and to append a filter.
+ * 
  * @author Philipp Noggler
  * @author FaKod
- * @author Tobi 
+ * @author Tobi
  */
 
 public class CCFilterImpl extends CCFilterBase implements CCFilter {
@@ -42,10 +42,8 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 	 * calls getWhere in ClusterSelectImpl and returns a String to generate a
 	 * query
 	 * 
-	 * @param clusterType
-	 *            specifies the ClusterType
-	 * @param selectID
-	 *            specifies the select ID
+	 * @param clusterType specifies the ClusterType
+	 * @param selectID specifies the select ID
 	 */
 	public String getSelectString(String selectID) {
 		String hql = getSelect().getWhere(getClusterType(), selectID);
@@ -55,35 +53,31 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 	/**
 	 * appends a Filter to another filter
 	 * 
-	 * @param CCFilter
-	 *            the Filter to be appended
+	 * @param CCFilter the Filter to be appended
 	 */
 	public void append(CCFilter filter) {
 		HashMap<String, String> temp = new HashMap<String, String>();
 
 		while (filter != null) {
 			HashMap<String, String> hm = getBinding();
-			if(hm == null) {
+			if (hm == null) {
 				setBinding(new HashMap<String, String>());
 				hm = getBinding();
 			}
 			temp.putAll(hm);
 			HashMap<String, String> filterHm = filter.getBinding();
-			if(filterHm != null) {
+			if (filterHm != null) {
 				temp.putAll(filterHm);
 				// add the binding from appended filter to root-filter
 				if (temp.size() == (getBinding().size() + filter.getBinding().size())) {
 					getBinding().putAll(filter.getBinding());
 				} else {
-					throw new BindingException(
-							"Cannot bind variables with the same name! Change binding 'var' in 'selects.xml'!",
-							new Throwable());
+					throw new BindingException("Cannot bind variables with the same name! Change binding 'var' in 'selects.xml'!", new Throwable());
 				}
 			}
-			if(filter.getWhereStatement() != null && filter.getWhereStatement().length() > 0) {
-				if(getWhereStatement() != null && getWhereStatement().length() < 0) {
-					setWhereStatement(getWhereStatement() + " and "
-							+ filter.getWhereStatement());
+			if (filter.getWhereStatement() != null && filter.getWhereStatement().length() > 0) {
+				if (getWhereStatement() != null && getWhereStatement().length() < 0) {
+					setWhereStatement(getWhereStatement() + " and " + filter.getWhereStatement());
 				} else {
 					setWhereStatement(filter.getWhereStatement());
 				}
@@ -100,16 +94,13 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 	/**
 	 * returns a HasMap which contains the key mapped to an attribute
 	 * 
-	 * @param ct
-	 *            specifies the ClusterType
-	 * @param selID
-	 *            specifies the select ID
+	 * @param ct specifies the ClusterType
+	 * @param selID specifies the select ID
 	 * @return HashMap
 	 */
 	public HashMap<String, String> getBinding(ClusterType ct, String selID) {
 		String className = getSelect().getClassName(ct, selID);
-		HashMap<String, String> binding = getSelect().getBinding(ct, selID,
-				className);
+		HashMap<String, String> binding = getSelect().getBinding(ct, selID, className);
 		return binding;
 	}
 

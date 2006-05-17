@@ -25,11 +25,10 @@ import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.annotation.DaoLink;
 
 /**
- * 
- * @author Christopher Schmidt
  * class CCFilterFactory is responsible for creating
  * CCFilter objects
- * @param <T>
+ * 
+ * @author FaKod
  */
 public class CCFilterFactory extends CCFilterBase{
 	
@@ -75,6 +74,7 @@ public class CCFilterFactory extends CCFilterBase{
 		
 		String hql = CCFilterBase.getSelect().getWhere(ct, selId);
 		String alias = CCFilterBase.getSelect().getAlias(ct, selId);
+		String ext = CCFilterBase.getSelect().getExt(ct, selId);
 		HashMap<String, String> binding = CCFilterBase.getSelect().getBinding(ct, selId, filterClassName);
 
 		Class<?> filterClass;
@@ -100,6 +100,7 @@ public class CCFilterFactory extends CCFilterBase{
 		filter.setClassName(filterClassName);
 		filter.setWhereStatement(hql);
 		filter.setAlias(alias);
+		filter.setExt(ext);
 		filter.setSelectStatementDAO(selectDAO);
 		return (T) filter;
 	}

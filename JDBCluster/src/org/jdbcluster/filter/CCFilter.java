@@ -20,10 +20,10 @@ import java.util.HashMap;
 import org.jdbcluster.clustertype.ClusterType;
 
 /**
- * 
- * @author Philipp Noggler
  * interface CCFilter: All filters are implementing this
  * interface
+ * 
+ * @author Philipp Noggler
  * 
  */
 
@@ -93,5 +93,11 @@ public interface CCFilter {
 	 * @return ClusterType
 	 */
 	public ClusterType getClusterType();
+
+	/**
+	 * usable for "from XXX xxx" extensions of a query
+	 * @return String
+	 */
+	public String getExt();
 	
 }

@@ -20,9 +20,9 @@ import java.util.HashMap;
 import org.jdbcluster.clustertype.ClusterType;
 
 /**
+ * interface ClusterSelect defines methods to create a query
  * 
  * @author Philipp Noggler
- * interface ClusterSelect defines methods to create a query
  *
  */
 
@@ -60,4 +60,12 @@ public interface ClusterSelect {
 	 * @return HashMap<String, String>
 	 */
 	public HashMap<String, String> getBinding(ClusterType ct, String selID, String className);
+
+	/**
+	 * gets query extension string
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return String
+	 */
+	public String getExt(ClusterType clusterType, String selId);
 }
