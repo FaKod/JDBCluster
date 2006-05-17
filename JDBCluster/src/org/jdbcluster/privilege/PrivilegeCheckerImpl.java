@@ -116,7 +116,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}
 		// if Cluster is no PrivilegedCluster creation is always possible
-		if (!clazz.isInstance(PrivilegedCluster.class))
+		if (!PrivilegedCluster.class.isAssignableFrom(clazz))
 			return true;
 
 		Class<? extends PrivilegedCluster> clusterClass = clazz.asSubclass(PrivilegedCluster.class);
