@@ -16,7 +16,7 @@ import org.jdbcluster.exception.ConfigurationException;
  */
 public class ColorTypeDomainList implements DomainList, DomainPrivilegeList {
 
-	static ValidDomainEntries<String> vde = new ValidDomainEntries<String>("Color", "BlackWhite", "None", "All");
+	static ValidDomainEntries<String> vde = new ValidDomainEntries<String>(null, "Color", "BlackWhite", "None", "All");
 
 	public ValidDomainEntries<String> getDomainEntryList(String domainId) {
 		if (domainId.equals("ColorTypeDomain"))

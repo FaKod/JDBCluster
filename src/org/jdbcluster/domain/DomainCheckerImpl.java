@@ -142,15 +142,12 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		if (es == null)
 			throw new ConfigurationException("while checking domainId [" + slaveDomainId + "] and value [" +slaveValue + "]" + 
 					" master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
-
-		if(masterValue==null)
-			masterValue = "";
 		
-		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
+		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue==null?"":masterValue);
 		if (slaveEntries == null) {
 			if (es.get("*") == null)
 				throw new DomainException("while checking domainId [" + slaveDomainId + "] and value [" +slaveValue + "]" + 
-						"master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
+						" master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
 			else
 				return true; // wildcard match
 		}
@@ -279,7 +276,8 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
-			if (es.get("*") == null)
+			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
+			if (slaveEs.get("*") == null)
 				throw new DomainException("master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
 			else
 				return wholeList; // wildcard match
@@ -349,7 +347,8 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
-			if (es.get("*") == null)
+			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
+			if (slaveEs.get("*") == null)
 				throw new DomainException("master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
 			else
 				return wholeList; // wildcard match
