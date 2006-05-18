@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jdbcluster.JDBClusterUtil;
-import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.domain.DomainChecker;
 import org.jdbcluster.domain.DomainCheckerImpl;
@@ -44,7 +43,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
 
 /**
- * 
+ * Main Class for handling privileges
  * @author FaKod
  * 
  */
@@ -276,14 +275,15 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 						result.addAll(setToAdd);
 				} else {
 					if (pd.getWriteMethod().equals(calledMethod)) {
-						if (args.length != 1 || !(args[0] instanceof String))
+						if ((args.length != 1 || !(args[0] instanceof String)) && args[0]!=null)
 							throw new ConfigurationException("privilege checked property [" + propertyPath + "] needs 1 String argument setter");
-						result.addAll(dpl.getDomainEntryPivilegeList(domId, (String) args[0]));
+						Set<String> ergList = dpl.getDomainEntryPivilegeList(domId, (String) args[0]); 
+						if(ergList!=null)
+							result.addAll(ergList);
 					}
 				}
 			}
 		}
-
 		return result;
 	}
 

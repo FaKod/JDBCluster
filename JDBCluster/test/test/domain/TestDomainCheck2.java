@@ -32,6 +32,42 @@ public class TestDomainCheck2 extends TestCase {
 
 		// create a Cluster and persist it
 		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		
+		/*
+		 * set ColorType to null should be possible
+		 */
+		rad.setColorType(null);
+		
+		/*
+		 *  set Color to null should fail (no wildcard "*" entry)
+		 */
+		try {
+			rad.setColor(null);
+			Assert.fail("null is not allowed with ColorType="+rad.getColorType());
+		} catch (Exception e) {
+			assertTrue(e instanceof DomainException);
+		}
+		
+		/*
+		 * set ColorShading to null should be OK (wildcard "*" entry)
+		 */
+		rad.setColorShading(null);
+		
+		/*
+		 * set ColorShading to LightRED should be OK (wildcard "*" entry)
+		 */
+		rad.setColorShading("LightRED");
+		
+		/*
+		 * Set Color to "RED" with ColorType == null should fail
+		 */
+		try {
+			rad.setColor("RED");
+			Assert.fail("RED is not allowed with ColorType="+rad.getColorType());
+		} catch (Exception e) {
+			assertTrue(e instanceof DomainException);
+		}
+		
 
 		/**
 		 * Tests if it's possible to add an attribute (GREY) not listed in vde
