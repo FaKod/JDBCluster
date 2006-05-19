@@ -65,4 +65,12 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 		return new HibernateSessionFactory(hibernateFactory);
 	}
 
+	/**
+	 * returns the native configuration object
+	 * @return T
+	 */
+	public <T> T getNativeConfiguration() {
+		return (T) cfg;
+	}
+
 }

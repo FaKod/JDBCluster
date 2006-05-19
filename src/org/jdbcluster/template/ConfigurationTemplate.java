@@ -18,10 +18,26 @@ package org.jdbcluster.template;
 /**
  * 
  * @author Philipp Noggler
+ * @author FaKod
  *
  */
 public interface ConfigurationTemplate {
 
+	/**
+	 * Set the Configuration
+	 * @param cfg the Configuration Object
+	 */
 	public void setConfiguration(Object cfg);
+	
+	/**
+	 * creates a session factory
+	 * @return SessionFactoryTemplate
+	 */
 	public SessionFactoryTemplate buildSessionFactory();
+	
+	/**
+	 * returns the native configuration object
+	 * @return T
+	 */
+	public <T> T getNativeConfiguration();
 }
