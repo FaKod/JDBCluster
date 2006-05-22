@@ -36,8 +36,9 @@ import org.jdbcluster.template.TransactionTemplate;
  */
 public class HibernateSession implements SessionTemplate{
 	//Hibernate session
-	private Session hibernateSession;
-	private HibernateSessionFactory factory;
+	protected Session hibernateSession;
+	
+	protected HibernateSessionFactory factory;
 
 	public HibernateSession() {}
 

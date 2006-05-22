@@ -26,7 +26,8 @@ import org.jdbcluster.template.SessionFactoryTemplate;
  */
 public class HibernateSessionFactory implements SessionFactoryTemplate {
 
-	private org.hibernate.SessionFactory factory;
+	protected org.hibernate.SessionFactory factory;
+	
 	private HibernateSession session;
 	
 	/*
