@@ -24,7 +24,7 @@ import org.hibernate.Transaction;
  */
 public class HibernateTransaction implements org.jdbcluster.template.TransactionTemplate {
 
-	private Transaction tx;
+	protected Transaction tx;
 	
 	public void commit() {
 		tx.commit();

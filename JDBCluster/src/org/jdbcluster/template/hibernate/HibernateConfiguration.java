@@ -33,12 +33,12 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 	/*
 	 * Hibernate configuration
 	 */
-	private Configuration cfg = null;
+	protected Configuration cfg = null;
 
 	/*
 	 * Session Factory
 	 */
-	private SessionFactory hibernateFactory;
+	protected SessionFactory hibernateFactory;
 	
 	
 	/**
