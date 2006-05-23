@@ -71,9 +71,13 @@
 			<xs:sequence>
 				<xs:element ref="FilterClass" minOccurs="0"/>
 			</xs:sequence>
+			<!-- the hql statement (where clause)-->
 			<xs:attribute name="hql" type="xs:string" use="optional"/>
+			<!-- settable alias for type of resultset-->
 			<xs:attribute name="alias" type="xs:string" use="optional"/>
+			<!-- extension for part after "from" -->
 			<xs:attribute name="ext" type="xs:string" use="optional"/>
+			<!-- filter id -->
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>
