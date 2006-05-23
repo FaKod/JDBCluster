@@ -35,6 +35,7 @@ public abstract class CCFilterBase {
 	private String whereStatement;
 	private String alias;
 	private String ext;
+	private String staticStatementAttribute;
 	private String selectStatementDAO;
 	private ClusterType clusterType;
 
@@ -170,6 +171,14 @@ public abstract class CCFilterBase {
 
 	public void setExt(String ext) {
 		this.ext = ext;
+	}
+
+	public String getStaticStatementAttribute() {
+		return staticStatementAttribute;
+	}
+
+	public void setStaticStatementAttribute(String staticStatementAttribute) {
+		this.staticStatementAttribute = staticStatementAttribute;
 	}
 
 

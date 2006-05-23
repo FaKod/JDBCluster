@@ -192,4 +192,25 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 			return binding;
 		}
 	}
+
+	/**
+	 * gets static part of a hql query read from a String attribute
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID the SelectID
+	 * @param className specifies the classname
+	 * @return String
+	 */
+	public String getStaticStatementAttribute(ClusterType clusterType, String SelectID, String className) {
+		String clusterId = clusterType.getName();
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']" + "/FilterClass[@class='" + className + "']" + "/static";
+		
+		Node node = document.selectSingleNode(xPath);
+
+		if (node == null) {
+			return null;
+		} else {
+			//returns the select String
+			return node.valueOf("@statementAttribute");	
+		}
+	}
 }
