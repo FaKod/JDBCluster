@@ -23,6 +23,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.exception.CCFilterException;
 
 
 /**
@@ -62,19 +63,15 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 	* @return String
 	*/
 	public String getWhere(ClusterType clusterType, String SelectID) {
-		//get the name e.g. unit
 		String clusterId = clusterType.getName();
-		//xPath expression to get the select statement
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
 		
 		Node node = document.selectSingleNode(xPath);
 
-		if (node == null) {
-			return null;
-		} else {
-			//returns the select String
-			return node.valueOf("@hql");	
-		}
+		if (node == null)
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+	
+		return node.valueOf("@hql");	
 	}
 	
 	/**
@@ -84,19 +81,15 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 	 * @return String
 	 */
 	public String getAlias(ClusterType clusterType, String SelectID) {
-//		get the name e.g. unit
 		String clusterId = clusterType.getName();
-		//xPath expression to get the select statement
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
 		
 		Node node = document.selectSingleNode(xPath);
 
-		if (node == null) {
-			return null;
-		} else {
-			//returns the select String
-			return node.valueOf("@alias");	
-		}
+		if (node == null) 
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+		
+		return node.valueOf("@alias");	
 	}
 	
 	/**
@@ -106,19 +99,33 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 	 * @return String
 	 */
 	public String getExt(ClusterType clusterType, String SelectID) {
-//		get the name e.g. unit
 		String clusterId = clusterType.getName();
-		//xPath expression to get the select statement
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
 		
 		Node node = document.selectSingleNode(xPath);
 
-		if (node == null) {
-			return null;
-		} else {
-			//returns the select String
-			return node.valueOf("@ext");	
-		}
+		if (node == null) 
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+		
+		return node.valueOf("@ext");	
+	}
+	
+	/**
+	 * order By statement part
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return String
+	 */
+	public String getOrderBy(ClusterType clusterType, String SelectID) {
+		String clusterId = clusterType.getName();
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
+		
+		Node node = document.selectSingleNode(xPath);
+
+		if (node == null)
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+			
+		return node.valueOf("@orderby");	
 	}
 	
 	/**
@@ -128,20 +135,15 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 	 * @return String
 	 */
 	public String getClassName(ClusterType clusterType, String SelectID){
-		//get the name e.g. unit
 		String clusterId = clusterType.getName();
-		//xPath expression to get the classname
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']" + "/FilterClass";
 
 		Node node = document.selectSingleNode(xPath);
 		
-		if (node == null) {
-			return null;
-		} else {
-			//returns the classname as a String
-			return node.valueOf("@class");	
-		}
+		if (node == null) 
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
 		
+		return node.valueOf("@class");	
 	}
 
 	/**
@@ -206,11 +208,8 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 		
 		Node node = document.selectSingleNode(xPath);
 
-		if (node == null) {
+		if (node == null) 
 			return null;
-		} else {
-			//returns the select String
-			return node.valueOf("@statementAttribute");	
-		}
+		return node.valueOf("@statementAttribute");	
 	}
 }

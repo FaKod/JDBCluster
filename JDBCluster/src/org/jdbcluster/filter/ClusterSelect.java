@@ -77,4 +77,12 @@ public interface ClusterSelect {
 	 * @return String
 	 */
 	public String getStaticStatementAttribute(ClusterType clusterType, String SelectID, String className);
+
+	/**
+	 * order By statement part
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return String
+	 */
+	public String getOrderBy(ClusterType clusterType, String SelectID);
 }

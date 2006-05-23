@@ -116,9 +116,11 @@ public class HibernateSession implements SessionTemplate{
 		Query query;
 		HibernateQuery queryTemplate = new HibernateQuery();
 		queryTemplate.setClusterType(ccf.getClusterType());
-		// create the query with given selectstring and wherestring
-		String whereStatement = ccf.getWhereStatement();
 		
+		/**
+		 * where statement
+		 */
+		String whereStatement = ccf.getWhereStatement();
 		String staticStatement = getStaticStatement(ccf);
 		if(staticStatement!=null && staticStatement.length()>0) {
 			if(whereStatement != null && whereStatement.length()>0)
@@ -126,22 +128,31 @@ public class HibernateSession implements SessionTemplate{
 			whereStatement = whereStatement + " ( " + staticStatement + " ) ";
 		}
 		
+		/**
+		 * part after from before where
+		 */
 		String qStr = ccf.getAlias();
-		
 		String ext = ccf.getExt();
 		if(ext != null && ext.length()>0)
 			qStr = qStr + ", " + ext;
 		
+		/**
+		 * order by clause
+		 */
+		String orderBy = ccf.getOrderBy();
+		if(orderBy!=null && orderBy.length()>0)
+			orderBy = " order by " + orderBy;
+		
 		if(whereStatement != null && whereStatement.length()>0) {
 			query = hibernateSession.createQuery(
 					" from " + ccf.getSelectStatementDAO() + " " + qStr + " " +
-					" where "+ ccf.getWhereStatement());
+					" where "+ ccf.getWhereStatement() + orderBy);
 			queryTemplate.setQuery(query);
 			getAppendedBindings(ccf, queryTemplate);
 		}
 		else {
 			query = hibernateSession.createQuery(
-					" from " + ccf.getSelectStatementDAO() );
+					" from " + ccf.getSelectStatementDAO() + orderBy);
 			queryTemplate.setQuery(query);
 		}
 		

@@ -36,6 +36,7 @@ public abstract class CCFilterBase {
 	private String alias;
 	private String ext;
 	private String staticStatementAttribute;
+	private String orderBy;
 	private String selectStatementDAO;
 	private ClusterType clusterType;
 
@@ -179,6 +180,14 @@ public abstract class CCFilterBase {
 
 	public void setStaticStatementAttribute(String staticStatementAttribute) {
 		this.staticStatementAttribute = staticStatementAttribute;
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
 	}
 
 
