@@ -85,6 +85,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="binding" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="static" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute name="class" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
@@ -93,6 +94,11 @@
 		<xs:complexType>
 			<xs:attribute name="var" type="xs:NMTOKEN" use="required"/>
 			<xs:attribute name="attribute" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="static">
+		<xs:complexType>
+			<xs:attribute name="statementAttribute" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="domain">
