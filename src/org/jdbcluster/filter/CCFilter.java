@@ -106,4 +106,10 @@ public interface CCFilter {
 	 */
 	public String getStaticStatementAttribute();
 	
+	/**
+	 * order by statement part
+	 * @return String
+	 */
+	public String getOrderBy();
+	
 }
