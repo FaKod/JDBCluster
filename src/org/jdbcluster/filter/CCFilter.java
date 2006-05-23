@@ -100,4 +100,10 @@ public interface CCFilter {
 	 */
 	public String getExt();
 	
+	/**
+	 * static statement part
+	 * @return String attribute name for call of getter
+	 */
+	public String getStaticStatementAttribute();
+	
 }

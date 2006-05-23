@@ -68,4 +68,13 @@ public interface ClusterSelect {
 	 * @return String
 	 */
 	public String getExt(ClusterType clusterType, String selId);
+	
+	/**
+	 * gets static part of a hql query read from a String attribute
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID the SelectID
+	 * @param className specifies the classname
+	 * @return String
+	 */
+	public String getStaticStatementAttribute(ClusterType clusterType, String SelectID, String className);
 }

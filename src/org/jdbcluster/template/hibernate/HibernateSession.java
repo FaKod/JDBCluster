@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
@@ -118,6 +119,13 @@ public class HibernateSession implements SessionTemplate{
 		// create the query with given selectstring and wherestring
 		String whereStatement = ccf.getWhereStatement();
 		
+		String staticStatement = getStaticStatement(ccf);
+		if(staticStatement!=null && staticStatement.length()>0) {
+			if(whereStatement != null && whereStatement.length()>0)
+				whereStatement = " ( " + whereStatement + " ) AND ";
+			whereStatement = whereStatement + " ( " + staticStatement + " ) ";
+		}
+		
 		String qStr = ccf.getAlias();
 		
 		String ext = ccf.getExt();
@@ -140,6 +148,19 @@ public class HibernateSession implements SessionTemplate{
 		
 		// return the whole object
 		return queryTemplate;
+	}
+	
+	/**
+	 * value of static statement attribute
+	 * @param ccf Filter instance
+	 * @return property value
+	 */
+	public String getStaticStatement(CCFilter ccf) {
+		String attr = ccf.getStaticStatementAttribute();
+		if(attr==null || attr.length()==0)
+			return null;
+		
+		return (String) JDBClusterUtil.getProperty(attr, ccf);
 	}
 
 	/**
