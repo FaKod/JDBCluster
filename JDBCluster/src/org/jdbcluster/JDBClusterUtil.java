@@ -23,13 +23,19 @@ import java.lang.reflect.Method;
 import org.jdbcluster.exception.ConfigurationException;
 
 /**
- * 
- * @author Christopher Schmdt
- * @author Thomas Bitzer
  * Utility class mainly for reflection stuff
+ * 
+ * @author FaKod
+ * @author Thomas Bitzer
  */
 public class JDBClusterUtil {
-	
+
+	/**
+	 * creates object from class named className
+	 * 
+	 * @param className name of the class
+	 * @return Object instance of class className
+	 */
 	static public Object createClassObject(String className) {
 		try {
 			Class<?> clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
@@ -38,9 +44,14 @@ public class JDBClusterUtil {
 			throw new ConfigurationException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}
 	}
-	
+
+	/**
+	 * @see createClassObject(String className) Creates Class from class object
+	 * @param clazz Class Object
+	 * @return created instance
+	 */
 	static public Object createClassObject(Class<?> clazz) {
-		
+
 		String className = clazz.getName();
 		try {
 			Constructor ctor = clazz.getDeclaredConstructor();
@@ -60,7 +71,14 @@ public class JDBClusterUtil {
 			throw new ConfigurationException("the underlying constructor of the class [" + className + "] throws an exception", e);
 		}
 	}
-	
+
+	/**
+	 * calles a getter method on instance obj
+	 * 
+	 * @param propName name of the property
+	 * @param obj instance of property
+	 * @return Object property value
+	 */
 	static public Object invokeGetPropertyMethod(String propName, Object obj) {
 		String getMethName = "get" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
 		try {
@@ -78,29 +96,39 @@ public class JDBClusterUtil {
 			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
 		}
 	}
-	
+
+	/**
+	 * calles a setter on instance obj
+	 * @param propName property name
+	 * @param propValue value to set
+	 * @param obj instance with the setter
+	 */
 	static public void invokeSetPropertyMethod(String propName, Object propValue, Object obj) {
-        String setMethName = "set" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
-        Object[] args = {propValue};
-        Class[] paramType = {propValue.getClass()};
-        try {
-                    Method mSet = obj.getClass().getMethod(setMethName, paramType);
-                    mSet.invoke(obj, args);
-        } catch (SecurityException e) {
-                    throw new ConfigurationException("cant access property [" + propName + "] with the specified name", e);
-        } catch (IllegalArgumentException e) {
-                    throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName, e);
-        } catch (NoSuchMethodException e) {
-                    throw new ConfigurationException("method of configured property [" + propName + "]  could not be found", e);
-        } catch (IllegalAccessException e) {
-                    throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access", e);
-        } catch (InvocationTargetException e) {
-                    throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
-        }
-	}           
+		String setMethName = "set" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
+		Object[] args = { propValue };
+		Class[] paramType = { propValue.getClass() };
+		try {
+			Method mSet = obj.getClass().getMethod(setMethName, paramType);
+			mSet.invoke(obj, args);
+		} catch (SecurityException e) {
+			throw new ConfigurationException("cant access property [" + propName + "] with the specified name", e);
+		} catch (IllegalArgumentException e) {
+			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName, e);
+		} catch (NoSuchMethodException e) {
+			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found", e);
+		} catch (IllegalAccessException e) {
+			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access", e);
+		} catch (InvocationTargetException e) {
+			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
+		}
+	}
 
-
-	
+	/**
+	 * returnes property value directly from field
+	 * @param propName name of property
+	 * @param obj instance of object
+	 * @return Object the property value
+	 */
 	static public Object getProperty(String propName, Object obj) {
 		try {
 			Field f = obj.getClass().getDeclaredField(propName);
@@ -115,9 +143,10 @@ public class JDBClusterUtil {
 			throw new ConfigurationException("configured property [" + propName + "]  could not be found", e);
 		}
 	}
-	
+
 	/**
 	 * returns Filed object for Properties
+	 * 
 	 * @param o Object
 	 * @param propName path to property
 	 * @return Field instance
@@ -133,9 +162,10 @@ public class JDBClusterUtil {
 		}
 		return f;
 	}
-	
+
 	/**
 	 * returns Filed object for Properties
+	 * 
 	 * @param propName path to property
 	 * @param c Class object
 	 * @return Field instance
@@ -151,9 +181,10 @@ public class JDBClusterUtil {
 		}
 		return f;
 	}
-	
+
 	/**
 	 * calculates method object
+	 * 
 	 * @param o Object
 	 * @param methodName method name
 	 * @param parameterTypes parameter types of method
