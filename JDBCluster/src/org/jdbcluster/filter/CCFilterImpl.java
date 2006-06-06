@@ -76,7 +76,7 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 				}
 			}
 			if (filter.getWhereStatement() != null && filter.getWhereStatement().length() > 0) {
-				if (getWhereStatement() != null && getWhereStatement().length() < 0) {
+				if (getWhereStatement() != null && getWhereStatement().length() > 0) {
 					setWhereStatement(getWhereStatement() + " and " + filter.getWhereStatement());
 				} else {
 					setWhereStatement(filter.getWhereStatement());
