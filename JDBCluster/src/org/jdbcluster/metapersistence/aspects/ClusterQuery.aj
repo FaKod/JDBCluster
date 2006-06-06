@@ -42,8 +42,7 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		List<Cluster> clusterResultSet = new ArrayList<Cluster>();
 		
 		for (Object dao : dAOResultSet) {
-			Cluster c = ClusterFactory.newInstance(ct);
-			c.setDao((Dao) dao);
+			Cluster c = ClusterFactory.newInstance(ct, (Dao) dao);
 			clusterResultSet.add(c);
 		}
 		return clusterResultSet;
