@@ -85,6 +85,8 @@ public class ClusterFactory {
 	
 	/**
 	 * creates an instance of a Cluster
+	 * Cluster interceptor is <b>not called</b> if dao!=null
+	 * Cluster privileges are <b>not checked</b> if dao!=null 
 	 * @param ct specifies the ClusterType class that should be returned
 	 * @param dao dao object to be presetted
 	 * @return Cluster
@@ -112,18 +114,20 @@ public class ClusterFactory {
 			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}
 		
-		/*
-		 * call of cluster interceptor
-		 */
-		if(!getClusterInterceptor().clusterNew(cluster))
-			throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
-		
-		/*
-		 * privilege check (only static privileges are checked)
-		 */
-		if(cluster instanceof PrivilegedCluster) {
-			if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
-				throw new PrivilegeException("No sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
+		if(dao==null) {
+			/*
+			 * call of cluster interceptor
+			 */
+			if(!getClusterInterceptor().clusterNew(cluster))
+				throw new ConfigurationException("ClusterInterceptor [" + getClusterInterceptor().getClass().getName() + "] returned false" );
+			
+			/*
+			 * privilege check (only static privileges are checked)
+			 */
+			if(cluster instanceof PrivilegedCluster) {
+				if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
+					throw new PrivilegeException("No sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
+			}
 		}
 		return (T) cluster;
 	}
