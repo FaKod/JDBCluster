@@ -59,6 +59,14 @@ public interface PrivilegeChecker {
 	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject);
 	
 	/**
+	 * intersects a specific domain value with the needed rights for this value
+	 * @param domainId configured domain id
+	 * @param value the value of the domain
+	 * @return true if the user rights are sufficient
+	 */
+	public boolean userPrivilegeIntersectDomain(String domainId, String value);
+	
+	/**
 	 * intersects required privileges against given privileges
 	 * @param serviceObject service object to check
 	 * @param serviceMethodName method name to check
