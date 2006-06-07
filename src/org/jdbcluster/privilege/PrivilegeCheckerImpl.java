@@ -233,6 +233,25 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		}
 		return hs;
 	}
+	
+	/**
+	 * intersects a specific domain value with the needed rights for this value
+	 * @param domainId configured domain id
+	 * @param value the value of the domain
+	 * @return true if the user rights are sufficient
+	 */
+	public boolean userPrivilegeIntersectDomain(String domainId, String value) {
+		DomainChecker dc = DomainCheckerImpl.getInstance();
+		DomainPrivilegeList dpl;
+		try {
+			dpl = (DomainPrivilegeList) dc.getDomainListInstance(domainId);
+		} catch (ClassCastException e) {
+			throw new ConfigurationException("[" + domainId + "] must be a privileged domain and needs a implemented DomainPrivilegeList Interface", e);
+		}
+		
+		Set<String> neededRights = dpl.getDomainEntryPivilegeList(domainId, value);
+		return userPrivilegeIntersect(neededRights);
+	}
 
 	/**
 	 * calculates instance and parameter specific privileges
