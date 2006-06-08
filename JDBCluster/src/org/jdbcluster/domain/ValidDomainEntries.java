@@ -28,6 +28,15 @@ import java.util.List;
 public final class ValidDomainEntries<T> extends ArrayList<T> implements List<T> {
 
 	private boolean nullAllowed = false;
+	
+	/**
+	 * Copy ctor
+	 * @param vde list to copy
+	 */
+	public ValidDomainEntries( ValidDomainEntries<T> vde) {
+		this.addAll(vde);
+		nullAllowed = vde.nullAllowed;
+	}
 
 	/**
 	 * prefilles entries a list containing the elements of the specified 
