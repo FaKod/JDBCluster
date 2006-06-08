@@ -383,7 +383,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param domainId domain id
 	 */
 	public ValidDomainEntries<String> getPossibleDomainEntries(String domainId) {
-		return getDomainListInstance(domainId).getDomainEntryList(domainId);
+		return new ValidDomainEntries<String>(getDomainListInstance(domainId).getDomainEntryList(domainId));
 	}
 	
 	/**
