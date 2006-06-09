@@ -284,6 +284,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		if (es == null)
 			throw new ConfigurationException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
+		if(masterValue==null)
+			masterValue = "";
+		
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
@@ -355,6 +358,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		if (es == null)
 			throw new ConfigurationException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
+		if(masterValue==null)
+			masterValue = "";
+		
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
