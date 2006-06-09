@@ -62,5 +62,17 @@ public abstract class ClusterTypeBase {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public int hashCode() {
+		if(name!=null)
+			return name.hashCode();
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 	
 }
