@@ -282,13 +282,13 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		
 		EntrySet es = getDomainConfig().getEntrySet(masterDomainId);
 		if (es == null)
-			throw new ConfigurationException("master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
+			throw new ConfigurationException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
 			if (slaveEs.get("*") == null)
-				throw new DomainException("master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
+				throw new DomainException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
 			else
 				return wholeList; // wildcard match
 		}
@@ -353,13 +353,13 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		
 		EntrySet es = getDomainConfig().getEntrySet(masterDomainId);
 		if (es == null)
-			throw new ConfigurationException("master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
+			throw new ConfigurationException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "] annotated [@Domain] but not configured");
 
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			EntrySet slaveEs = getDomainConfig().getEntrySet(slaveDomainId);
 			if (slaveEs.get("*") == null)
-				throw new DomainException("master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
+				throw new DomainException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "]: value [" + masterValue + "] is not configured");
 			else
 				return wholeList; // wildcard match
 		}
