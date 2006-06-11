@@ -43,8 +43,8 @@ public class TestFilter extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("xml/logging.properties");
-		CCFilterBase.setFilterConfig(new ClusterSelectImpl("xml/selects.xml"));
-		ClusterTypeBase.setClusterTypeConfig(new ClusterTypeConfigImpl("xml/clustertype.xml"));
+		CCFilterBase.setFilterConfig(new ClusterSelectImpl("xml/jdbcluster.conf.xml"));
+		ClusterTypeBase.setClusterTypeConfig(new ClusterTypeConfigImpl("xml/jdbcluster.conf.xml"));
 		
 		ConfigurationFactory.setConfigurationClass("org.jdbcluster.template.hibernate.HibernateConfiguration");
 		ConfigurationFactory.getInstance().setConfiguration("mapping/hibernate.cfg.xml");
