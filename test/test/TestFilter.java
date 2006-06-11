@@ -188,5 +188,16 @@ public class TestFilter extends TestCase {
 		}
 		
 	}
+	
+	public void testFilterExecutionTime() {
+		long start, end;
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		NameFilter nameFilter;
+		
+		start = System.currentTimeMillis();
+		for(int i=0; i<10; i++)
+			nameFilter = CCFilterFactory.newInstance(cAutoType, "name");
+		System.out.println("Exec time: " + (System.currentTimeMillis() - start));
+	}
 
 }
