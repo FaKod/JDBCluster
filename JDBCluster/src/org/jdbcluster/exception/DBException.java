@@ -22,6 +22,11 @@ package org.jdbcluster.exception;
  */
 public class DBException extends JDBClusterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1534981214363559126L;
+
 	public DBException(Throwable cause) {
 		super(cause);
 	}

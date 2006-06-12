@@ -22,6 +22,11 @@ package org.jdbcluster.exception;
  */
 public class DomainException extends JDBClusterException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6330046003086484086L;
+
 	public DomainException(String message, Throwable cause) {
 		super(message, cause);
 	}

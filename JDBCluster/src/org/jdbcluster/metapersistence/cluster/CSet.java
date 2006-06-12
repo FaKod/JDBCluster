@@ -25,6 +25,11 @@ import java.util.*;
  */
 public class CSet<T> extends Vector<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9143903433525551468L;
+
 	@Override
 	public boolean add(T o) {
 		return super.add(o);

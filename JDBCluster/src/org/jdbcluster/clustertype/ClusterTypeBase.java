@@ -27,7 +27,6 @@ public abstract class ClusterTypeBase {
 	//reference to a ClusterTypeConfig object
 	static private ClusterTypeConfig cTypeConfig;
 	private String name;
-	private String clusterClassName;
 
 	/**
 	 * gets the ClusterTypeConfig object which contains information

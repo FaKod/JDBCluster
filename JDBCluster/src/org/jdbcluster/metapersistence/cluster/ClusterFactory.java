@@ -91,6 +91,7 @@ public class ClusterFactory {
 	 * @param dao dao object to be presetted
 	 * @return Cluster
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
 		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());

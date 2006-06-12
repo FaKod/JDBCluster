@@ -74,6 +74,7 @@ public class DomainConfigImpl extends SAXReader implements DomainConfig {
 	 * configuration xml file
 	 * @param configuration
 	 */
+	@SuppressWarnings("unchecked")
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
 		dependancies = new HashMap<String, EntrySet>();

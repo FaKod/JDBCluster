@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.JDBClusterUtil;
@@ -247,6 +246,7 @@ public class HibernateSession implements SessionTemplate{
 	/**
 	 * returns native session object
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T getNativeSession() {
 		return (T) hibernateSession;
 	}

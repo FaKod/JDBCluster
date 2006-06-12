@@ -27,6 +27,11 @@ import java.util.List;
  */
 public final class ValidDomainEntries<T> extends ArrayList<T> implements List<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3538466934275677615L;
+	
 	private boolean nullAllowed = false;
 	
 	/**
