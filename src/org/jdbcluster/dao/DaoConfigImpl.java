@@ -76,6 +76,7 @@ public class DaoConfigImpl extends SAXReader implements DaoConfig {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public String[] getPropertyName(String daoId) {
 		String xPath = "//jdbcluster/daotype/dao[@id='" + daoId + "']/property";
 		List<Node> nodes = document.selectNodes(xPath);

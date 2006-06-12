@@ -31,6 +31,11 @@ import org.dom4j.Node;
  */
 final class EntrySet extends HashMap<String,HashMap<String, ValidEntryList>> {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8732982067055787566L;
+	
+	/**
 	 * the current DomainId this Map is for
 	 */
 	String domainId;
@@ -49,6 +54,7 @@ final class EntrySet extends HashMap<String,HashMap<String, ValidEntryList>> {
 	 * filles structure
 	 * @param domEntryNodes
 	 */
+	@SuppressWarnings("unchecked") 
 	void fill(List<Node> domEntryNodes, HashMap<String,HashMap<String, ValidEntryList>> topList) {
 		for( Node n : domEntryNodes) {
 			String domEntryValue = n.valueOf("@value");

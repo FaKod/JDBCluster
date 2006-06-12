@@ -134,6 +134,7 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	 * returns a list of all cluster ids
 	 * @return List<String>
 	 */
+	@SuppressWarnings("unchecked")
 	public List<String> getClusterIDs() {
 		ArrayList<String> clusterIDs = new ArrayList<String>();
 		//xPath expression to get the classname

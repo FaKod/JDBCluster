@@ -16,8 +16,6 @@
 package org.jdbcluster.logging;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Before;
 import org.jdbcluster.exception.JDBClusterException;
 import org.jdbcluster.tracing.TracingAspect;
 

@@ -66,6 +66,7 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 		this.session = session;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T getNativeSessionFactory() {
 		return (T) this;
 	}

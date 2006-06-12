@@ -50,6 +50,7 @@ public class CCFilterFactory extends CCFilterBase{
 	 * @return filter a template which extends CCFilterBase
 	 * @throws CCFilterException
 	 */
+	@SuppressWarnings("unchecked")
 	static public <T extends CCFilterBase> T newInstance(ClusterType ct, String selId) throws CCFilterException {
 		//get the classname of the object
 		String filterClassName = CCFilterBase.getSelect().getClassName(ct, selId);
@@ -79,7 +80,6 @@ public class CCFilterFactory extends CCFilterBase{
 		String staticStatement = CCFilterBase.getSelect().getStaticStatementAttribute(ct, selId, filterClassName);
 		HashMap<String, String> binding = CCFilterBase.getSelect().getBinding(ct, selId, filterClassName);
 
-		Class<?> filterClass;
 		CCFilterBase filter = null;
 		filter = (CCFilterBase) JDBClusterUtil.createClassObject(filterClassName);
 		// get select statement

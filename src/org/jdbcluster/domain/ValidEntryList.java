@@ -30,6 +30,11 @@ import org.dom4j.Node;
 final class ValidEntryList extends ArrayList<Valid> {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4798425531880900416L;
+
+	/**
 	 * true if it containing valid elements
 	 */
 	private boolean containsValidElements=false;
@@ -82,6 +87,7 @@ final class ValidEntryList extends ArrayList<Valid> {
 	 * parses additional Master Dependancies
 	 * @param addMasterEntries 1st level of tags
 	 */
+	@SuppressWarnings("unchecked")
 	private void fillAddMasterEntries(List<Node> addMasterEntries) {
 		/**
 		 * maps AddMasterDomEntryValue -> MasterDomainID -> ValidEntryList

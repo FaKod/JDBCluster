@@ -7,6 +7,11 @@ package org.jdbcluster.exception;
  */
 public class PrivilegeException extends JDBClusterException {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1018800983736771225L;
+
 	public PrivilegeException(String message, Throwable cause) {
 		super(message, cause);
 	}

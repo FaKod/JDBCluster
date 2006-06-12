@@ -17,6 +17,11 @@ package org.jdbcluster.exception;
 
 public class DaoException extends JDBClusterException {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7621416924947145147L;
+
 	public DaoException(String message, Throwable cause) {
 		super(message, cause);
 	}
