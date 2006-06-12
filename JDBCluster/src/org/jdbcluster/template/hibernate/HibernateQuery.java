@@ -25,19 +25,18 @@ import org.jdbcluster.exception.JDBClusterException;
 import org.jdbcluster.template.QueryTemplate;
 
 /**
- * 
+ * HBMQuery is an implementation of QueryTemplate. It
+ * provides information about the query and is responsible for executing
+ * a hibernate specific query.
  * @author Philipp Noggler
  * @author Christopher Schmidt 
- * 	HBMQuery is an implementation of QueryTemplate. It
- *  provides information about the query and is responsible for executing
- *  a hibernate specific query.
- * 
+ * 	
  */
 public class HibernateQuery implements QueryTemplate {
 
 	// query object which contains information about the result after execution
 	private Query query;
-	@SuppressWarnings("unused")
+
 	private ClusterType clusterType;
 
 	public HibernateQuery() {
