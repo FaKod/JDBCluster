@@ -135,13 +135,12 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	 * @return List<String>
 	 */
 	public List<String> getClusterIDs() {
-		ArrayList<String> clusterIDs=null;
+		ArrayList<String> clusterIDs = new ArrayList<String>();
 		//xPath expression to get the classname
 		String xPath = "//jdbcluster/clustertype/cluster";
 
 		List<Node> nodes = document.selectNodes(xPath);
 		if(nodes != null) {
-			clusterIDs = new ArrayList<String>();
 			for(Node n : nodes){
 				clusterIDs.add(n.valueOf("@id"));
 			}
