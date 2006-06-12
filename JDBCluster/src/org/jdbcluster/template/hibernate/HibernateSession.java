@@ -171,7 +171,7 @@ public class HibernateSession implements SessionTemplate{
 		if(attr==null || attr.length()==0)
 			return null;
 	
-		return (String) JDBClusterUtil.invokeGetPropertyMethod(attr, ccf);
+		return JDBClusterUtil.invokeGetPropertyMethod(attr, ccf).toString();
 	}
 
 	/**
