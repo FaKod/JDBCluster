@@ -85,15 +85,15 @@ public class JDBClusterUtil {
 			Method mGet = obj.getClass().getMethod(getMethName);
 			return mGet.invoke(obj);
 		} catch (SecurityException e) {
-			throw new ConfigurationException("cant access property [" + propName + "] with the specified name", e);
+			throw new ConfigurationException("cant access property [" + propName + "] with the specified name in " + obj.getClass().getName(), e);
 		} catch (IllegalArgumentException e) {
-			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName, e);
+			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName + " in " + obj.getClass().getName(), e);
 		} catch (NoSuchMethodException e) {
-			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found", e);
+			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found in " + obj.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
-			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access", e);
+			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access in " + obj.getClass().getName(), e);
 		} catch (InvocationTargetException e) {
-			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
+			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception in " + obj.getClass().getName(), e);
 		}
 	}
 
@@ -111,15 +111,15 @@ public class JDBClusterUtil {
 			Method mSet = obj.getClass().getMethod(setMethName, paramType);
 			mSet.invoke(obj, args);
 		} catch (SecurityException e) {
-			throw new ConfigurationException("cant access property [" + propName + "] with the specified name", e);
+			throw new ConfigurationException("cant access property [" + propName + "] with the specified name in " + obj.getClass().getName(), e);
 		} catch (IllegalArgumentException e) {
-			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName, e);
+			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName +" in " + obj.getClass().getName(), e);
 		} catch (NoSuchMethodException e) {
-			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found", e);
+			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found in " + obj.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
-			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access", e);
+			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access in " + obj.getClass().getName(), e);
 		} catch (InvocationTargetException e) {
-			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception", e);
+			throw new ConfigurationException("the underlying constructor of the property [" + propName + "] throws an exception in " + obj.getClass().getName(), e);
 		}
 	}
 
