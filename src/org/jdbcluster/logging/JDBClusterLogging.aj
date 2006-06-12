@@ -33,23 +33,28 @@ public abstract aspect JDBClusterLogging extends LoggingAspect {
 		handler(org.jdbcluster.exception.JDBClusterException);
 	
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
-		getLogger().debug("Called " + joinPoint.getSignature( ));
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Called " + joinPoint.getSignature( ));
 	}
 	
 	protected void traceStaticBefore(JoinPoint joinPoint) {
-		getLogger().debug("Statically Called " + joinPoint.getSignature());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Statically Called " + joinPoint.getSignature());
 	}
 	
 	protected void traceAfter(JoinPoint joinPoint, Object object) {
-		getLogger().debug("Returned from " + joinPoint.getSignature());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Returned from " + joinPoint.getSignature());
 	}
 	
 	protected void traceStaticAfter(JoinPoint joinPoint) {
-		getLogger().debug("Returned from static call to " + joinPoint.getSignature());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Returned from static call to " + joinPoint.getSignature());
 	}
 	
 	protected void logException(JoinPoint joinPoint) {
-		getLogger().debug("" + joinPoint.getArgs()[0] + " exception thrown");
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("" + joinPoint.getArgs()[0] + " exception thrown");
 	}
 	
 	protected void logExceptionThrow(JoinPoint joinPoint) {
