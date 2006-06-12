@@ -170,8 +170,8 @@ public class HibernateSession implements SessionTemplate{
 		String attr = ccf.getStaticStatementAttribute();
 		if(attr==null || attr.length()==0)
 			return null;
-		
-		return (String) JDBClusterUtil.getProperty(attr, ccf);
+	
+		return (String) JDBClusterUtil.invokeGetPropertyMethod(attr, ccf);
 	}
 
 	/**
