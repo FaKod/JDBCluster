@@ -2,46 +2,103 @@ package org.jdbcluster.metapersistence.aspects;
 
 import java.util.HashMap;
 import java.lang.reflect.Method;
-import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.metapersistence.aspects.XmlCache;
+import org.aspectj.lang.reflect.MethodSignature;
 
+/**
+ * Aspect to cache the various XML XPATH operations
+ * the class used for this must implement interface XmlCachable
+ * the Caching is implemented flexible to allow implementing additional methods
+ * in the XPATH classes (Its not the fastest caching way)
+ * @author FaKod
+ */
 public abstract aspect XmlCache {
 	
-	private HashMap<Method, HashMap<ClusterType, HashMap<String, Object>>> 
-	XmlCachable.cache = new HashMap<Method, HashMap<ClusterType, HashMap<String, Object>>>(); 
+	/**
+	 * intertype declation on all XmlCachable interfaces
+	 */
+	private HashMap<Method, HashMap<String, Object>> XmlCachable.cache = new HashMap<Method, HashMap<String, Object>>(); 
 
+	public abstract pointcut xmlCache0(XmlCachable xmlc);
+	public abstract pointcut xmlCache1(XmlCachable xmlc, String str);
+	public abstract pointcut xmlCache2(XmlCachable xmlc, String str, String str2);
 	
-	protected void fillCache(XmlCachable xmlc, Method m, ClusterType ct, Object value, String... key) {
-		HashMap<ClusterType, HashMap<String, Object>> hm = xmlc.cache.get(m);
+	/**
+	 * around advice for no parameter methods
+	 */
+	Object around(XmlCachable xmlc) : xmlCache0(xmlc) {
+		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
+		if(isInCache(xmlc, ms.getMethod()))
+			return getCache(xmlc, ms.getMethod());
+		
+		Object o = proceed(xmlc);
+		fillCache(xmlc, ms.getMethod(), o);
+		return o;
+	}
+
+	/**
+	 * around advice for one String parameter methods
+	 */
+	Object around(XmlCachable xmlc, String str) : xmlCache1(xmlc, str) {
+		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
+		if(isInCache(xmlc, ms.getMethod(), str))
+			return getCache(xmlc, ms.getMethod(), str);
+		
+		Object o = proceed(xmlc, str);
+		fillCache(xmlc, ms.getMethod(), o, str);
+		return o;
+	}
+	
+	/**
+	 * around advice for two String parameter methods
+	 */
+	Object around(XmlCachable xmlc, String str, String str2) : xmlCache2(xmlc, str, str2) {
+		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
+		if(isInCache(xmlc, ms.getMethod(), str, str2))
+			return getCache(xmlc, ms.getMethod(), str, str2);
+		
+		Object o = proceed(xmlc, str, str2);
+		fillCache(xmlc, ms.getMethod(), o, str, str2);
+		return o;
+	}
+	
+	/**
+	 * filles cache with a concat. String as Key and a object as value
+	 */
+	protected void fillCache(XmlCachable xmlc, Method m, Object value, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
 		if(hm==null) {
-			hm = new HashMap<ClusterType, HashMap<String, Object>>();
+			hm = new HashMap<String, Object>();
 			xmlc.cache.put(m, hm);
 		}
-		HashMap<String, Object> hm2 = hm.get(ct);
-		if(hm2==null) {
-			hm2 = new HashMap<String, Object>();
-			hm.put(ct, hm2);
-		}
-		hm2.put(doKey(key), value);
+		hm.put(doKey(key), value);
 	}
 	
-	protected Object getCache(XmlCachable xmlc, Method m, ClusterType ct, String... key) {
-		HashMap<ClusterType, HashMap<String, Object>> hm = xmlc.cache.get(m);
-		HashMap<String, Object> hm2 = hm.get(ct);
-		return hm2.get(doKey(key)); 
+	/**
+	 * gets a Object from the cache
+	 * null is a valid value! Please check isInCache first
+	 */
+	protected Object getCache(XmlCachable xmlc, Method m, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
+		return hm.get(doKey(key)); 
 	}
 	
-	protected boolean isInCache(XmlCachable xmlc, Method m, ClusterType ct, String... key) {
-		HashMap<ClusterType, HashMap<String, Object>> hm = xmlc.cache.get(m);
-		if(hm==null)
+	/**
+	 * checks if a value is inserted in the cache
+	 */
+	protected boolean isInCache(XmlCachable xmlc, Method m, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
+		if(hm==null) 
 			return false;
-		HashMap<String, Object> hm2 = hm.get(ct);
-		if(hm2==null) 
-			return false;
-		return hm2.containsKey(doKey(key));
+		return hm.containsKey(doKey(key));
 	}
 	
-	protected String doKey(String... key) {
+	/**
+	 * cancats the key values
+	 */
+	private String doKey(String... key) {
+		if(key==null || key.length==0) 
+			return null;
 		StringBuffer res = new StringBuffer();
 		for(String str: key) {
 			res.append(str);
