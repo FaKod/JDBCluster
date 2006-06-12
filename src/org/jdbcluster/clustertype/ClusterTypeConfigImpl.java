@@ -36,8 +36,6 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	//path to config file
 	private String configuration;
 	private Document document;
-	private ArrayList<String> clusterIDs = null;
-	
 	
 	/**
 	 * Default constructor
@@ -137,16 +135,15 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	 * @return List<String>
 	 */
 	public List<String> getClusterIDs() {
-		if(clusterIDs == null) {
-			//xPath expression to get the classname
-			String xPath = "//jdbcluster/clustertype/cluster";
+		ArrayList<String> clusterIDs=null;
+		//xPath expression to get the classname
+		String xPath = "//jdbcluster/clustertype/cluster";
 
-			List<Node> nodes = document.selectNodes(xPath);
-			if(nodes != null) {
-				clusterIDs = new ArrayList<String>();
-				for(Node n : nodes){
-					clusterIDs.add(n.valueOf("@id"));
-				}
+		List<Node> nodes = document.selectNodes(xPath);
+		if(nodes != null) {
+			clusterIDs = new ArrayList<String>();
+			for(Node n : nodes){
+				clusterIDs.add(n.valueOf("@id"));
 			}
 		}
 		return clusterIDs;
