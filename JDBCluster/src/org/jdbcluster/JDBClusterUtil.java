@@ -175,9 +175,9 @@ public class JDBClusterUtil {
 		try {
 			f = c.getDeclaredField(propName);
 		} catch (SecurityException e) {
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name for " + c.getName(), e);
 		} catch (NoSuchFieldException e) {
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name  for "+ c.getName(), e);
 		}
 		return f;
 	}
