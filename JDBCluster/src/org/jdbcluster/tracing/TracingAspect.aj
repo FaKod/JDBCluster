@@ -58,24 +58,28 @@ public abstract aspect TracingAspect {
 	}
 
 	protected void traceBefore(JoinPoint joinPoint, Object caller) {
-		getLogger().debug(caller + " calling " + joinPoint.getSignature()
-				+ " @ " + joinPoint.getSourceLocation());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug(caller + " calling " + joinPoint.getSignature()
+					+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticBefore(JoinPoint joinPoint) {
-		getLogger().debug("Static code calling " + joinPoint.getSignature()
-				+ " @ " + joinPoint.getSourceLocation());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Static code calling " + joinPoint.getSignature()
+					+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceAfter(JoinPoint joinPoint, Object caller) {
-		getLogger().debug("Returning from call to" + joinPoint.getSignature()
-				+ " @ " + joinPoint.getSourceLocation());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Returning from call to" + joinPoint.getSignature()
+					+ " @ " + joinPoint.getSourceLocation());
 	}
 
 	protected void traceStaticAfter(JoinPoint joinPoint) {
-		getLogger().debug("Returning from static call to "
-				+ joinPoint.getSignature() + " @ "
-				+ joinPoint.getSourceLocation());
+		if(getLogger().isDebugEnabled())
+			getLogger().debug("Returning from static call to "
+					+ joinPoint.getSignature() + " @ "
+					+ joinPoint.getSourceLocation());
 	}
 
 	private static aspect FormatCallDepthAspect {
