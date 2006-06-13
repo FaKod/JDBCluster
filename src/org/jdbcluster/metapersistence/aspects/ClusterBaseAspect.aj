@@ -15,13 +15,9 @@
  */
 package org.jdbcluster.metapersistence.aspects;
 
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
-
 /**
- * @author Christopher Schmidt
- * Aspect for inter type declaration of the
- * Dao stuff
+ * currently unused
+ * @author FaKod
  */
 public abstract aspect ClusterBaseAspect {
-	public Class ClusterBase.daoClass;
 }
