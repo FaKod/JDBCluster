@@ -145,7 +145,7 @@ public class HibernateSession implements SessionTemplate{
 		if(whereStatement != null && whereStatement.length()>0) {
 			query = hibernateSession.createQuery(
 					" from " + ccf.getSelectStatementDAO() + " " + qStr + " " +
-					" where "+ ccf.getWhereStatement() + orderBy);
+					" where "+ whereStatement + orderBy);
 			queryTemplate.setQuery(query);
 			getAppendedBindings(ccf, queryTemplate);
 		}
