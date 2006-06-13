@@ -9,8 +9,6 @@
 	<import file="${tools.dir}/AntImport/spring.xml" />
 	<import file="${tools.dir}/AntImport/jdbc.xml" />
 
-	<property file="build.ajproperties" />
-
 	<!-- AspectJ Taskdefinition -->
 	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
 		<classpath>
@@ -25,6 +23,8 @@
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
 	<property name="test.reports" location="TestReports" />
+	
+	<property file="build.ajproperties" />
 
 	<target name="init" depends="clean">
 		<tstamp />
@@ -33,8 +33,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
-		<iajc source="1.5" target="1.5" srcdir="${src}" destdir="${build}">
-			<exclude name="${src.excludes}" />
+		<iajc source="1.5" target="1.5" srcdir="${src}" destdir="${build}" excludes="${src.excludes}" >
 			<classpath>
 				<path refid="hibernate3.1.class.path" />
 				<path refid="commons-lang-2.1.class.path" />
