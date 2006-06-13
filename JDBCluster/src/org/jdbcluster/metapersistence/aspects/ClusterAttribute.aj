@@ -67,7 +67,7 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 		try {
 			// get get-method
 			String setMethName = "set" + fName.substring(0, 1).toUpperCase() + fName.substring(1);
-			Method mSet = c.daoClass.getMethod(setMethName, fField.getType());
+			Method mSet = c.getDaoClass().getMethod(setMethName, fField.getType());
 			// read clusters field and invoke DAOs SetMethod
 			mSet.invoke(c.getDao(), fField.get(c));
 		} catch (Exception e) {

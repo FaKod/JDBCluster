@@ -84,7 +84,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 
 			// getting DAO Set
 			String daoGetSetMethName = "get" + fieldAnno.dAOClass().getSimpleName();
-			Method mDaoGetSet = c.daoClass.getMethod(daoGetSetMethName);
+			Method mDaoGetSet = c.getDaoClass().getMethod(daoGetSetMethName);
 			Set dAOSet = (Set) mDaoGetSet.invoke(c.getDao());
 
 			// copy DAO Set to Cluster Set
@@ -118,7 +118,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 				Dao dAO = (Dao) s.dAOClass.newInstance();
 				if(objectToAdd.getDao()==null) {
 					objectToAdd.setDao(dAO);
-					objectToAdd.daoClass = s.dAOClass;
+					objectToAdd.setDaoClass(s.dAOClass);
 				}
 				s.daoSet.add(dAO);
 		} catch (Exception e) {

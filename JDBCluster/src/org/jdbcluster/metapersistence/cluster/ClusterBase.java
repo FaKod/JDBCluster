@@ -21,6 +21,7 @@ import org.jdbcluster.dao.Dao;
 public abstract class ClusterBase implements ICluster{
 	
 	private Dao dao;
+	private Class daoClass;
 
 	private ClusterType clusterType;
 	
@@ -38,5 +39,13 @@ public abstract class ClusterBase implements ICluster{
 	
 	public ClusterType getClusterType() {
 		return clusterType;
+	}
+
+	public Class getDaoClass() {
+		return daoClass;
+	}
+
+	public void setDaoClass(Class daoClass) {
+		this.daoClass = daoClass;
 	}
 }
