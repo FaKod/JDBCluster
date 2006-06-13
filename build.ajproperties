@@ -1,3 +1,5 @@
 src.includes = src/,\
                example/,\
                test/
+src.excludes = src/org/jdbcluster/logging/,\
+               src/org/jdbcluster/tracing/
