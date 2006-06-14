@@ -22,14 +22,17 @@ import java.util.ArrayList;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.dao.Dao;
+import org.apache.log4j.Logger;
 
 /**
- * @author Christopher Schmidt
  * Aspect used after a native (fe. hibernate) query was
  * executed. We have to convert Dao objects
  * to Cluster objects
+ * @author Christopher Schmidt
  */
 public aspect ClusterQuery extends ClusterBaseAspect {
+	
+	private Logger logger = Logger.getLogger(ClusterQuery.class);
 	
 	pointcut resultList(HibernateQuery q):
 		execution(* HibernateQuery+.list(..)) && 
@@ -40,6 +43,9 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		ClusterType ct = q.getClusterType();
 		List dAOResultSet = (List) proceed(q);
 		List<Cluster> clusterResultSet = new ArrayList<Cluster>();
+		
+		if(logger.isDebugEnabled())
+			logger.debug("Query result converting " + dAOResultSet.size() + " elements to Cluster");
 		
 		for (Object dao : dAOResultSet) {
 			Cluster c = ClusterFactory.newInstance(ct, (Dao) dao);
