@@ -30,7 +30,7 @@ import org.jdbcluster.metapersistence.annotation.DaoLink;
  * 
  * @author FaKod
  */
-public class CCFilterFactory extends CCFilterBase{
+public abstract class CCFilterFactory extends CCFilterBase{
 	
 	/**
 	 * creates an Instance of a CCFilter object by passing the Clustertype as String and the select String

@@ -24,7 +24,7 @@ import org.jdbcluster.exception.ClusterTypeException;
  * ClusterType objects
  * @param <T>
  */
-public class ClusterTypeFactory extends ClusterTypeBase{
+public abstract class ClusterTypeFactory extends ClusterTypeBase{
 
 	/**
 	 * creates ClusterType objects depending on the ClusterType name which is passed as
