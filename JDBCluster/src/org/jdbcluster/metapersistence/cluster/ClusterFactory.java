@@ -35,7 +35,7 @@ import org.jdbcluster.privilege.PrivilegedCluster;
  * @author FaKod
  *
  */
-public class ClusterFactory {
+public abstract class ClusterFactory {
 	
 	private static ClusterInterceptor clusterInterceptor;
 
