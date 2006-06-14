@@ -35,7 +35,7 @@ import org.jdbcluster.template.TransactionTemplate;
  * @author thobi
  */
 public class HibernateSession implements SessionTemplate {
-	
+
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	protected Session hibernateSession;
@@ -81,14 +81,14 @@ public class HibernateSession implements SessionTemplate {
 	}
 
 	public QueryTemplate createQuery(String queryString) {
-		if(logger.isDebugEnabled())
+		if (logger.isDebugEnabled())
 			logger.debug("creating Query with queryString = " + queryString);
 		Query query = hibernateSession.createQuery(queryString);
 		return new HibernateQuery(query);
 	}
 
 	public QueryTemplate getNamedQuery(String queryName) {
-		if(logger.isDebugEnabled())
+		if (logger.isDebugEnabled())
 			logger.debug("creating NamedQuery with queryName = " + queryName);
 		Query query = hibernateSession.getNamedQuery(queryName);
 		return new HibernateQuery(query);
@@ -114,15 +114,13 @@ public class HibernateSession implements SessionTemplate {
 	 * creates a query with given parameters and saves the query object (to get
 	 * the result later on)
 	 * 
-	 * @param ccf
-	 *            the filter that contains the criteria for the select statement
+	 * @param ccf the filter that contains the criteria for the select statement
 	 * @return QueryTemplate the object holding the hibernate query
 	 */
 	public QueryTemplate createQuery(CCFilter ccf) {
-		if(logger.isDebugEnabled())
-			logger.debug("creating Query with CCFilter = " + ccf.getClass().getName() + 
-					" and ClusterType = " + ccf.getClusterType().getName());
-		
+		if (logger.isDebugEnabled())
+			logger.debug("creating Query with CCFilter = " + ccf.getClass().getName() + " and ClusterType = " + ccf.getClusterType().getName());
+
 		Query query;
 		HibernateQuery queryTemplate = new HibernateQuery();
 		queryTemplate.setClusterType(ccf.getClusterType());
@@ -137,20 +135,26 @@ public class HibernateSession implements SessionTemplate {
 				whereStatement = " ( " + whereStatement + " ) AND ";
 			whereStatement = whereStatement + " ( " + staticStatement + " ) ";
 		}
-		
-		if(logger.isDebugEnabled())
+
+		if (logger.isDebugEnabled())
 			logger.debug("using where statement [" + whereStatement + "]");
 
+		String alias = ccf.getAlias();
+		
 		/**
 		 * part after from before where
 		 */
-		String qStr = ccf.getAlias();
+		String qStr = new String(alias);
 		String ext = ccf.getExt();
 		if (ext != null && ext.length() > 0)
 			qStr = qStr + ", " + ext;
-		
-		if(logger.isDebugEnabled())
+
+		if (logger.isDebugEnabled())
 			logger.debug("using from ... statement [" + qStr + "]");
+
+		String select = "";
+		if (alias != null && alias.length() > 0)
+			select = "select " + alias + " ";
 
 		/**
 		 * order by clause
@@ -160,25 +164,30 @@ public class HibernateSession implements SessionTemplate {
 			orderBy = " order by " + orderBy;
 
 		if (whereStatement != null && whereStatement.length() > 0) {
-			query = hibernateSession.createQuery(" from "
-					+ ccf.getSelectStatementDAO() + " " + qStr + " "
-					+ " where " + whereStatement + orderBy);
+			String queryString = select + " from " + ccf.getSelectStatementDAO() + " " + qStr + " " + " where " + whereStatement + orderBy;
+
+			if (logger.isDebugEnabled())
+				logger.debug("using query string [" + queryString + "]");
+
+			query = hibernateSession.createQuery(queryString);
 			queryTemplate.setQuery(query);
 			getAppendedBindings(ccf, queryTemplate);
+			
 		} else {
-			query = hibernateSession.createQuery(" from "
-					+ ccf.getSelectStatementDAO() + orderBy);
+			String queryString = " from " + ccf.getSelectStatementDAO() + orderBy;
+			
+			if (logger.isDebugEnabled())
+				logger.debug("using query string [" + queryString + "]");
+			
+			query = hibernateSession.createQuery(queryString);
 			queryTemplate.setQuery(query);
 		}
-		
-		if(logger.isDebugEnabled())
-			logger.debug("using query string [" + query.getQueryString() + "]");
-		
 		return queryTemplate;
 	}
 
 	/**
 	 * value of static statement attribute
+	 * 
 	 * @param ccf Filter instance
 	 * @return property value
 	 */
@@ -186,35 +195,34 @@ public class HibernateSession implements SessionTemplate {
 		String attr = ccf.getStaticStatementAttribute();
 		if (attr == null || attr.length() == 0)
 			return null;
-		
-		if(logger.isDebugEnabled())
+
+		if (logger.isDebugEnabled())
 			logger.debug("using static statement in " + attr);
 
 		Object o = JDBClusterUtil.invokeGetPropertyMethod(attr, ccf);
 		if (o == null) {
-			if(logger.isDebugEnabled())
+			if (logger.isDebugEnabled())
 				logger.debug("static statement is null");
 			return null;
 		}
 
-		if(logger.isDebugEnabled())
+		if (logger.isDebugEnabled())
 			logger.debug("returning value [" + o.toString() + "]");
-		
+
 		return o.toString();
 	}
 
 	/**
 	 * recursive method that retrieves all appended filters and their bindings
 	 * 
-	 * @param ccf
-	 *            CCFilter that contains the binding
+	 * @param ccf CCFilter that contains the binding
 	 */
 	public void getAppendedBindings(CCFilter ccf, HibernateQuery queryTemplate) {
-			
+
 		// while there are appended filters
 		while (ccf != null) {
-			if(logger.isDebugEnabled())
-				logger.debug("binding filter class name [" + ccf.getClass().getName()+"]");
+			if (logger.isDebugEnabled())
+				logger.debug("binding filter class name [" + ccf.getClass().getName() + "]");
 
 			if (ccf.getBinding() != null) {
 				Iterator paramNameIter = ccf.getBinding().keySet().iterator();
@@ -225,14 +233,14 @@ public class HibernateSession implements SessionTemplate {
 					String paramName = (String) paramNameIter.next();
 					String propPath = (String) propParthIter.next();
 
-					if(logger.isDebugEnabled())
+					if (logger.isDebugEnabled())
 						logger.debug("binding property [" + propPath + "] to parameter [" + paramName);
-					
+
 					Object val = JDBClusterUtil.invokeGetPropertyMethod(propPath, ccf);
 
-					if(logger.isDebugEnabled())
+					if (logger.isDebugEnabled())
 						logger.debug("using value = " + val.toString());
-					
+
 					// set the binding to the query
 					queryTemplate.getQuery().setParameter(paramName, val);
 				}
@@ -253,19 +261,17 @@ public class HibernateSession implements SessionTemplate {
 	}
 
 	/**
-	 * Re-read the state of the given instance from the underlying database. It
-	 * is inadvisable to use this to implement long-running sessions that span
-	 * many business tasks. This method is, however, useful in certain special
+	 * Re-read the state of the given instance from the underlying database. It is
+	 * inadvisable to use this to implement long-running sessions that span many
+	 * business tasks. This method is, however, useful in certain special
 	 * circumstances. For example
 	 * <ul>
-	 * <li>where a database trigger alters the object state upon insert or
-	 * update
+	 * <li>where a database trigger alters the object state upon insert or update
 	 * <li>after executing direct SQL (eg. a mass update) in the same session
 	 * <li>after inserting a <tt>Blob</tt> or <tt>Clob</tt>
 	 * </ul>
 	 * 
-	 * @param object
-	 *            a persistent or detached cluster instance
+	 * @param object a persistent or detached cluster instance
 	 */
 	public void refresh(Object object) {
 		hibernateSession.refresh(object);
