@@ -28,7 +28,7 @@ import org.jdbcluster.exception.ConfigurationException;
  * @author FaKod
  * @author Thomas Bitzer
  */
-public class JDBClusterUtil {
+public abstract class JDBClusterUtil {
 
 	/**
 	 * creates object from class named className
