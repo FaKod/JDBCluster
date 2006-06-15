@@ -22,10 +22,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.filter.CCFilter;
+import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
 import org.jdbcluster.template.TransactionTemplate;
+import org.springframework.util.Assert;
 
 /**
  * implements SessionTemplate to use HIBERNATE
@@ -51,8 +53,9 @@ public class HibernateSession implements SessionTemplate {
 		return tx;
 	}
 
-	public void save(Object o) {
-		hibernateSession.save(o);
+	public void save(ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.save(cluster.getDao());
 	}
 
 	public void close() {
@@ -69,7 +72,6 @@ public class HibernateSession implements SessionTemplate {
 
 	public void setSessionFactory(SessionFactoryTemplate factory) {
 		this.factory = (HibernateSessionFactory) factory;
-
 	}
 
 	public SessionFactoryTemplate getSessionFactory() {
@@ -94,20 +96,24 @@ public class HibernateSession implements SessionTemplate {
 		return new HibernateQuery(query);
 	}
 
-	public void delete(Object o) {
-		hibernateSession.delete(o);
+	public void delete(ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.delete(cluster.getDao());
 	}
 
-	public void saveOrUpdate(Object o) {
-		hibernateSession.saveOrUpdate(o);
+	public void saveOrUpdate(ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.saveOrUpdate(cluster.getDao());
 	}
 
-	public void update(Object o) {
-		hibernateSession.update(o);
+	public void update(ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.update(cluster.getDao());
 	}
 
-	public void save(String id, Object o) {
-		hibernateSession.save(id, o);
+	public void save(String id, ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.save(id, cluster.getDao());
 	}
 
 	/**
@@ -118,6 +124,9 @@ public class HibernateSession implements SessionTemplate {
 	 * @return QueryTemplate the object holding the hibernate query
 	 */
 	public QueryTemplate createQuery(CCFilter ccf) {
+		
+		Assert.notNull(ccf, "CCFilter may not be null");
+		
 		if (logger.isDebugEnabled())
 			logger.debug("creating Query with CCFilter = " + ccf.getClass().getName() + " and ClusterType = " + ccf.getClusterType().getName());
 
@@ -192,6 +201,9 @@ public class HibernateSession implements SessionTemplate {
 	 * @return property value
 	 */
 	public String getStaticStatement(CCFilter ccf) {
+		
+		Assert.notNull(ccf, "CCFilter may not be null");
+		
 		String attr = ccf.getStaticStatementAttribute();
 		if (attr == null || attr.length() == 0)
 			return null;
@@ -273,8 +285,9 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param object a persistent or detached cluster instance
 	 */
-	public void refresh(Object object) {
-		hibernateSession.refresh(object);
+	public void refresh(ClusterBase cluster) {
+		Assert.notNull(cluster, "Cluster may not be null");
+		hibernateSession.refresh(cluster.getDao());
 	}
 
 }

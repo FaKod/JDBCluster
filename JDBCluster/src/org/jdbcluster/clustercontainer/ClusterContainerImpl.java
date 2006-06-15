@@ -78,12 +78,12 @@ public class ClusterContainerImpl implements ClusterContainer, Notification {
 
 	//noch unklar
 	public void dBUpdate(Identifier id) {
-		session.update(id);
+//		session.update(id);
 	}
 
 	//noch unklar
 	public void dBDelete(Identifier id) {
-		session.delete(id);
+//		session.delete(id);
 	}
 
 	public void dBInsert(Cluster cluster) {
