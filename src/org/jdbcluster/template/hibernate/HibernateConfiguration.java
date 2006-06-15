@@ -69,6 +69,7 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 	 * returns the native configuration object
 	 * @return T
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T getNativeConfiguration() {
 		return (T) cfg;
 	}
