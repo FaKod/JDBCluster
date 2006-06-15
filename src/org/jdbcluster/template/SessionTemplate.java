@@ -16,6 +16,7 @@
 package org.jdbcluster.template;
 
 import org.jdbcluster.filter.CCFilter;
+import org.jdbcluster.metapersistence.cluster.ClusterBase;
 
 /**
  * 
@@ -35,12 +36,12 @@ public interface SessionTemplate {
 	 */
 	public QueryTemplate createQuery(CCFilter ccf);
 	public QueryTemplate getNamedQuery(String queryName);
-	public void delete(Object o);
-	public void saveOrUpdate(Object o);
-	public void save(Object o);
+	public void delete(ClusterBase cluster);
+	public void saveOrUpdate(ClusterBase cluster);
+	public void save(ClusterBase cluster);
 	public void close();
-	public void update(Object o);
-	public void save(String id, Object o);
-	public void refresh(Object object);
+	public void update(ClusterBase cluster);
+	public void save(String id, ClusterBase cluster);
+	public void refresh(ClusterBase cluster);
 	public <T> T getNativeSession();
 }
