@@ -110,10 +110,10 @@ public class TestFilter extends TestCase {
 		System.out.println("Session" + session);
 		TransactionTemplate tx = null;
 		tx = session.beginTransaction();
-		session.save(bmw);
-		session.save(fahrrad);
-		session.save(audi);
-		session.save(opel);
+//		session.save(bmw);
+//		session.save(fahrrad);
+//		session.save(audi);
+//		session.save(opel);
 		tx.commit();
 		
 		
