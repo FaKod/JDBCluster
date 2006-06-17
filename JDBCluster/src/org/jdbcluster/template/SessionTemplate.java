@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.template;
 
+import java.io.Serializable;
+
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 
@@ -42,6 +44,8 @@ public interface SessionTemplate {
 	public void close();
 	public void update(ClusterBase cluster);
 	public void save(String id, ClusterBase cluster);
+	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id);
+	public ClusterBase load(ClusterBase cluster, Serializable id);
 	public void refresh(ClusterBase cluster);
 	public <T> T getNativeSession();
 }
