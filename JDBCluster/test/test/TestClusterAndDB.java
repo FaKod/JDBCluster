@@ -24,6 +24,8 @@ public class TestClusterAndDB extends TestCase {
 	
 	SessionTemplate session;
 	
+	SessionFactoryTemplate sf;
+	
 	@Override
 	protected void setUp() throws Exception {
 		// configuring logging
@@ -36,8 +38,7 @@ public class TestClusterAndDB extends TestCase {
 		//get a Configuration instance
 		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
 		//get a factory for sessions
-		SessionFactoryTemplate sf = cf.buildSessionFactory();
-		//and open one
+		sf = cf.buildSessionFactory();
 		session = sf.openSession();
 		super.setUp();
 	}
@@ -49,7 +50,6 @@ public class TestClusterAndDB extends TestCase {
 	}
 
 	public void testCluster() {	
-		
 		//get a transaction
 		TransactionTemplate tx = session.beginTransaction();
 		
@@ -76,5 +76,23 @@ public class TestClusterAndDB extends TestCase {
 		List<CCar> list = nameFilterQuery.list();
 		CCar myQueriedAuto = list.get(0);
 		assertEquals("BMW", myQueriedAuto.getName());
+	}
+	
+	public void testClusterLoad() {
+		TransactionTemplate tx = session.beginTransaction();
+		
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		
+		//create a Cluster and persist it
+		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		bmw.setName("BMWforTest");
+		session.save(bmw);
+		tx.commit();
+		
+		SessionTemplate session2 = sf.openSession();
+		
+		CCar car2 = (CCar) session2.load(CCar.class, bmw.getId());
+		assertEquals("BMWforTest", car2.getName());
+		session2.close();
 	}
 }
