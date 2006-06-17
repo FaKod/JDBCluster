@@ -91,29 +91,44 @@ public abstract class ClusterFactory {
 	 * @param dao dao object to be presetted
 	 * @return Cluster
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
-		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());
 		if (className == null) {
 			throw new ConfigurationException("unknown ClusterType [" + ct.getName() + "]");
 		}
 
 		Class<?> clusterClass;
+		try {
+			clusterClass = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
+		}
+		
+		return newInstance(clusterClass, dao);
+	}
+	
+	/**
+	 * creates an instance of a Cluster
+	 * Cluster interceptor is <b>not called</b> if dao!=null
+	 * Cluster privileges are <b>not checked</b> if dao!=null 
+	 * @param clusterClass class of cluster
+	 * @param dao dao object to be presetted
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao) {
+		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		Cluster cluster = null;
 		try {
 			//create a new instance with given classname
-			clusterClass = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
 			cluster = (Cluster) clusterClass.newInstance();
 			if(dao!=null)
 				cluster.setDao(dao);
 		} catch (InstantiationException e) {
-			throw new ClusterTypeException("specified class [" + className + "] object cannot be instantiated because it is an interface or is an abstract class", e);
+			throw new ClusterTypeException("specified class [" + clusterClass.getName() + "] object cannot be instantiated because it is an interface or is an abstract class", e);
 		} catch (IllegalAccessException e) {
-			throw new ClusterTypeException("the currently executed ctor for class [" + className + "] does not have access", e);
-		} catch (ClassNotFoundException e) {
-			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
-		}
+			throw new ClusterTypeException("the currently executed ctor for class [" + clusterClass.getName() + "] does not have access", e);
+		} 
 		
 		if(dao==null) {
 			/*
@@ -127,7 +142,7 @@ public abstract class ClusterFactory {
 			 */
 			if(cluster instanceof PrivilegedCluster) {
 				if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
-					throw new PrivilegeException("No sufficient privileges for new Cluster with ClusterType [" + ct.getName() + "]");
+					throw new PrivilegeException("No sufficient privileges for new Cluster class [" + clusterClass.getName() + "]");
 			}
 		}
 		return (T) cluster;
