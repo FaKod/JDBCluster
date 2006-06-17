@@ -10,6 +10,8 @@ import dao.SparePart;
 @DaoLink(dAOClass = Car.class)
 public class CCar extends Cluster {
 
+	long id;
+	
 	//DAO Field name
 	private String name;
 
@@ -22,6 +24,10 @@ public class CCar extends Cluster {
 	MyRemoveSpecialTreatmentCSet<COwner> cbesitzer;
 
 	
+	public long getId() {
+		return id;
+	}
+
 	public String getName() {
 		return name;
 	}
