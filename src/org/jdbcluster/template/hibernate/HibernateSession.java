@@ -15,6 +15,7 @@
  */
 package org.jdbcluster.template.hibernate;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -23,6 +24,7 @@ import org.hibernate.Session;
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
@@ -288,6 +290,35 @@ public class HibernateSession implements SessionTemplate {
 	public void refresh(ClusterBase cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.refresh(cluster.getDao());
+	}
+
+	/**
+	 * creates a new Cluster Object and loads it from DB
+	 * @param clusterClass class of cluster
+	 * @param id primary id of cluster
+	 */
+	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id) {
+		
+		Assert.notNull(clusterClass, "clusterClass may not be null");
+		Assert.notNull(id, "id may not be null");
+		
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
+		hibernateSession.load(cb.getDao(), id);
+		return cb;
+	}
+
+	/**
+	 * creates a new Cluster Object and loads it from DB
+	 * @param cluster existing cluster object
+	 * @param id primary id of cluster
+	 */
+	public ClusterBase load(ClusterBase cluster, Serializable id) {
+		
+		Assert.notNull(cluster, "cluster may not be null");
+		Assert.notNull(id, "id may not be null");
+		
+		hibernateSession.load(cluster.getDao(), id);
+		return cluster;
 	}
 
 }
