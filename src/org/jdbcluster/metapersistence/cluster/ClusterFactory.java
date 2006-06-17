@@ -26,6 +26,7 @@ import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegedCluster;
+import org.springframework.util.Assert;
 
 /**
  * class ClusterFactory is responsible for creating instances
@@ -92,19 +93,7 @@ public abstract class ClusterFactory {
 	 * @return Cluster
 	 */
 	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
-		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());
-		if (className == null) {
-			throw new ConfigurationException("unknown ClusterType [" + ct.getName() + "]");
-		}
-
-		Class<?> clusterClass;
-		try {
-			clusterClass = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-		} catch (ClassNotFoundException e) {
-			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
-		}
-		
-		return newInstance(clusterClass, dao);
+		return newInstance(getClusterClass(ct), dao);
 	}
 	
 	/**
@@ -117,6 +106,9 @@ public abstract class ClusterFactory {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao) {
+		
+		Assert.notNull(clusterClass, "Class<?> may not be null");
+		
 		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		Cluster cluster = null;
 		try {
@@ -146,6 +138,44 @@ public abstract class ClusterFactory {
 			}
 		}
 		return (T) cluster;
+	}
+	
+	/**
+	 * get the cluster class object
+	 * @param ct specifies the ClusterType class that should be returned
+	 * @return Class<? extends ClusterBase> of ClusterType
+	 */
+	@SuppressWarnings("unchecked")
+	public static Class<? extends ClusterBase> getClusterClass(ClusterType ct) {
+		
+		Assert.notNull(ct, "ClusterType may not be null");
+		
+		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(ct.getName());
+		if (className == null) {
+			throw new ConfigurationException("unknown ClusterType [" + ct.getName() + "]");
+		}
+
+		Class<? extends ClusterBase> clusterClass;
+		try {
+			clusterClass = (Class<? extends ClusterBase>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
+		}
+		
+		return clusterClass;
+	}
+	
+	/**
+	 *  get the cluster class object
+	 * @param clusterType specifies the ClusterType class that should be returned
+	 * @return Class<? extends ClusterBase> of ClusterType
+	 */
+	public static Class<? extends ClusterBase> getClusterClass(String clusterType) {
+		
+		Assert.notNull(clusterType, "String clusterType may not be null");
+		
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
+		return getClusterClass(ct);
 	}
 	
 }
