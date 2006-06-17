@@ -15,9 +15,10 @@
  */
 package org.jdbcluster.clustercontainer.identifier;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public interface Identifier {
+public interface Identifier extends Serializable {
 
 	public abstract void setFirstIdAttribute(Long value);
 	public abstract Vector getIdVector();
