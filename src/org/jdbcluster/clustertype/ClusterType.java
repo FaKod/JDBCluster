@@ -16,11 +16,11 @@
 package org.jdbcluster.clustertype;
 
 /**
- * 
- * @author Philipp Noggler
- * @author Christopher Schmidt
  * interface ClusterType defines methods to get a specific 
  * ClusterType and it's name.
+ * @author Philipp Noggler
+ * @author Christopher Schmidt
+ * 
  */
 
 public interface ClusterType {
