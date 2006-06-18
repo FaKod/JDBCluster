@@ -231,7 +231,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param ccf CCFilter that contains the binding
 	 */
-	public void getAppendedBindings(CCFilter ccf, HibernateQuery queryTemplate) {
+	private void getAppendedBindings(CCFilter ccf, HibernateQuery queryTemplate) {
 
 		// while there are appended filters
 		while (ccf != null) {
