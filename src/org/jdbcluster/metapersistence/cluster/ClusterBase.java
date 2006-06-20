@@ -17,6 +17,7 @@ package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.dao.Dao;
+import org.springframework.util.Assert;
 
 public abstract class ClusterBase implements ICluster{
 	
@@ -30,10 +31,16 @@ public abstract class ClusterBase implements ICluster{
 	}
 
 	public void setDao(Dao dao) {
+		
+		Assert.notNull(dao, "dao may not be null");
+		
 		this.dao = dao;
 	}
 
 	public void setClusterType(ClusterType ct) {
+		
+		Assert.notNull(ct, "ClusterType may not be null");
+		
 		clusterType = ct;
 	}
 	
@@ -46,6 +53,9 @@ public abstract class ClusterBase implements ICluster{
 	}
 
 	public void setDaoClass(Class daoClass) {
+		
+		Assert.notNull(daoClass, "daoClass may not be null");
+		
 		this.daoClass = daoClass;
 	}
 }
