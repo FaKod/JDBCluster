@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.JDBClusterUtil;
+import org.jdbcluster.dao.Dao;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
@@ -126,9 +127,9 @@ public class HibernateSession implements SessionTemplate {
 	 * @return QueryTemplate the object holding the hibernate query
 	 */
 	public QueryTemplate createQuery(CCFilter ccf) {
-		
+
 		Assert.notNull(ccf, "CCFilter may not be null");
-		
+
 		if (logger.isDebugEnabled())
 			logger.debug("creating Query with CCFilter = " + ccf.getClass().getName() + " and ClusterType = " + ccf.getClusterType().getName());
 
@@ -151,7 +152,7 @@ public class HibernateSession implements SessionTemplate {
 			logger.debug("using where statement [" + whereStatement + "]");
 
 		String alias = ccf.getAlias();
-		
+
 		/**
 		 * part after from before where
 		 */
@@ -183,13 +184,13 @@ public class HibernateSession implements SessionTemplate {
 			query = hibernateSession.createQuery(queryString);
 			queryTemplate.setQuery(query);
 			getAppendedBindings(ccf, queryTemplate);
-			
+
 		} else {
 			String queryString = " from " + ccf.getSelectStatementDAO() + orderBy;
-			
+
 			if (logger.isDebugEnabled())
 				logger.debug("using query string [" + queryString + "]");
-			
+
 			query = hibernateSession.createQuery(queryString);
 			queryTemplate.setQuery(query);
 		}
@@ -203,9 +204,9 @@ public class HibernateSession implements SessionTemplate {
 	 * @return property value
 	 */
 	public String getStaticStatement(CCFilter ccf) {
-		
+
 		Assert.notNull(ccf, "CCFilter may not be null");
-		
+
 		String attr = ccf.getStaticStatementAttribute();
 		if (attr == null || attr.length() == 0)
 			return null;
@@ -275,12 +276,13 @@ public class HibernateSession implements SessionTemplate {
 	}
 
 	/**
-	 * Re-read the state of the given instance from the underlying database. It is
-	 * inadvisable to use this to implement long-running sessions that span many
-	 * business tasks. This method is, however, useful in certain special
+	 * Re-read the state of the given instance from the underlying database. It
+	 * is inadvisable to use this to implement long-running sessions that span
+	 * many business tasks. This method is, however, useful in certain special
 	 * circumstances. For example
 	 * <ul>
-	 * <li>where a database trigger alters the object state upon insert or update
+	 * <li>where a database trigger alters the object state upon insert or
+	 * update
 	 * <li>after executing direct SQL (eg. a mass update) in the same session
 	 * <li>after inserting a <tt>Blob</tt> or <tt>Clob</tt>
 	 * </ul>
@@ -293,31 +295,72 @@ public class HibernateSession implements SessionTemplate {
 	}
 
 	/**
-	 * creates a new Cluster Object and loads it from DB
+	 * creates a new Cluster Object and read the persistent state associated
+	 * with the given identifier into the given instance.
+	 * 
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
 	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id) {
-		
+
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
-		
+
 		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
 		hibernateSession.load(cb.getDao(), id);
 		return cb;
 	}
 
 	/**
-	 * creates a new Cluster Object and loads it from DB
+	 * Read the persistent state associated with the given identifier into the
+	 * given instance.
+	 * 
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
 	public ClusterBase load(ClusterBase cluster, Serializable id) {
-		
+
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
-		
+
 		hibernateSession.load(cluster.getDao(), id);
+		return cluster;
+	}
+
+	/**
+	 * creates a new Cluster Object and return the persistent instance of the
+	 * given entity class with the given identifier, or null if there is no such
+	 * persistent instance. (If the instance, or a proxy for the instance, is
+	 * already associated with the session, return that instance or proxy.)
+	 * 
+	 * @param clusterClass class of cluster
+	 * @param id primary id of cluster
+	 */
+	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id) {
+
+		Assert.notNull(clusterClass, "clusterClass may not be null");
+		Assert.notNull(id, "id may not be null");
+
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
+		cb.setDao((Dao) hibernateSession.get(cb.getDao().getClass(), id));
+		return cb;
+	}
+
+	/**
+	 * Return the persistent instance of the given entity class with the given
+	 * identifier, or null if there is no such persistent instance. (If the
+	 * instance, or a proxy for the instance, is already associated with the
+	 * session, return that instance or proxy.)
+	 * 
+	 * @param cluster existing cluster object
+	 * @param id primary id of cluster
+	 */
+	public ClusterBase get(ClusterBase cluster, Serializable id) {
+
+		Assert.notNull(cluster, "cluster may not be null");
+		Assert.notNull(id, "id may not be null");
+
+		cluster.setDao((Dao) hibernateSession.get(cluster.getDao().getClass(), id));
 		return cluster;
 	}
 
