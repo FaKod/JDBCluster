@@ -46,6 +46,8 @@ public interface SessionTemplate {
 	public void save(String id, ClusterBase cluster);
 	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id);
 	public ClusterBase load(ClusterBase cluster, Serializable id);
+	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id);
+	public ClusterBase get(ClusterBase cluster, Serializable id);
 	public void refresh(ClusterBase cluster);
 	public <T> T getNativeSession();
 }
