@@ -296,7 +296,8 @@ public class HibernateSession implements SessionTemplate {
 
 	/**
 	 * creates a new Cluster Object and read the persistent state associated
-	 * with the given identifier into the given instance.
+	 * with the given identifier into the given instance. Assuming that the
+	 * instance exists. non-existence would be an actual error.
 	 * 
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
@@ -313,7 +314,8 @@ public class HibernateSession implements SessionTemplate {
 
 	/**
 	 * Read the persistent state associated with the given identifier into the
-	 * given instance.
+	 * given instance. Assuming that the instance exists. non-existence would be
+	 * an actual error.
 	 * 
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
@@ -362,6 +364,25 @@ public class HibernateSession implements SessionTemplate {
 
 		cluster.setDao((Dao) hibernateSession.get(cluster.getDao().getClass(), id));
 		return cluster;
+	}
+
+	/**
+	 * Copy the state of the given object onto the persistent object with the
+	 * same identifier. If there is no persistent instance currently associated
+	 * with the session, it will be loaded. This operation cascades to
+	 * associated instances if the association is mapped with
+	 * <tt>cascade="merge"</tt>.<br>
+	 * <br>
+	 * The semantics of this method are defined by JSR-220.
+	 * 
+	 * @param cluster cluster object
+	 */
+	public void merge(ClusterBase cluster) {
+
+		Assert.notNull(cluster, "cluster may not be null");
+
+		Dao dao = cluster.getDao();
+		cluster.setDao((Dao) hibernateSession.merge(dao));
 	}
 
 }

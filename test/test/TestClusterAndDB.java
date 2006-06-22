@@ -110,4 +110,25 @@ public class TestClusterAndDB extends TestCase {
 		assertEquals("BMWforTest", car4.getName());
 		session4.close();
 	}
+	
+	public void testSession() {
+		TransactionTemplate tx = session.beginTransaction();
+		
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		
+		//create a Cluster and persist it
+		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		bmw.setName("BMWforTest");
+		session.save(bmw);
+		tx.commit();
+		
+		// test in a second session
+		SessionTemplate session1 = sf.openSession();
+		SessionTemplate session2 = sf.openSession();
+		CCar car1 = (CCar) session1.get(CCar.class, bmw.getId());
+		CCar car2 = (CCar) session2.get(CCar.class, bmw.getId());
+		car1.setName("changed");
+		session1.merge(car2);
+		session1.close();
+	}
 }
