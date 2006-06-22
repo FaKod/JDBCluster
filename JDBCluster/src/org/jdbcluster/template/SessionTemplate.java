@@ -40,6 +40,7 @@ public interface SessionTemplate {
 	public QueryTemplate getNamedQuery(String queryName);
 	public void delete(ClusterBase cluster);
 	public void saveOrUpdate(ClusterBase cluster);
+	public void merge(ClusterBase cluster);
 	public void save(ClusterBase cluster);
 	public void close();
 	public void update(ClusterBase cluster);
