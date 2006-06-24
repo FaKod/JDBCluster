@@ -2,16 +2,14 @@ package mycluster;
 
 import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.metapersistence.cluster.CSet;
-import org.jdbcluster.metapersistence.cluster.Cluster;
+
 import dao.Car;
 import dao.Owner;
 import dao.SparePart;
 
 @DaoLink(dAOClass = Car.class)
-public class CCar extends Cluster {
+public class CCar extends CVehicle {
 
-	long id;
-	
 	//DAO Field name
 	private String name;
 
@@ -24,9 +22,7 @@ public class CCar extends Cluster {
 	MyRemoveSpecialTreatmentCSet<COwner> cbesitzer;
 
 	
-	public long getId() {
-		return id;
-	}
+	
 
 	public String getName() {
 		return name;
@@ -48,6 +44,7 @@ public class CCar extends Cluster {
 		return cbesitzer;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setCbesitzer(MyRemoveSpecialTreatmentCSet<COwner> cbesitzer) {
 		this.cbesitzer = (MyRemoveSpecialTreatmentCSet)cbesitzer;
 	}

@@ -9,14 +9,13 @@ import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.annotation.PrivilegesCluster;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
-import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.privilege.PrivilegedCluster;
 
 import dao.Bicycle;
 
 @PrivilegesCluster(required={"BIKE"},property={"colorType", "nested.nestedDomain"})
 @DaoLink(dAOClass = Bicycle.class)
-public class CBicycle extends Cluster implements PrivilegedCluster {
+public class CBicycle extends CVehicle implements PrivilegedCluster {
 	
 	@PrivilegesDomain
 	@Domain(domainId="ColorTypeDomain")
