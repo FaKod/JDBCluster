@@ -124,11 +124,20 @@ public class TestClusterAndDB extends TestCase {
 		
 		// test in a second session
 		SessionTemplate session1 = sf.openSession();
+		session1.beginTransaction();
+		
 		SessionTemplate session2 = sf.openSession();
+		TransactionTemplate tx2 = session2.beginTransaction();
 		CCar car1 = (CCar) session1.get(CCar.class, bmw.getId());
 		CCar car2 = (CCar) session2.get(CCar.class, bmw.getId());
-		car1.setName("changed");
-		session1.merge(car2);
+		car2.setName("changed");
+		
+		//session2.merge(car2);
+		session2.saveOrUpdate(car2);
+		tx2.commit();
+		
+		session2.close();
+		
 		session1.close();
 	}
 }
