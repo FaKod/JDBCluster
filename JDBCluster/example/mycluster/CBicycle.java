@@ -34,17 +34,7 @@ public class CBicycle extends CVehicle implements PrivilegedCluster {
 	@NoDAO
 	double noDAOElement;
 	
-	@NoDAO
-	NestedPropertyForPrivTest nested;
-
-	@PrivilegesMethod(required={"GETNESTED"})
-	public NestedPropertyForPrivTest getNested() {
-		return nested;
-	}
-
-	public void setNested(NestedPropertyForPrivTest nested) {
-		this.nested = nested;
-	}
+	
 
 	public String getColorShading() {
 		return colorShading;
