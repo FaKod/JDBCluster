@@ -26,12 +26,12 @@ public aspect ClusterUsage {
 		!withincode(* ClusterFactory.*(..));
 	
 	pointcut clusterWithoutDAOAnno(): 
-		execution(* *(..)) && 
+		execution(* *.*(..)) && 
 		within(!@DaoLink Cluster+);
 
 	declare error: newCluster(): 
 		"please use static factory method ClusterFactory.newInstance(ClusterType)";
 	
-	declare error: clusterWithoutDAOAnno(): 
-		"please use @DaoLink Annotation for Cluster Objects";
+	declare warning: clusterWithoutDAOAnno(): 
+		"please use @DaoLink Annotation for Cluster Objects (for abstract classes it may be allowed)";
 }
