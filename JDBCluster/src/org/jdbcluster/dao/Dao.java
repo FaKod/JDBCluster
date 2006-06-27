@@ -17,11 +17,10 @@ package org.jdbcluster.dao;
 
 /**
  * Basic Dao class
- * @author Christopher Schmidt
+ * @author FaKod
  */
-public class Dao {
+public abstract class Dao {
 
-	protected long id;
 	private static DaoConfig daoConfig;
 
 	public static DaoConfig getDaoConfig() {
@@ -30,14 +29,6 @@ public class Dao {
 
 	public static void setDaoConfig(DaoConfig daoConfig) {
 		Dao.daoConfig = daoConfig;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 	
 }
