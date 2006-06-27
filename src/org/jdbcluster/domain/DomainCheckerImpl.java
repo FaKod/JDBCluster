@@ -81,7 +81,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	public String getDomainId(ClusterBase cluster, String propPath) {
 		
 		Assert.notNull(cluster, "ClusterBase may not be null");
-		Assert.notNull(propPath, "propPath may not be null");
+		Assert.hasLength(propPath, "propPath may not be null");
 		
 		if (logger.isDebugEnabled())
 			logger.debug("getDomainId for cluster [" + cluster.getClass().getName() + "] and Property Path [" + propPath + "]");
@@ -113,7 +113,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	public boolean check(ClusterBase cluster, String propSlavePath) {
 
 		Assert.notNull(cluster, "ClusterBase may not be null");
-		Assert.notNull(propSlavePath, "propSlavePath may not be null");
+		Assert.hasLength(propSlavePath, "propSlavePath may not be null");
 
 		Field fSlave = JDBClusterUtil.getField(propSlavePath, cluster);
 		String slaveValue = (String) JDBClusterUtil.invokeGetPropertyMethod(propSlavePath, cluster);
@@ -262,7 +262,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	public ValidDomainEntries<String> getValidDomainEntries(ClusterBase cluster, String propPath) {
 
 		Assert.notNull(cluster, "ClusterBase may not be null");
-		Assert.notNull(propPath, "propPath may not be null");
+		Assert.hasLength(propPath, "propPath may not be null");
 
 		if (logger.isDebugEnabled())
 			logger.debug("getValidDomainEntries for Cluster [" + cluster.getClass().getName() + "]" + " and property path [" + propPath + "]");
