@@ -63,17 +63,17 @@ public abstract class JDBClusterUtil {
 			throw new ConfigurationException("the currently executed ctor for class [" + className + "] does not have access", e);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant access class [" + className + "] with the specified name", e);
-		} catch (NoSuchMethodException e) {
-			throw new ConfigurationException("method of configured class [" + className + "]  could not be found", e);
 		} catch (IllegalArgumentException e) {
 			throw new ConfigurationException("number of actual and formal parameters differ for the class [" + className, e);
 		} catch (InvocationTargetException e) {
 			throw new ConfigurationException("the underlying constructor of the class [" + className + "] throws an exception", e);
+		} catch (NoSuchMethodException e) {
+			throw new ConfigurationException("method of configured class [" + className + "]  could not be found", e);
 		}
 	}
 
 	/**
-	 * calles a getter method on instance obj
+	 * calles a getter method on instance obj. Iterates over all superclasses
 	 * 
 	 * @param propName name of the property
 	 * @param obj instance of property
@@ -82,14 +82,12 @@ public abstract class JDBClusterUtil {
 	static public Object invokeGetPropertyMethod(String propName, Object obj) {
 		String getMethName = "get" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
 		try {
-			Method mGet = obj.getClass().getMethod(getMethName);
+			Method mGet = getMethod(obj, getMethName, (Class[]) null);
 			return mGet.invoke(obj);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant access property [" + propName + "] with the specified name in " + obj.getClass().getName(), e);
 		} catch (IllegalArgumentException e) {
 			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName + " in " + obj.getClass().getName(), e);
-		} catch (NoSuchMethodException e) {
-			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found in " + obj.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
 			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access in " + obj.getClass().getName(), e);
 		} catch (InvocationTargetException e) {
@@ -98,7 +96,8 @@ public abstract class JDBClusterUtil {
 	}
 
 	/**
-	 * calles a setter on instance obj
+	 * calles a setter on instance obj. Iterates over all superclasses
+	 * 
 	 * @param propName property name
 	 * @param propValue value to set
 	 * @param obj instance with the setter
@@ -108,14 +107,12 @@ public abstract class JDBClusterUtil {
 		Object[] args = { propValue };
 		Class[] paramType = { propValue.getClass() };
 		try {
-			Method mSet = obj.getClass().getMethod(setMethName, paramType);
+			Method mSet = getMethod(obj, setMethName, paramType);
 			mSet.invoke(obj, args);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant access property [" + propName + "] with the specified name in " + obj.getClass().getName(), e);
 		} catch (IllegalArgumentException e) {
-			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName +" in " + obj.getClass().getName(), e);
-		} catch (NoSuchMethodException e) {
-			throw new ConfigurationException("method of configured property [" + propName + "]  could not be found in " + obj.getClass().getName(), e);
+			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName + " in " + obj.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
 			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access in " + obj.getClass().getName(), e);
 		} catch (InvocationTargetException e) {
@@ -124,14 +121,15 @@ public abstract class JDBClusterUtil {
 	}
 
 	/**
-	 * returnes property value directly from field
+	 * returnes property value directly from field. Iterates over all superclasses
+	 * 
 	 * @param propName name of property
 	 * @param obj instance of object
 	 * @return Object the property value
 	 */
 	static public Object getProperty(String propName, Object obj) {
 		try {
-			Field f = obj.getClass().getDeclaredField(propName);
+			Field f = getField(propName, obj);
 			return f.get(obj);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant access property [" + propName + "] with the specified name in " + obj.getClass().getName(), e);
@@ -139,13 +137,11 @@ public abstract class JDBClusterUtil {
 			throw new ConfigurationException("number of actual and formal parameters differ for the property [" + propName + "] in " + obj.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
 			throw new ConfigurationException("the currently executed ctor for property [" + propName + "] does not have access in " + obj.getClass().getName(), e);
-		} catch (NoSuchFieldException e) {
-			throw new ConfigurationException("configured property [" + propName + "]  could not be found in " + obj.getClass().getName(), e);
-		}
+		} 
 	}
 
 	/**
-	 * returns Filed object for Properties
+	 * returns Filed object for Properties. Iterates over all superclasses
 	 * 
 	 * @param o Object
 	 * @param propName path to property
@@ -153,37 +149,44 @@ public abstract class JDBClusterUtil {
 	 */
 	static public Field getField(String propName, Object o) {
 		Field f = null;
+		Class clazz = o.getClass();
 		try {
-			f = o.getClass().getDeclaredField(propName);
+			f = clazz.getDeclaredField(propName);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
 		} catch (NoSuchFieldException e) {
+			if (clazz.getSuperclass() != null) {
+				return getField(propName, clazz.getSuperclass());
+			}
 			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
 		}
 		return f;
 	}
 
 	/**
-	 * returns Filed object for Properties
+	 * returns Filed object for Properties. Iterates over all superclasses
 	 * 
 	 * @param propName path to property
 	 * @param c Class object
 	 * @return Field instance
 	 */
-	static public Field getField(String propName, Class c) {
+	static public Field getField(String propName, Class clazz) {
 		Field f = null;
 		try {
-			f = c.getDeclaredField(propName);
+			f = clazz.getDeclaredField(propName);
 		} catch (SecurityException e) {
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name for " + c.getName(), e);
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name for " + clazz.getName(), e);
 		} catch (NoSuchFieldException e) {
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name  for "+ c.getName(), e);
+			if (clazz.getSuperclass() != null) {
+				return getField(propName, clazz.getSuperclass());
+			}
+			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name  for " + clazz.getName(), e);
 		}
 		return f;
 	}
 
 	/**
-	 * calculates method object
+	 * calculates method object. Iterates over all superclasses
 	 * 
 	 * @param o Object
 	 * @param methodName method name
@@ -192,11 +195,38 @@ public abstract class JDBClusterUtil {
 	 */
 	static public Method getMethod(Object o, String methodName, Class... parameterTypes) {
 		Method m = null;
+		Class clazz = o.getClass();
 		try {
-			m = o.getClass().getDeclaredMethod(methodName, parameterTypes);
+			m = clazz.getDeclaredMethod(methodName, parameterTypes);
 		} catch (SecurityException e) {
 			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
 		} catch (NoSuchMethodException e) {
+			if (clazz.getSuperclass() != null) {
+				return getMethod(clazz.getSuperclass(), methodName, parameterTypes);
+			}
+			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
+		}
+		return m;
+	}
+	
+	/**
+	 * calculates method object. Iterates over all superclasses
+	 * 
+	 * @param clazz Class of Object
+	 * @param methodName method name
+	 * @param parameterTypes parameter types of method
+	 * @return
+	 */
+	static public Method getMethod(Class clazz, String methodName, Class... parameterTypes) {
+		Method m = null;
+		try {
+			m = clazz.getDeclaredMethod(methodName, parameterTypes);
+		} catch (SecurityException e) {
+			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
+		} catch (NoSuchMethodException e) {
+			if (clazz.getSuperclass() != null) {
+				return getMethod(clazz.getSuperclass(), methodName, parameterTypes);
+			}
 			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
 		}
 		return m;
