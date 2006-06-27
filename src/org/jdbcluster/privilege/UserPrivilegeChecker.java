@@ -27,7 +27,7 @@ public interface UserPrivilegeChecker {
 	/**
 	 * should do an intersection between the user privileges and
 	 * the privileges given through requiredPrivileges
-	 * @param requiredPrivileges the required privileges
+	 * @param requiredPrivileges the required privileges (<b>can be null</b>)
 	 * @return true if the privileges are sufficient
 	 */
 	public abstract boolean userPrivilegeIntersect(Set<String> requiredPrivileges);
