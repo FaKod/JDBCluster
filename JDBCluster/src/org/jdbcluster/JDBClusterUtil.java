@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.jdbcluster.exception.ConfigurationException;
+import org.springframework.util.Assert;
 
 /**
  * Utility class mainly for reflection stuff
@@ -37,6 +38,9 @@ public abstract class JDBClusterUtil {
 	 * @return Object instance of class className
 	 */
 	static public Object createClassObject(String className) {
+		
+		Assert.hasLength(className, "className may not be null or \"\"");
+		
 		try {
 			Class<?> clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
 			return createClassObject(clazz);
@@ -52,6 +56,8 @@ public abstract class JDBClusterUtil {
 	 */
 	static public Object createClassObject(Class<?> clazz) {
 
+		Assert.notNull(clazz, "clazz may not be null");
+		
 		String className = clazz.getName();
 		try {
 			Constructor ctor = clazz.getDeclaredConstructor();
@@ -80,6 +86,10 @@ public abstract class JDBClusterUtil {
 	 * @return Object property value
 	 */
 	static public Object invokeGetPropertyMethod(String propName, Object obj) {
+		
+		Assert.notNull(obj, "obj may not be null");
+		Assert.hasLength(propName, "obj may not be null or \"\"");
+		
 		String getMethName = "get" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
 		try {
 			Method mGet = getMethod(obj, getMethName, (Class[]) null);
@@ -103,6 +113,11 @@ public abstract class JDBClusterUtil {
 	 * @param obj instance with the setter
 	 */
 	static public void invokeSetPropertyMethod(String propName, Object propValue, Object obj) {
+		
+		Assert.notNull(obj, "obj may not be null");
+		Assert.notNull(propValue, "propValue may not be null");
+		Assert.hasLength(propName, "obj may not be null or \"\"");
+		
 		String setMethName = "set" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
 		Object[] args = { propValue };
 		Class[] paramType = { propValue.getClass() };
@@ -128,6 +143,10 @@ public abstract class JDBClusterUtil {
 	 * @return Object the property value
 	 */
 	static public Object getProperty(String propName, Object obj) {
+		
+		Assert.notNull(obj, "obj may not be null");
+		Assert.hasLength(propName, "obj may not be null or \"\"");
+		
 		try {
 			Field f = getField(propName, obj);
 			return f.get(obj);
@@ -148,19 +167,7 @@ public abstract class JDBClusterUtil {
 	 * @return Field instance
 	 */
 	static public Field getField(String propName, Object o) {
-		Field f = null;
-		Class clazz = o.getClass();
-		try {
-			f = clazz.getDeclaredField(propName);
-		} catch (SecurityException e) {
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
-		} catch (NoSuchFieldException e) {
-			if (clazz.getSuperclass() != null) {
-				return getField(propName, clazz.getSuperclass());
-			}
-			throw new ConfigurationException("cant get field for property [" + propName + "] with the specified name", e);
-		}
-		return f;
+		return getField(propName, o.getClass());
 	}
 
 	/**
@@ -171,6 +178,10 @@ public abstract class JDBClusterUtil {
 	 * @return Field instance
 	 */
 	static public Field getField(String propName, Class clazz) {
+		
+		Assert.notNull(clazz, "clazz may not be null");
+		Assert.hasLength(propName, "obj may not be null or \"\"");
+		
 		Field f = null;
 		try {
 			f = clazz.getDeclaredField(propName);
@@ -194,19 +205,7 @@ public abstract class JDBClusterUtil {
 	 * @return Method
 	 */
 	static public Method getMethod(Object o, String methodName, Class... parameterTypes) {
-		Method m = null;
-		Class clazz = o.getClass();
-		try {
-			m = clazz.getDeclaredMethod(methodName, parameterTypes);
-		} catch (SecurityException e) {
-			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
-		} catch (NoSuchMethodException e) {
-			if (clazz.getSuperclass() != null) {
-				return getMethod(clazz.getSuperclass(), methodName, parameterTypes);
-			}
-			throw new ConfigurationException("cant get Method for method [" + methodName + "] with the specified name", e);
-		}
-		return m;
+		return getMethod(o.getClass(), methodName, parameterTypes);
 	}
 	
 	/**
@@ -218,6 +217,10 @@ public abstract class JDBClusterUtil {
 	 * @return
 	 */
 	static public Method getMethod(Class clazz, String methodName, Class... parameterTypes) {
+		
+		Assert.notNull(clazz, "clazz may not be null");
+		Assert.hasLength(methodName, "methodName may not be null or \"\"");
+		
 		Method m = null;
 		try {
 			m = clazz.getDeclaredMethod(methodName, parameterTypes);
