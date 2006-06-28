@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jdbcluster.exception.ConfigurationException;
 import org.springframework.util.Assert;
 
@@ -28,6 +29,9 @@ import org.springframework.util.Assert;
  * @author Thomas Bitzer
  */
 public abstract class JDBClusterUtil {
+	
+	/** Logger available to subclasses */
+	static final Logger logger = Logger.getLogger(JDBClusterUtil.class);
 
 	/**
 	 * creates object from class named className
@@ -308,7 +312,7 @@ public abstract class JDBClusterUtil {
 	 * Uses getMethod() first, if there is no direct match every parameter is
 	 * checkt if there is a method with a superclass match. etc
 	 * 
-	 * @see #getMethod(Class, String, Class[])
+	 * @see #getMethodBestParameterFit(Class, String, Class[])
 	 * @param o Object of the class
 	 * @param methodName name of the method to find
 	 * @param parameterTypes parameter types of method
@@ -355,6 +359,10 @@ public abstract class JDBClusterUtil {
 			if (m.getParameterTypes().length == parameterTypes.length && m.getName().equals(methodName))
 				mList.add(m);
 		}
+		
+		if(mList.size()>1)
+			logger.warn("possible ambiguity. Found more than one method with name [" + methodName + "]. "+
+					"trying best fit method");
 
 		/*
 		 * check if parameter superclasses do fit for all above selected methods
