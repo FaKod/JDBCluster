@@ -83,10 +83,7 @@ public class CCFilterImpl extends CCFilterBase implements CCFilter {
 				}
 			}
 			setAppendedFilter(filter);
-			System.out.println("Filter appended");
-
 			append(filter.getAppendedFilter());
-			System.out.println(getBinding());
 			return;
 		}
 	}
