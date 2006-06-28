@@ -319,9 +319,13 @@ public abstract class JDBClusterUtil {
 	}
 
 	/**
-	 * tries to determine the best fitting method for a set of parameter types.
+	 * Tries to determine the best fitting method for a set of parameter types.
 	 * Uses getMethod() first, if there is no direct match every parameter is
-	 * checkt if there is a method with a superclass or superinterface match. etc.
+	 * checked if there is a method with a superclass or superinterface match.
+	 * etc. For this best fitting method a scoring is used. It counts for every
+	 * parameter the "distance" from the class to the requested superclass or
+	 * superinterface. These "distances" are cummulated to one value. The method
+	 * with the lowest scoring value is returned.
 	 * 
 	 * @see #getMethod(Class, String, Class[])
 	 * @param clazz Class of Object
