@@ -321,7 +321,7 @@ public abstract class JDBClusterUtil {
 	/**
 	 * tries to determine the best fitting method for a set of parameter types.
 	 * Uses getMethod() first, if there is no direct match every parameter is
-	 * checkt if there is a method with a superclass match. etc
+	 * checkt if there is a method with a superclass or superinterface match. etc.
 	 * 
 	 * @see #getMethod(Class, String, Class[])
 	 * @param clazz Class of Object
@@ -337,8 +337,8 @@ public abstract class JDBClusterUtil {
 		try {
 			return JDBClusterUtil.getMethod(clazz, methodName, parameterTypes);
 		} catch (ConfigurationException e) {
-			if(!(e.getCause() instanceof NoSuchMethodException))
-			 throw e;
+			if (!(e.getCause() instanceof NoSuchMethodException))
+				throw e;
 		}
 
 		/*
@@ -360,8 +360,11 @@ public abstract class JDBClusterUtil {
 			Class<?>[] mParameterTypes = m.getParameterTypes();
 
 			for (int i = 0; i < parameterTypes.length; i++) {
-				int count = countSuperClass(0, mParameterTypes[i], parameterTypes[i]);
-				methodScore.put(m, methodScore.get(m) + count);
+				int count = countSuper(mParameterTypes[i], parameterTypes[i]);
+				Integer oldInt = methodScore.get(m);
+				if (oldInt == null)
+					oldInt = 0;
+				methodScore.put(m, oldInt + count);
 				if (count < 0) {
 					methodScore.put(m, -1);
 					break; // if there is no match this method is not fitting
@@ -391,11 +394,24 @@ public abstract class JDBClusterUtil {
 	}
 
 	/**
+	 * @param superClass Class or Interface to look for
+	 * @param clazz the class instance
+	 * @return -1 for not found. Counter for supercasses above parameter
+	 *         superClass
+	 */
+	static private int countSuper(Class<?> superClass, Class<?> clazz) {
+		if (superClass.isInterface())
+			return countSuperInterface(0, superClass, clazz.getInterfaces());
+		else
+			return countSuperClass(0, superClass, clazz);
+	}
+
+	/**
 	 * tries to validate class instances through Super Classes
 	 * 
 	 * @param count recursive parameter. Use 0 for the first call
 	 * @param superClass the Superclass to validate against
-	 * @param clazz the class istance
+	 * @param clazz the class instance
 	 * @return -1 for not found. Counter for supercasses above parameter
 	 *         superClass
 	 */
@@ -405,5 +421,33 @@ public abstract class JDBClusterUtil {
 		if (superClass == clazz)
 			return count;
 		return countSuperClass(++count, superClass, clazz.getSuperclass());
+	}
+
+	/**
+	 * tries to validate interface instances through Super Interfaces
+	 * 
+	 * @param count recursive parameter. Use 0 for the first call
+	 * @param superInterface
+	 * @param interfaceClasses
+	 * @return -1 for not found. Counter for superInterfaces above parameter
+	 *         superInterface
+	 */
+	static private int countSuperInterface(int count, Class<?> superInterface, Class<?>[] interfaceClasses) {
+		int ret = 0;
+
+		if (interfaceClasses == null)
+			return -1;
+
+		for (Class<?> c : interfaceClasses) {
+			if (superInterface == c)
+				return count;
+		}
+		++count;
+		for (Class<?> c : interfaceClasses) {
+			ret = countSuperInterface(count, superInterface, c.getInterfaces());
+			if (ret != -1)
+				break;
+		}
+		return ret;
 	}
 }
