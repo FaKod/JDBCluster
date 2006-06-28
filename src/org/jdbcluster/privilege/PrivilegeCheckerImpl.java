@@ -233,7 +233,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		for (int i = args.length - 1; i >= 0; i--) {
 			paramTypes[i] = args[i].getClass();
 		}
-		return JDBClusterUtil.getMethod(object, methodName, paramTypes);
+		return JDBClusterUtil.getMethodBestParameterFit(object, methodName, paramTypes);
 	}
 
 	/**
