@@ -254,7 +254,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 			hs = calcClusterPrivileges(calledMethod, clusterObject);
 			mp.put(calledMethod, hs);
 		}
-		return hs;
+		return new HashSet<String>(hs);
 	}
 	
 	/**
@@ -477,7 +477,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 			hs = calcServicePrivileges(calledServiceMethod, serObject);
 			mp.put(calledServiceMethod, hs);
 		}
-		return hs;
+		return new HashSet<String>(hs);
 	}
 
 	/**
