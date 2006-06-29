@@ -68,7 +68,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	/**
 	 * maps: Class -> Method -> HashSet of privileges
 	 */
-	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesClustere = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
+	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesCluster = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
 
 	/**
 	 * maps: Class -> Servicce Method -> HashSet of privileges
@@ -244,10 +244,10 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return return reqired privileges
 	 */
 	private HashSet<String> getStaticPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
-		HashMap<Method, HashSet<String>> mp = privilegesClustere.get(clusterObject.getClass());
+		HashMap<Method, HashSet<String>> mp = privilegesCluster.get(clusterObject.getClass());
 		if (mp == null) {
 			mp = new HashMap<Method, HashSet<String>>();
-			privilegesClustere.put(clusterObject.getClass(), mp);
+			privilegesCluster.put(clusterObject.getClass(), mp);
 		}
 		HashSet<String> hs = mp.get(calledMethod);
 		if (hs == null) {
@@ -470,7 +470,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		HashMap<Method, HashSet<String>> mp = privilegesService.get(serObject.getClass());
 		if (mp == null) {
 			mp = new HashMap<Method, HashSet<String>>();
-			privilegesClustere.put(serObject.getClass(), mp);
+			privilegesService.put(serObject.getClass(), mp);
 		}
 		HashSet<String> hs = mp.get(calledServiceMethod);
 		if (hs == null) {
