@@ -29,7 +29,7 @@ import org.jdbcluster.exception.BindingException;
  * @author Tobi
  */
 
-public class CCFilterImpl extends CCFilterBase implements CCFilter {
+public class CCFilterImpl extends CCFilterBase {
 
 	public CCFilterImpl() {
 	}

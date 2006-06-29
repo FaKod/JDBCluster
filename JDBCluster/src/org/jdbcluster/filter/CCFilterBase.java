@@ -26,7 +26,7 @@ import org.jdbcluster.clustertype.ClusterType;
  * @author Philipp Noggler
  */
 
-public abstract class CCFilterBase {
+public abstract class CCFilterBase implements CCFilter {
 
 	static private ClusterSelect select;
 	private HashMap<String, String> binding;
