@@ -18,6 +18,7 @@ package org.jdbcluster.filter;
 import java.util.HashMap;
 
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.template.hibernate.HibernateQuery;
 
 /**
  * interface CCFilter: All filters are implementing this
@@ -107,9 +108,24 @@ public interface CCFilter {
 	public String getStaticStatementAttribute();
 	
 	/**
+	 * value of static statement attribute
+	 * 
+	 * @param ccf Filter instance
+	 * @return property value
+	 */
+	public String getStaticStatement();
+	
+	/**
 	 * order by statement part
 	 * @return String
 	 */
 	public String getOrderBy();
+	
+	/**
+	 * recursive method that retrieves all appended filters and their bindings
+	 * 
+	 * @param queryTemplate HibernateQuery Query to bind parameter
+	 */
+	public void doBindings(HibernateQuery queryTemplate);
 	
 }

@@ -1,61 +1,79 @@
 /*
- * Copyright 2002-2005 the original author or authors.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2002-2005 the original author or authors. Licensed under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package org.jdbcluster.filter;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.exception.BindingException;
+import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.template.hibernate.HibernateQuery;
+import org.springframework.util.Assert;
 
 /**
- * abstract class CCFilterBase provides information about a filter. Since it is an
- * abstract class, it cannot be instanciatet but specific filter extends that class.
+ * abstract class CCFilterBase provides information about a filter. Since it is
+ * an abstract class, it cannot be instanciatet but specific filter extends that
+ * class.
  * 
  * @author Philipp Noggler
  */
 
 public abstract class CCFilterBase implements CCFilter {
 
+	protected Logger logger = Logger.getLogger(this.getClass());
+
 	static private ClusterSelect select;
+
 	private HashMap<String, String> binding;
+
 	private String className;
+
 	private CCFilter appendedFilter = null;
+
 	private String whereStatement;
+
 	private String alias;
+
 	private String ext;
+
 	private String staticStatementAttribute;
+
 	private String orderBy;
+
 	private String selectStatementDAO;
+
 	private ClusterType clusterType;
 
-	public CCFilterBase() {}
-	
+	public CCFilterBase() {
+	}
+
 	public CCFilterBase(ClusterType ct) {
 		this.clusterType = ct;
 	}
-	
+
 	/**
 	 * returns select object
+	 * 
 	 * @return ClusterSelect
 	 */
 	public static ClusterSelect getSelect() {
 		return select;
 	}
-	
+
 	/**
 	 * sets the ClusterSelect
+	 * 
 	 * @param select
 	 */
 	public static void setFilterConfig(ClusterSelect select) {
@@ -64,14 +82,22 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the wherestatement as a String
+	 * 
 	 * @return String
 	 */
 	public String getWhereStatement() {
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null) {
+			String tmp = appendedFilter.getWhereStatement();
+			if (tmp != null && tmp.length() > 0)
+				return whereStatement + " AND " + tmp;
+		}
 		return whereStatement;
 	}
 
 	/**
 	 * sets the where statement as a String
+	 * 
 	 * @param hql
 	 */
 	protected void setWhereStatement(String hql) {
@@ -80,6 +106,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the binding mapped in a HashMap
+	 * 
 	 * @return HashMap
 	 */
 	public HashMap<String, String> getBinding() {
@@ -88,6 +115,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * set the binding mapped in a HashMap
+	 * 
 	 * @param binding the HashMap to be set
 	 */
 	protected void setBinding(HashMap<String, String> binding) {
@@ -96,6 +124,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the classname of a filter as a String
+	 * 
 	 * @return className the classname of that filter
 	 */
 	public String getClassName() {
@@ -104,6 +133,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * set the classname of a filter
+	 * 
 	 * @param className the classname to be set
 	 */
 	protected void setClassName(String className) {
@@ -112,6 +142,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the filter which is appended to the root filter
+	 * 
 	 * @return CCFilter the appended filter
 	 */
 	public CCFilter getAppendedFilter() {
@@ -120,6 +151,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * set a filter as an appended filter to the root filter
+	 * 
 	 * @param appendedFilter the filter to be set
 	 */
 	public void setAppendedFilter(CCFilter appendedFilter) {
@@ -128,6 +160,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the selectstatement (without the where clause) of a filter
+	 * 
 	 * @return selectStatement the select statement
 	 */
 	public String getSelectStatementDAO() {
@@ -136,6 +169,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * set the select statement of a filter
+	 * 
 	 * @param selectStatement the statement to be set
 	 */
 	public void setSelectStatementDAO(String selectStatementDAO) {
@@ -144,6 +178,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * returns the clustertype of a filter
+	 * 
 	 * @return ClusterType
 	 */
 	public ClusterType getClusterType() {
@@ -152,6 +187,7 @@ public abstract class CCFilterBase implements CCFilter {
 
 	/**
 	 * set the clustertype of a filter
+	 * 
 	 * @param clusterType the ClusterType to be set
 	 */
 	protected void setClusterType(ClusterType clusterType) {
@@ -190,5 +226,100 @@ public abstract class CCFilterBase implements CCFilter {
 		this.orderBy = orderBy;
 	}
 
+	/**
+	 * value of static statement attribute
+	 * 
+	 * @param ccf Filter instance
+	 * @return property value
+	 */
+	public String getStaticStatement() {
+
+		String attr = getStaticStatementAttribute();
+		if (attr == null || attr.length() == 0)
+			return null;
+
+		if (logger.isDebugEnabled())
+			logger.debug("using static statement in " + attr);
+
+		Object o = null;
+		try {
+			o = JDBClusterUtil.invokeGetPropertyMethod(attr, this);
+		} catch (ConfigurationException ce) {
+			throw new BindingException("cannot find getter for Property Path [" + attr + "] in Class [" + this.getClassName() + "]", ce);
+		}
+
+		if (o == null) {
+			if (logger.isDebugEnabled())
+				logger.debug("static statement is null");
+			return null;
+		}
+
+		if (logger.isDebugEnabled())
+			logger.debug("returning value [" + o.toString() + "]");
+
+		return o.toString();
+	}
+
+	/**
+	 * recursive method that retrieves all appended filters and their bindings
+	 * 
+	 * @param queryTemplate HibernateQuery Query to bind parameter
+	 */
+	public void doBindings(HibernateQuery queryTemplate) {
+
+		if (logger.isDebugEnabled())
+			logger.debug("binding filter class name [" + this.getClass().getName() + "]");
+
+		HashMap<String, String> binding = getBinding();
+		if (binding != null) {
+
+			for (String paramName : binding.keySet()) {
+				String propPath = binding.get(paramName);
+
+				if (logger.isDebugEnabled())
+					logger.debug("binding property [" + propPath + "] to parameter [" + paramName);
+
+				Object val = null;
+				try {
+					val = JDBClusterUtil.invokeGetPropertyMethod(propPath, this);
+				} catch (ConfigurationException ce) {
+					throw new BindingException("cannot find getter for Property Path [" + propPath + "] in Class [" + this.getClassName() + "]", ce);
+				}
+				if (logger.isDebugEnabled())
+					logger.debug("using value = " + val.toString());
+				// set the binding to the query
+				queryTemplate.getQuery().setParameter(paramName, val);
+
+			}
+		}
+		// call the method recursive with the appended filter as an argument
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null)
+			appendedFilter.doBindings(queryTemplate);
+		return;
+
+	}
+
+	/**
+	 * returns a HasMap which contains the key mapped to an attribute
+	 * 
+	 * @param ct specifies the ClusterType
+	 * @param selID specifies the select ID
+	 * @return HashMap
+	 */
+	public HashMap<String, String> getBinding(ClusterType ct, String selID) {
+		String className = getSelect().getClassName(ct, selID);
+		HashMap<String, String> binding = getSelect().getBinding(ct, selID, className);
+		return binding;
+	}
+	
+	/**
+	 * appends a Filter to another filter
+	 * 
+	 * @param CCFilter the Filter to be appended
+	 */
+	public void append(CCFilter filter) {
+		setAppendedFilter(filter);
+	}
 
 }
