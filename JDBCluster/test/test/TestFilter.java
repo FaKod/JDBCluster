@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import mycluster.CCar;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustercontainer.ClusterContainerImpl;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeBase;
@@ -31,171 +32,120 @@ import dao.Car;
 import dao.Bicycle;
 
 /**
- * 
- * @author Philipp Noggler
- * JUnit test to determine if returning select string is the same
- * as the given one
- *
+ * @author Philipp Noggler JUnit test to determine if returning select string is
+ *         the same as the given one
  */
 
 public class TestFilter extends TestCase {
 
+	SessionTemplate session;
+
+	SessionFactoryTemplate sf;
+
 	@Override
 	protected void setUp() throws Exception {
+		// configuring logging
 		PropertyConfigurator.configure("xml/logging.properties");
-		CCFilterBase.setFilterConfig(new ClusterSelectImpl("xml/jdbcluster.conf.xml"));
-		ClusterTypeBase.setClusterTypeConfig(new ClusterTypeConfigImpl("xml/jdbcluster.conf.xml"));
-		
-		ConfigurationFactory.setConfigurationClass("org.jdbcluster.template.hibernate.HibernateConfiguration");
-		ConfigurationFactory.getInstance().setConfiguration("mapping/hibernate.cfg.xml");
 
+		JDBClusterSimpleConfig.setConfiguration("xml/jdbcluster.conf.xml");
+		JDBClusterSimpleConfig.setHibernateConfiguration(null, "mapping/hibernate.cfg.xml");
+
+		// //////using HIBERNATE means
+		// get a Configuration instance
+		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
+		// get a factory for sessions
+		sf = cf.buildSessionFactory();
+		session = sf.openSession();
 		super.setUp();
 	}
 
 	public void testWhere() {
-		//this block creates some test objects, gets a select String from XML file
-		//and compares the returned select String to the given one
-		
+		// this block creates some test objects, gets a select String from XML file
+		// and compares the returned select String to the given one
+
 		ClusterType type = ClusterTypeFactory.newInstance("car");
 		PositionFilter impl = CCFilterFactory.newInstance(type, "position");
 		impl.setLatitude(1.0);
 		impl.setLongitude(2.0);
 		String where = impl.getSelectString("position");
 		assertEquals(where, "LATITUDE=:LAT and LONGITUDE=:LONG");
-		
+
 	}
-	
+
 	public void testBinding() {
-		//this block creates some test objects, gets a select String from XML file
-		//and compares the returned select String to the given one
-		
+		// this block creates some test objects, gets a select String from XML file
+		// and compares the returned select String to the given one
+
 		ClusterType type = ClusterTypeFactory.newInstance("car");
 		PositionFilter impl = CCFilterFactory.newInstance(type, "position");
 		impl.setLatitude(1.0);
 		impl.setLongitude(2.0);
-		HashMap<String,String> binding = new HashMap<String, String>();
-		
+		HashMap<String, String> binding = new HashMap<String, String>();
+
 		binding = impl.getBinding(type, "position");
 		System.out.println("binding: " + binding.toString());
 
 	}
 	
-	public void testTemplates() {
-		//this block creates some test objects, gets a select String from XML file
-		//and compares the returned select String to the given one
+	public void testAppendedFilter() {
+	
+		PositionFilter pos = CCFilterFactory.newInstance("car", "position");
+		pos.setLatitude(1.0);
+		pos.setLongitude(2.0);
 		
-		ClusterType type = ClusterTypeFactory.newInstance("car");
-		String selectID = "positionLatOnly";
-		String SelectIDName = "name";
-		PositionFilter position1 = CCFilterFactory.newInstance(type, selectID);
-		NameFilter namefilter = CCFilterFactory.newInstance(type, SelectIDName);
-		PositionFilter position2 = CCFilterFactory.newInstance(type, selectID);
-
-		//select statement und where sind getrennt
-//		namefilter.setSelectStatementDAO("from Auto where ");
+		NameFilter name = CCFilterFactory.newInstance("car", "name");
+		name.setName("BMW");
 		
-		//append 2 filter
-//		position2.append(namefilter);
-		namefilter.append(position1);
+		pos.append(name);
 		
+		QueryTemplate q = session.createQuery(pos);
+		List list = q.list();
 		
-		Car bmw = new Car();
-		Bicycle fahrrad = new Bicycle();
-		Car audi = new Car();
-		Car opel = new Car();
+		PositionFilter pos2 = CCFilterFactory.newInstance("car", "position");
+		pos2.setLatitude(1.0);
+		pos2.setLongitude(2.0);
 		
+		NameFilter name2 = CCFilterFactory.newInstance("car", "name");
+		name2.setName("BMW");
 		
-		SessionTemplate session = ConfigurationFactory.getInstance().buildSessionFactory().openSession();
-
-		System.out.println("Session" + session);
-		TransactionTemplate tx = null;
-		tx = session.beginTransaction();
-//		session.save(bmw);
-//		session.save(fahrrad);
-//		session.save(audi);
-//		session.save(opel);
-		tx.commit();
+		name2.append(pos2);
 		
-		
-		tx = session.beginTransaction();
-		opel.setName("opel");
-		audi.setName("audi");
-		bmw.setName("bmw");
-		opel.setLatitude(235435.465);
-		opel.setLongitude(3435.3255);
-		bmw.setLatitude(235435.465);
-		bmw.setLongitude(3435.3255);
-		audi.setLatitude(235435.465);
-		audi.setLongitude(3435.3255);
-		position1.setLatitude(235435.465);
-		position1.setLongitude(3435.3255);
-		position2.setLatitude(235435.465);
-		position2.setLongitude(3435.3255);
-		namefilter.setName("bmw");
-		
-		QueryTemplate temp = session.createQuery(namefilter);
-		List list = ((HibernateQuery) temp).getQuery().list();
-				
-		tx.commit();
-		session.close();
-		
-		for (int i = 0; i < list.size();i++) {
-			System.out.println(((Car)list.get(i)).getName());
-		}
-		
+		QueryTemplate q2 = session.createQuery(name2);
+		List list2 = q2.list();
 	}
 
-	
 	public void testCluster() {
-		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
-		SessionFactoryTemplate sf = cf.buildSessionFactory();
-		SessionTemplate session = sf.openSession();
-
+		
 		TransactionTemplate tx = session.beginTransaction();
 		
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		CCar bmw = ClusterFactory.newInstance(cAutoType);
-		
+
 		bmw.setName("BMW");
-		
+
 		session.save(bmw);
 		tx.commit();
-		
-		
+
 		NameFilter nameFilter = CCFilterFactory.newInstance(cAutoType, "name");
 		nameFilter.setName("BMW");
 		QueryTemplate nameFilterQuery = session.createQuery(nameFilter);
-		
+
 		List list = ((HibernateQuery) nameFilterQuery).getQuery().list();
-		
-		for (int i = 0; i < list.size();i++) {
-			System.out.println(((Car)list.get(i)).getName());
+
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(((Car) list.get(i)).getName());
 		}
-		
+
 		session.close();
 	}
-	
-	public void testClusterContainer() {
-		List list;
-		ClusterType type = ClusterTypeFactory.newInstance("car");
-		ClusterContainerImpl ccImpl = new ClusterContainerImpl(type);
-		ccImpl.fill();
-		System.out.println("Cluster Container liste: " + ccImpl.getClusterList().toString());
-		list = ccImpl.getClusterList();
-		
-		for (int i = 0; i < list.size();i++) {
-			System.out.println(((Car)list.get(i)).getName());
-		}
-		
-	}
-	
+
 	public void testFilterExecutionTime() {
 		long start, end;
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		NameFilter nameFilter;
-		
+
 		start = System.currentTimeMillis();
-		for(int i=0; i<10; i++)
+		for (int i = 0; i < 10; i++)
 			nameFilter = CCFilterFactory.newInstance(cAutoType, "name");
 		System.out.println("Exec time: " + (System.currentTimeMillis() - start));
 	}
