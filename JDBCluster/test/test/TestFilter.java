@@ -4,19 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import mycluster.CCar;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jdbcluster.JDBClusterSimpleConfig;
-import org.jdbcluster.clustercontainer.ClusterContainerImpl;
 import org.jdbcluster.clustertype.ClusterType;
-import org.jdbcluster.clustertype.ClusterTypeBase;
-import org.jdbcluster.clustertype.ClusterTypeConfigImpl;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
-import org.jdbcluster.filter.CCFilterBase;
 import org.jdbcluster.filter.CCFilterFactory;
-import org.jdbcluster.filter.ClusterSelectImpl;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
@@ -29,7 +23,6 @@ import org.jdbcluster.template.hibernate.HibernateQuery;
 import test.testfilter.NameFilter;
 import test.testfilter.PositionFilter;
 import dao.Car;
-import dao.Bicycle;
 
 /**
  * @author Philipp Noggler JUnit test to determine if returning select string is
@@ -89,6 +82,9 @@ public class TestFilter extends TestCase {
 	
 	public void testAppendedFilter() {
 	
+		/*
+		 * test appended Filter
+		 */
 		PositionFilter pos = CCFilterFactory.newInstance("car", "position");
 		pos.setLatitude(1.0);
 		pos.setLongitude(2.0);
@@ -98,9 +94,14 @@ public class TestFilter extends TestCase {
 		
 		pos.append(name);
 		
+		assertEquals("LATITUDE=:LAT and LONGITUDE=:LONG AND NAME=:UNITNAME", pos.getWhereStatement());
+		
 		QueryTemplate q = session.createQuery(pos);
 		List list = q.list();
 		
+		/*
+		 * and vice versa
+		 */
 		PositionFilter pos2 = CCFilterFactory.newInstance("car", "position");
 		pos2.setLatitude(1.0);
 		pos2.setLongitude(2.0);
@@ -109,6 +110,8 @@ public class TestFilter extends TestCase {
 		name2.setName("BMW");
 		
 		name2.append(pos2);
+		
+		assertEquals("NAME=:UNITNAME AND LATITUDE=:LAT and LONGITUDE=:LONG", name2.getWhereStatement());
 		
 		QueryTemplate q2 = session.createQuery(name2);
 		List list2 = q2.list();
