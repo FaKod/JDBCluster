@@ -141,7 +141,7 @@ public class HibernateSession implements SessionTemplate {
 		 * where statement
 		 */
 		String whereStatement = ccf.getWhereStatement();
-		String staticStatement = getStaticStatement(ccf);
+		String staticStatement = ccf.getStaticStatement();
 		if (staticStatement != null && staticStatement.length() > 0) {
 			if (whereStatement != null && whereStatement.length() > 0)
 				whereStatement = " ( " + whereStatement + " ) AND ";
@@ -183,7 +183,7 @@ public class HibernateSession implements SessionTemplate {
 
 			query = hibernateSession.createQuery(queryString);
 			queryTemplate.setQuery(query);
-			getAppendedBindings(ccf, queryTemplate);
+			ccf.doBindings(queryTemplate);
 
 		} else {
 			String queryString = " from " + ccf.getSelectStatementDAO() + orderBy;
@@ -195,76 +195,6 @@ public class HibernateSession implements SessionTemplate {
 			queryTemplate.setQuery(query);
 		}
 		return queryTemplate;
-	}
-
-	/**
-	 * value of static statement attribute
-	 * 
-	 * @param ccf Filter instance
-	 * @return property value
-	 */
-	public String getStaticStatement(CCFilter ccf) {
-
-		Assert.notNull(ccf, "CCFilter may not be null");
-
-		String attr = ccf.getStaticStatementAttribute();
-		if (attr == null || attr.length() == 0)
-			return null;
-
-		if (logger.isDebugEnabled())
-			logger.debug("using static statement in " + attr);
-
-		Object o = JDBClusterUtil.invokeGetPropertyMethod(attr, ccf);
-		if (o == null) {
-			if (logger.isDebugEnabled())
-				logger.debug("static statement is null");
-			return null;
-		}
-
-		if (logger.isDebugEnabled())
-			logger.debug("returning value [" + o.toString() + "]");
-
-		return o.toString();
-	}
-
-	/**
-	 * recursive method that retrieves all appended filters and their bindings
-	 * 
-	 * @param ccf CCFilter that contains the binding
-	 */
-	private void getAppendedBindings(CCFilter ccf, HibernateQuery queryTemplate) {
-
-		// while there are appended filters
-		while (ccf != null) {
-			if (logger.isDebugEnabled())
-				logger.debug("binding filter class name [" + ccf.getClass().getName() + "]");
-
-			if (ccf.getBinding() != null) {
-				Iterator paramNameIter = ccf.getBinding().keySet().iterator();
-				Iterator propParthIter = ccf.getBinding().values().iterator();
-
-				// while HashMaps has bindings
-				while (paramNameIter.hasNext()) {
-					String paramName = (String) paramNameIter.next();
-					String propPath = (String) propParthIter.next();
-
-					if (logger.isDebugEnabled())
-						logger.debug("binding property [" + propPath + "] to parameter [" + paramName);
-
-					Object val = JDBClusterUtil.invokeGetPropertyMethod(propPath, ccf);
-
-					if (logger.isDebugEnabled())
-						logger.debug("using value = " + val.toString());
-
-					// set the binding to the query
-					queryTemplate.getQuery().setParameter(paramName, val);
-				}
-			}
-			// call the method recursive with the appended filter as an argument
-			getAppendedBindings(ccf.getAppendedFilter(), queryTemplate);
-			return;
-		}
-
 	}
 
 	/**
@@ -290,7 +220,9 @@ public class HibernateSession implements SessionTemplate {
 	 * @param object a persistent or detached cluster instance
 	 */
 	public void refresh(ClusterBase cluster) {
+		
 		Assert.notNull(cluster, "Cluster may not be null");
+		
 		hibernateSession.refresh(cluster.getDao());
 	}
 
