@@ -11,7 +11,6 @@
 package org.jdbcluster.filter;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.jdbcluster.JDBClusterUtil;
@@ -19,7 +18,6 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.BindingException;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.template.hibernate.HibernateQuery;
-import org.springframework.util.Assert;
 
 /**
  * abstract class CCFilterBase provides information about a filter. Since it is
@@ -312,7 +310,7 @@ public abstract class CCFilterBase implements CCFilter {
 		HashMap<String, String> binding = getSelect().getBinding(ct, selID, className);
 		return binding;
 	}
-	
+
 	/**
 	 * appends a Filter to another filter
 	 * 
@@ -322,4 +320,10 @@ public abstract class CCFilterBase implements CCFilter {
 		setAppendedFilter(filter);
 	}
 
+	/**
+	 * removes appended Filter
+	 */
+	public void remove() {
+		setAppendedFilter(null);
+	}
 }

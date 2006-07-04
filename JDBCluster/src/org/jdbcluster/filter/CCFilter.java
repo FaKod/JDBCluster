@@ -44,6 +44,11 @@ public interface CCFilter {
 	public void append(CCFilter filter);
 	
 	/**
+	 * removes appended Filter
+	 */
+	public void remove();
+	
+	/**
 	 * returns a HashMap which contains the Binding. The key (var) is 
 	 * mapped to a value (attribute)
 	 * @param ct specifies the ClusterType
