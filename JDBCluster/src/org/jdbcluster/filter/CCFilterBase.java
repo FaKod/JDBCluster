@@ -88,7 +88,7 @@ public abstract class CCFilterBase implements CCFilter {
 		if (appendedFilter != null) {
 			String tmp = appendedFilter.getWhereStatement();
 			if (tmp != null && tmp.length() > 0)
-				return whereStatement + " AND " + tmp;
+				return "(" + whereStatement + ") AND (" + tmp + ")";
 		}
 		return whereStatement;
 	}
@@ -255,6 +255,12 @@ public abstract class CCFilterBase implements CCFilter {
 		if (logger.isDebugEnabled())
 			logger.debug("returning value [" + o.toString() + "]");
 
+		CCFilter appendedFilter = getAppendedFilter();
+		if (appendedFilter != null) {
+			String tmp = appendedFilter.getStaticStatement();
+			if (tmp != null && tmp.length() > 0)
+				return "(" + o.toString() + ") AND (" + tmp + ")";
+		}
 		return o.toString();
 	}
 
@@ -291,7 +297,7 @@ public abstract class CCFilterBase implements CCFilter {
 			}
 		}
 		// call the method recursive with the appended filter as an argument
-		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		CCFilter appendedFilter = getAppendedFilter();
 		if (appendedFilter != null)
 			appendedFilter.doBindings(queryTemplate);
 		return;
