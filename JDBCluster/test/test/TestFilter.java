@@ -116,6 +116,33 @@ public class TestFilter extends TestCase {
 		QueryTemplate q2 = session.createQuery(name2);
 		List list2 = q2.list();
 	}
+	
+	public void testAppendedAndRemovedFilter() {
+		
+		/*
+		 * test appended Filter
+		 */
+		PositionFilter pos = CCFilterFactory.newInstance("car", "position");
+		pos.setLatitude(1.0);
+		pos.setLongitude(2.0);
+		
+		NameFilter name = CCFilterFactory.newInstance("car", "name");
+		name.setName("BMW");
+		
+		pos.append(name);
+		
+		assertEquals("LATITUDE=:LAT and LONGITUDE=:LONG AND NAME=:UNITNAME", pos.getWhereStatement());
+		
+		QueryTemplate q = session.createQuery(pos);
+		List list = q.list();
+		
+		pos.remove();
+		
+		assertEquals("LATITUDE=:LAT and LONGITUDE=:LONG", pos.getWhereStatement());
+		
+		q = session.createQuery(pos);
+		list = q.list();
+	}
 
 	public void testCluster() {
 		
