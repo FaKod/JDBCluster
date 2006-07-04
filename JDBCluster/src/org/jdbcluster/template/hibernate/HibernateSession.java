@@ -16,12 +16,10 @@
 package org.jdbcluster.template.hibernate;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.dao.Dao;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
