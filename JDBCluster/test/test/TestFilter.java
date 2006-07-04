@@ -94,7 +94,7 @@ public class TestFilter extends TestCase {
 		
 		pos.append(name);
 		
-		assertEquals("LATITUDE=:LAT and LONGITUDE=:LONG AND NAME=:UNITNAME", pos.getWhereStatement());
+		assertEquals("(LATITUDE=:LAT and LONGITUDE=:LONG) AND (NAME=:UNITNAME)", pos.getWhereStatement());
 		
 		QueryTemplate q = session.createQuery(pos);
 		List list = q.list();
@@ -111,7 +111,7 @@ public class TestFilter extends TestCase {
 		
 		name2.append(pos2);
 		
-		assertEquals("NAME=:UNITNAME AND LATITUDE=:LAT and LONGITUDE=:LONG", name2.getWhereStatement());
+		assertEquals("(NAME=:UNITNAME) AND (LATITUDE=:LAT and LONGITUDE=:LONG)", name2.getWhereStatement());
 		
 		QueryTemplate q2 = session.createQuery(name2);
 		List list2 = q2.list();
@@ -131,7 +131,7 @@ public class TestFilter extends TestCase {
 		
 		pos.append(name);
 		
-		assertEquals("LATITUDE=:LAT and LONGITUDE=:LONG AND NAME=:UNITNAME", pos.getWhereStatement());
+		assertEquals("(LATITUDE=:LAT and LONGITUDE=:LONG) AND (NAME=:UNITNAME)", pos.getWhereStatement());
 		
 		QueryTemplate q = session.createQuery(pos);
 		List list = q.list();
