@@ -193,6 +193,17 @@ public abstract class CCFilterBase implements CCFilter {
 	}
 
 	public String getAlias() {
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null) {
+			String tmp = appendedFilter.getAlias();
+			if (tmp != null && tmp.length() > 0) {
+				if(alias == null || alias.length() == 0) {
+					return tmp;
+				} else if(!alias.equals(tmp)) {
+					throw new ConfigurationException("Alias of filter and appended filter must be equal!!");
+				}
+			}
+		}
 		return alias;
 	}
 
@@ -201,6 +212,17 @@ public abstract class CCFilterBase implements CCFilter {
 	}
 
 	public String getExt() {
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null) {
+			String tmp = appendedFilter.getExt();
+			if (tmp != null && tmp.length() > 0) {
+				if(ext != null && ext.length() > 0) {	
+					return ext + ", " + tmp;
+				}else {
+					return tmp;
+				}
+			} 
+		}
 		return ext;
 	}
 
