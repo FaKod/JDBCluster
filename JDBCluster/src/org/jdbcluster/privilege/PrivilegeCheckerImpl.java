@@ -154,6 +154,39 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		Method calledMethod = getMethod(clusterObject, methodName, args);
 		return userPrivilegeIntersect(clusterObject, calledMethod, args);
 	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
+	 * @param methodName method name to check
+	 * @param args array of parameter
+	 * @param argTypes array of parameter class objects
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes) {
+	
+		Assert.notNull(clusterObject, "clusterObject may not be null");
+		Assert.hasLength(methodName, "methodName may not be null or \"\"");
+		
+		Method calledMethod = JDBClusterUtil.getMethod(clusterObject.getClass(), methodName, argTypes);
+		return userPrivilegeIntersect(clusterObject, calledMethod, args);
+	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
+	 * @param method method name to check
+	 * @param args array of parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedCluster clusterObject, Method method, Object... args) {
+	
+		Assert.notNull(clusterObject, "clusterObject may not be null");
+		Assert.notNull(method, "method may not be null");
+		
+		return userPrivilegeIntersect(clusterObject, method, args);
+	}
+	
 
 	/**
 	 * intersects required privileges against given privileges
@@ -201,6 +234,38 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		
 		Method calledMethod = getMethod(serviceObject, serviceMethodName, args);
 		return userPrivilegeIntersect(serviceObject, calledMethod, args);
+	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param serviceObject service object to check
+	 * @param serviceMethodName method name to check
+	 * @param args array of parameter
+	 * @param argTypes array of parameter class objects
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes) {
+	
+		Assert.notNull(serviceObject, "serviceObject may not be null");
+		Assert.hasLength(serviceMethodName, "serviceMethodName may not be null or \"\"");
+		
+		Method calledMethod = JDBClusterUtil.getMethod(serviceObject.getClass(), serviceMethodName, argTypes);
+		return userPrivilegeIntersect(serviceObject, calledMethod, args);
+	}
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param serviceObject service object to check
+	 * @param serviceMethod method name to check
+	 * @param args array of parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, Method serviceMethod, Object... args) {
+	
+		Assert.notNull(serviceObject, "serviceObject may not be null");
+		Assert.notNull(serviceMethod, "serviceMethodName may not be null");
+		
+		return userPrivilegeIntersect(serviceObject, serviceMethod, args);
 	}
 
 	/**

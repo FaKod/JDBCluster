@@ -77,12 +77,49 @@ public interface PrivilegeChecker {
 	
 	/**
 	 * intersects required privileges against given privileges
-	 * @param clusterObject
+	 * @param serviceObject service object to check
+	 * @param serviceMethodName method name to check
+	 * @param args array of parameter
+	 * @param argTypes array of parameter class objects
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param serviceObject service object to check
+	 * @param serviceMethod method name to check
+	 * @param args array of parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedService serviceObject, Method serviceMethod, Object... args);
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
 	 * @param methodName method name to check
 	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
+	 * @param methodName method name to check
+	 * @param args array of parameter
+	 * @param argTypes array of parameter class objects
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes);
+	
+	/**
+	 * intersects required privileges against given privileges
+	 * @param clusterObject cluster object instance
+	 * @param method method name to check
+	 * @param args array of parameter
+	 * @return true if the privileges are sufficient
+	 */
+	public boolean checkAccess(PrivilegedCluster clusterObject, Method method, Object... args);
 	
 	/**
 	 * intersects required static privileges for cluster new against given
