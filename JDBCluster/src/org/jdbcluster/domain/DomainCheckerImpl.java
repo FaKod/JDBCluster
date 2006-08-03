@@ -426,6 +426,10 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 
 		ValidDomainEntries<String> resultList = new ValidDomainEntries<String>();
 		ValidEntryList valid = slaveEntries.get(slaveDomainId);
+		
+		if (valid == null) {
+	    throw new ConfigurationException("slave domain [" + slaveDomainId + "].\n master domain [" + masterDomainId + "] annotated [@Domain] but slaveDomain not configured");
+		}
 
 		for (String domEntry : wholeList) {
 			if (validate(valid, domEntry)) {
