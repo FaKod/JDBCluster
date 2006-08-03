@@ -22,6 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.dao.Dao;
 import org.jdbcluster.filter.CCFilter;
+import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.QueryTemplate;
@@ -272,9 +273,11 @@ public class HibernateSession implements SessionTemplate {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
-
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
-		cb.setDao((Dao) hibernateSession.get(cb.getDao().getClass(), id));
+		
+		//get the Class Annotations
+		DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
+		Assert.notNull(classAnno, "annotaion dao link is missing");
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, (Dao) hibernateSession.get(classAnno.dAOClass(), id));
 		return cb;
 	}
 
@@ -314,5 +317,5 @@ public class HibernateSession implements SessionTemplate {
 		Dao dao = cluster.getDao();
 		cluster.setDao((Dao) hibernateSession.merge(dao));
 	}
-
+	
 }
