@@ -18,6 +18,7 @@ package org.jdbcluster.template.hibernate;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.dao.Dao;
@@ -319,6 +320,38 @@ public class HibernateSession implements SessionTemplate {
 
 		Dao dao = cluster.getDao();
 		cluster.setDao((Dao) hibernateSession.merge(dao));
+	}
+
+	/**
+	 * Remove this instance from the session cache. Changes to the instance will
+	 * not be synchronized with the database. This operation cascades to associated
+	 * instances if the association is mapped with <tt>cascade="evict"</tt>.
+	 *
+	 * @param object a persistent instance
+	 * @throws HibernateException
+	 */
+	public void evict(ClusterBase cluster) {
+		
+		Assert.notNull(cluster, "cluster may not be null");
+
+		Dao dao = cluster.getDao();
+		hibernateSession.evict(dao);
+	}
+
+	/**
+	 * Make a transient instance persistent. This operation cascades to associated 
+	 * instances if the association is mapped with <tt>cascade="persist"</tt>.<br>
+	 * <br>
+	 * The semantics of this method are defined by JSR-220.
+	 * 
+	 * @param object a transient instance to be made persistent
+	 */
+	public void persist(ClusterBase cluster) {
+
+		Assert.notNull(cluster, "cluster may not be null");
+
+		Dao dao = cluster.getDao();
+		hibernateSession.persist(dao);
 	}
 	
 }
