@@ -271,16 +271,13 @@ public class HibernateSession implements SessionTemplate {
 	 * @param id primary id of cluster
 	 */
 	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id) {
-		ClusterBase result = null;
+
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
-		DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
-		Assert.notNull(classAnno);
-		Dao dao = (Dao) hibernateSession.get(classAnno.dAOClass(), id);
-		if  (dao.getClass().equals(classAnno.dAOClass())) {
-			result = ClusterFactory.newInstance(clusterClass, dao);
-		}     
-		return result;
+
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
+		cb.setDao((Dao) hibernateSession.get(cb.getDao().getClass(), id));
+		return cb;
 	}
 
 
