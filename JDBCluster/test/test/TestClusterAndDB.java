@@ -150,12 +150,27 @@ public class TestClusterAndDB extends TestCase {
 		CCar bmw = ClusterFactory.newInstance(cAutoType);
 		bmw.setName("BMWforTest");
 		session.save(bmw);
+		long id = bmw.getId();
 		tx.commit();
 		
+		/*
+		 * session two
+		 */
+		SessionTemplate session2 = sf.openSession();
+		TransactionTemplate tx2 = session2.beginTransaction();
+		
+		CCar bmw2 = (CCar) session2.get(CCar.class, id);
+		bmw2.setName("BMW Session 2");
+		tx2.commit();
+		session2.close();
+		
+		/*
+		 * session one
+		 */
 		bmw.setName("This name is Wrong");
 		
 		session.refresh(bmw);
 		
-		assertEquals("BMWforTest", bmw.getName());
+		assertEquals("BMW Session 2", bmw.getName());
 	}
 }
