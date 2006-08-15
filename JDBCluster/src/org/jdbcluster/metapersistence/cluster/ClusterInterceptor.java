@@ -25,6 +25,7 @@ public interface ClusterInterceptor {
 	
 	/**
 	 * calles after cluster creation
+	 * clusterNew is not called if cluster is created from a persisten object
 	 * @param cluster created cluster object
 	 * @return boolean true if successful
 	 */
