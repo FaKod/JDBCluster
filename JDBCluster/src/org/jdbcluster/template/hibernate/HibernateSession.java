@@ -239,7 +239,7 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
 		hibernateSession.load(cb.getDao(), id);
 		return cb;
 	}
@@ -275,7 +275,7 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null);
+		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
 		cb.setDao((Dao) hibernateSession.get(cb.getDao().getClass(), id));
 		return cb;
 	}
