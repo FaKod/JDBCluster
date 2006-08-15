@@ -140,4 +140,22 @@ public class TestClusterAndDB extends TestCase {
 		
 		session1.close();
 	}
+	
+	public void testClusterRefresh() {
+		TransactionTemplate tx = session.beginTransaction();
+		
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		
+		//create a Cluster and persist it
+		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		bmw.setName("BMWforTest");
+		session.save(bmw);
+		tx.commit();
+		
+		bmw.setName("This name is Wrong");
+		
+		session.refresh(bmw);
+		
+		assertEquals("BMWforTest", bmw.getName());
+	}
 }
