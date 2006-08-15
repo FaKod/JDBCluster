@@ -38,7 +38,7 @@ public abstract class ClusterBase implements ICluster{
 		if(daoClass!=null) {
 			if(!daoClass.equals(dao.getClass()))
 				throw new DaoException("Assigning wrong Dao type in ClusterType ["+
-						clusterType.getClusterClassName() + 
+						clusterType!=null?clusterType.getClusterClassName():"unknown" + 
 						"]. Dao class is ["+
 						dao.getClass().getName() + 
 						"] and should be ["+
@@ -46,7 +46,7 @@ public abstract class ClusterBase implements ICluster{
 		}
 		else
 			throw new DaoException("No Dao class set for ClusterType [" + 
-					clusterType.getClusterClassName() +"]");
+					clusterType!=null?clusterType.getClusterClassName():"unknown" +"]");
 			
 		
 		this.dao = dao;
