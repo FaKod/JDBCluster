@@ -17,6 +17,7 @@ package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.dao.Dao;
+import org.jdbcluster.exception.DaoException;
 import org.springframework.util.Assert;
 
 public abstract class ClusterBase implements ICluster{
@@ -33,6 +34,20 @@ public abstract class ClusterBase implements ICluster{
 	public void setDao(Dao dao) {
 		
 		Assert.notNull(dao, "dao may not be null");
+		
+		if(daoClass!=null) {
+			if(!daoClass.equals(dao.getClass()))
+				throw new DaoException("Assigning wrong Dao type in ClusterType ["+
+						clusterType.getClusterClassName() + 
+						"]. Dao class is ["+
+						dao.getClass().getName() + 
+						"] and should be ["+
+						daoClass.getName() + "]");
+		}
+		else
+			throw new DaoException("No Dao class set for ClusterType [" + 
+					clusterType.getClusterClassName() +"]");
+			
 		
 		this.dao = dao;
 	}
