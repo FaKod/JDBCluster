@@ -102,12 +102,27 @@ public abstract class ClusterFactory {
 	 * creates an instance of a Cluster
 	 * Cluster interceptor is <b>not called</b> if dao!=null
 	 * Cluster privileges are <b>not checked</b> if dao!=null 
+	 * If dao is not null its assumed that the dao object is persistent 
 	 * @param clusterClass class of cluster
 	 * @param dao dao object to be presetted
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao) {
+		return newInstance(clusterClass, dao, dao!=null);
+	}
+	
+	/**
+	 * creates an instance of a Cluster
+	 * Cluster interceptor is <b>not called</b> if dao!=null
+	 * Cluster privileges are <b>not checked</b> if dao!=null 
+	 * @param clusterClass class of cluster
+	 * @param dao dao object to be presetted
+	 * @param daoIsPersistent if dao Object is persistent dont call interceptor and pivilegeInterceptor
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao, boolean daoIsPersistent) {
 		
 		Assert.notNull(clusterClass, "Class<?> may not be null");
 		
@@ -124,7 +139,7 @@ public abstract class ClusterFactory {
 			throw new ClusterTypeException("the currently executed ctor for class [" + clusterClass.getName() + "] does not have access", e);
 		} 
 		
-		if(dao==null) {
+		if(!daoIsPersistent) {
 			/*
 			 * call of cluster interceptor
 			 */
