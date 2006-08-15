@@ -36,13 +36,15 @@ public abstract class ClusterBase implements ICluster{
 		Assert.notNull(dao, "dao may not be null");
 		
 		if(daoClass!=null) {
-			if(!daoClass.equals(dao.getClass()))
+			if( !daoClass.equals(dao.getClass()) && 
+					!daoClass.isAssignableFrom(dao.getClass())) {
 				throw new DaoException("Assigning wrong Dao type in ClusterType ["+
 						((clusterType!=null)?clusterType.getClusterClassName():"unknown") + 
 						"]. Dao class is ["+
 						dao.getClass().getName() + 
 						"] and should be ["+
 						daoClass.getName() + "]");
+			}
 		}
 		else
 			throw new DaoException("No Dao class set for ClusterType [" + 
