@@ -93,7 +93,9 @@ public abstract class ClusterFactory {
 	 * @return Cluster
 	 */
 	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
-		return newInstance(getClusterClass(ct), dao);
+		T cluster = newInstance(getClusterClass(ct), dao);
+		cluster.setClusterType(ct);
+		return cluster;
 	}
 	
 	/**
