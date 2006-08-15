@@ -45,8 +45,8 @@ import org.springframework.util.Assert;
 
 /**
  * Main Class for handling privileges
- * @author FaKod
  * 
+ * @author FaKod
  */
 public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChecker {
 
@@ -77,7 +77,6 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * C-Tor to use Factory method
-	 * 
 	 */
 	private PrivilegeCheckerImpl() {
 	}
@@ -108,9 +107,9 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkClusterNew(String clusterType) {
-		
+
 		Assert.hasLength(clusterType, "clusterType may not be null or \"\"");
-		
+
 		String className = ClusterTypeFactory.newInstance(clusterType).getClusterClassName();
 		Class<?> clazz;
 		try {
@@ -147,16 +146,17 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args) {
-		
+
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.hasLength(methodName, "methodName may not be null or \"\"");
-		
+
 		Method calledMethod = getMethod(clusterObject, methodName, args);
 		return userPrivilegeIntersect(clusterObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param clusterObject cluster object instance
 	 * @param methodName method name to check
 	 * @param args array of parameter
@@ -164,29 +164,29 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes) {
-	
+
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.hasLength(methodName, "methodName may not be null or \"\"");
-		
+
 		Method calledMethod = JDBClusterUtil.getMethod(clusterObject.getClass(), methodName, argTypes);
 		return userPrivilegeIntersect(clusterObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param clusterObject cluster object instance
 	 * @param method method name to check
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedCluster clusterObject, Method method, Object... args) {
-	
+
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.notNull(method, "method may not be null");
-		
+
 		return userPrivilegeIntersect(clusterObject, method, args);
 	}
-	
 
 	/**
 	 * intersects required privileges against given privileges
@@ -196,10 +196,10 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args) {
-		
+
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.notNull(calledMethod, "calledMethod may not be null");
-		
+
 		HashSet<String> privileges = getStaticPrivilegesCluster(calledMethod, clusterObject);
 		privileges.addAll(getDynamicPrivilegesCluster(clusterObject, calledMethod, args));
 		return userPrivilegeIntersect(privileges);
@@ -213,9 +213,9 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject) {
-		
+
 		Assert.notNull(clusterObject, "clusterObject may not be null");
-		
+
 		return userPrivilegeIntersect(calcStaticClusterPrivileges(clusterObject.getClass()));
 	}
 
@@ -228,16 +228,17 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object... args) {
-		
+
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.hasLength(serviceMethodName, "serviceMethodName may not be null or \"\"");
-		
+
 		Method calledMethod = getMethod(serviceObject, serviceMethodName, args);
 		return userPrivilegeIntersect(serviceObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param serviceObject service object to check
 	 * @param serviceMethodName method name to check
 	 * @param args array of parameter
@@ -245,26 +246,27 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes) {
-	
+
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.hasLength(serviceMethodName, "serviceMethodName may not be null or \"\"");
-		
+
 		Method calledMethod = JDBClusterUtil.getMethod(serviceObject.getClass(), serviceMethodName, argTypes);
 		return userPrivilegeIntersect(serviceObject, calledMethod, args);
 	}
-	
+
 	/**
 	 * intersects required privileges against given privileges
+	 * 
 	 * @param serviceObject service object to check
 	 * @param serviceMethod method name to check
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean checkAccess(PrivilegedService serviceObject, Method serviceMethod, Object... args) {
-	
+
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.notNull(serviceMethod, "serviceMethodName may not be null");
-		
+
 		return userPrivilegeIntersect(serviceObject, serviceMethod, args);
 	}
 
@@ -276,10 +278,10 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return true if the privileges are sufficient
 	 */
 	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
-		
+
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.notNull(calledMethod, "calledMethod may not be null");
-		
+
 		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
 		privileges.addAll(getServiceMethodParameterPrivileges(calledMethod, args));
 		return userPrivilegeIntersect(privileges);
@@ -321,17 +323,18 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		}
 		return new HashSet<String>(hs);
 	}
-	
+
 	/**
 	 * intersects a specific domain value with the needed rights for this value
+	 * 
 	 * @param domainId configured domain id
 	 * @param value the value of the domain
 	 * @return true if the user rights are sufficient
 	 */
 	public boolean userPrivilegeIntersectDomain(String domainId, String value) {
-		
+
 		Assert.hasLength(domainId, "domainId may not be null or \"\"");
-		
+
 		DomainChecker dc = DomainCheckerImpl.getInstance();
 		DomainPrivilegeList dpl;
 		try {
@@ -339,7 +342,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		} catch (ClassCastException e) {
 			throw new ConfigurationException("[" + domainId + "] must be a privileged domain and needs a implemented DomainPrivilegeList Interface", e);
 		}
-		
+
 		Set<String> neededRights = dpl.getDomainEntryPivilegeList(domainId, value);
 		return userPrivilegeIntersect(neededRights);
 	}
@@ -381,14 +384,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod))) {
 					String value = getPropertyValue(propertyPath, beanWrapper);
 					Set<String> setToAdd = dpl.getDomainEntryPivilegeList(domId, value);
-					if(setToAdd!=null)
+					if (setToAdd != null)
 						result.addAll(setToAdd);
 				} else {
 					if (pd.getWriteMethod().equals(calledMethod)) {
-						if ((args.length != 1 || !(args[0] instanceof String)) && args[0]!=null)
+						if ((args.length != 1 || !(args[0] instanceof String)) && args[0] != null)
 							throw new ConfigurationException("privilege checked property [" + propertyPath + "] needs 1 String argument setter");
-						Set<String> ergList = dpl.getDomainEntryPivilegeList(domId, (String) args[0]); 
-						if(ergList!=null)
+						Set<String> ergList = dpl.getDomainEntryPivilegeList(domId, (String) args[0]);
+						if (ergList != null)
 							result.addAll(ergList);
 					}
 				}
@@ -418,6 +421,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/**
 	 * calculates parameter specific privileges for service method calls
+	 * null values for PrivilegeCluster arguments are always allowed!
 	 * 
 	 * @param calledServiceMethod the method called
 	 * @param args method parameters
@@ -441,26 +445,28 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 				}
 				if (pp != null) {
 					Object arg = args[i];
-					if (arg instanceof PrivilegedCluster) {
-						serviceBeanWrapper.setWrappedInstance(arg);
-						for (String propertyPath : pp.property()) {
-							PropertyDescriptor pd = getPropertyDescriptor(propertyPath, serviceBeanWrapper);
-							if (pd != null) {
-								Field f = getPropertyField(propertyPath, pd);
-								String domId = getDomainIdFromField(f);
-								DomainPrivilegeList dpl;
-								try {
-									dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
-								} catch (ClassCastException e) {
-									throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+					if (arg != null) {
+						if (arg instanceof PrivilegedCluster) {
+							serviceBeanWrapper.setWrappedInstance(arg);
+							for (String propertyPath : pp.property()) {
+								PropertyDescriptor pd = getPropertyDescriptor(propertyPath, serviceBeanWrapper);
+								if (pd != null) {
+									Field f = getPropertyField(propertyPath, pd);
+									String domId = getDomainIdFromField(f);
+									DomainPrivilegeList dpl;
+									try {
+										dpl = (DomainPrivilegeList) dc.getDomainListInstance(domId);
+									} catch (ClassCastException e) {
+										throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
+									}
+									String value = getPropertyValue(propertyPath, serviceBeanWrapper);
+									result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 								}
-								String value = getPropertyValue(propertyPath, serviceBeanWrapper);
-								result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 							}
-						}
-					} else
-						throw new ConfigurationException("Argument of method: " + calledServiceMethod.getName() + " has @" + PrivilegesParameter.class.getName() + " annotation but is not a instance of "
-								+ PrivilegedCluster.class.getName());
+						} else
+							throw new ConfigurationException("Argument of method: " + calledServiceMethod.getName() + " has @" + PrivilegesParameter.class.getName() + " annotation but is not a instance of "
+									+ PrivilegedCluster.class.getName());
+					}
 				}
 			}
 		}
