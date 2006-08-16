@@ -20,47 +20,43 @@ import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.DaoException;
 import org.springframework.util.Assert;
 
-public abstract class ClusterBase implements ICluster{
-	
+public abstract class ClusterBase implements ICluster {
+
 	private Dao dao;
+
 	private Class daoClass;
 
 	private ClusterType clusterType;
-	
+
 	public Dao getDao() {
 		return dao;
 	}
 
 	public void setDao(Dao dao) {
-		
+
 		Assert.notNull(dao, "dao may not be null");
-		
-		if(daoClass!=null) {
-			if( !daoClass.equals(dao.getClass()) && 
-					!daoClass.isAssignableFrom(dao.getClass())) {
-				throw new DaoException("Assigning wrong Dao type in ClusterType ["+
-						((clusterType!=null)?clusterType.getClusterClassName():"unknown") + 
-						"]. Dao class is ["+
-						dao.getClass().getName() + 
-						"] and should be ["+
-						daoClass.getName() + "]");
-			}
+
+		if (false) {
+			if (daoClass != null) {
+				if (!daoClass.equals(dao.getClass()) && !daoClass.isAssignableFrom(dao.getClass())) {
+					throw new DaoException("Assigning wrong Dao type in ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]. Dao class is [" + dao.getClass().getName()
+							+ "] and should be [" + daoClass.getName() + "]");
+				}
+			} else
+				throw new DaoException("No Dao class set for ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]");
+
 		}
-		else
-			throw new DaoException("No Dao class set for ClusterType [" + 
-					((clusterType!=null)?clusterType.getClusterClassName():"unknown") +"]");
-			
-		
+
 		this.dao = dao;
 	}
 
 	public void setClusterType(ClusterType ct) {
-		
+
 		Assert.notNull(ct, "ClusterType may not be null");
-		
+
 		clusterType = ct;
 	}
-	
+
 	public ClusterType getClusterType() {
 		return clusterType;
 	}
@@ -70,9 +66,9 @@ public abstract class ClusterBase implements ICluster{
 	}
 
 	public void setDaoClass(Class daoClass) {
-		
+
 		Assert.notNull(daoClass, "daoClass may not be null");
-		
+
 		this.daoClass = daoClass;
 	}
 }
