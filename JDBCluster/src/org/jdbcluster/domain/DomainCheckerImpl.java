@@ -218,8 +218,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		HashMap<String, ValidEntryList> slaveEntries = es.get(masterValue);
 		if (slaveEntries == null) {
 			if (es.get("*") == null)
-				throw new DomainException("while checking domainId [" + slaveDomainId + "] and value [" + slaveValue + "]" + "master domain [" + masterDomainId + "]: value [" + masterValue
-						+ "] is not configured");
+				throw new DomainException("while checking domainId [" + slaveDomainId + "] and value [" + slaveValue + "]" + " master domain [" + masterDomainId + "]: Value [" + masterValue
+						+ "] is not configured. \nUse <entry value=\"*\" slavedomainid=\"" + slaveDomainId + "\"/>" +
+						"\nIn definition of domain id " + masterDomainId);
 			else
 				return true; // wildcard match
 		}
