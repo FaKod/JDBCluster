@@ -21,8 +21,23 @@ package org.jdbcluster.domain;
  * 
  */
 final class Valid {
-	boolean valid; //for valid or invalid values
+	/*
+	 * if this was a valid or invalid tag
+	 */
+	boolean valid;
+	
+	/*
+	 * content of the value tag. Null if there was'nt one
+	 */
 	String value;
-	boolean all;
-	boolean nullValue;
+	
+	/*
+	 * content of the all tag. False if there was'nt one
+	 */
+	boolean all = false;
+	
+	/*
+	 * content of the null tag. False if there was'nt one
+	 */
+	boolean nullValue = false;
 }
