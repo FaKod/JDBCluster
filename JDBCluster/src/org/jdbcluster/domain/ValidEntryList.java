@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Node;
+import org.jdbcluster.exception.ConfigurationException;
 
 /**
  * List of configured validation entries
@@ -122,8 +123,15 @@ final class ValidEntryList extends ArrayList<Valid> {
 	private void fill(Node n, boolean valid) {
 		Valid v = new Valid();
 		v.valid = valid;
-		v.all = n.valueOf("@all").equalsIgnoreCase("true");
-		v.nullValue = n.valueOf("@null").equalsIgnoreCase("true");
+		
+		String allTmp = n.valueOf("@all");
+		if(allTmp.length()>0)
+			v.all = allTmp.equalsIgnoreCase("true");
+		
+		String nullTmp = n.valueOf("@null");
+		if(nullTmp.length()>0)
+			v.nullValue = nullTmp.equalsIgnoreCase("true");
+		
 		v.value = n.valueOf("@value");
 		if(v.value.length()==0) {
 			v.value = null;
@@ -132,6 +140,17 @@ final class ValidEntryList extends ArrayList<Valid> {
 		else {
 			mapValuesToValid.put(v.value, v);
 		}
+		
+		if(v.value != null && v.value.length()>0) {
+			if(allTmp.length()>0 || nullTmp.length()>0)
+				throw new ConfigurationException("given value attribute (<valid value=\"...\">) requires unset null and all attribute");
+		}
+		else {
+			if(allTmp.length()==0)
+				if(nullTmp.length()==0)
+					throw new ConfigurationException("missing all attribute (<valid all=\"...\">) requires existing null attribute");
+		}
+		
 	}
 	
 	/**
@@ -189,7 +208,8 @@ final class ValidEntryList extends ArrayList<Valid> {
 		if(nextVed==null)
 			return;
 		
-		valid.add(nextVed);
+		if(nextVed.containsInValidElements || nextVed.containsValidElements)
+			valid.add(nextVed);
 		
 		if(++index==masterDomainId.length)
 			return;
