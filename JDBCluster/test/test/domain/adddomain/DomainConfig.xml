@@ -49,7 +49,7 @@ B1					[null]			[any],[null]		[null]
 			<entry null="true" slavedomainid="subSubCatCode">
 				<valid null="true" />
 				<additionalmaster value="A1" masterdomainid="categoryCode">
-					<valid all="true"/> 
+					<valid null="true" all="true"/> 
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
 					<valid all="true"/> 
@@ -87,7 +87,28 @@ B1					[null]			[any],[null]		[null]
 					</additionalmaster>
 				</additionalmaster>
 			</entry>
-			
+			<entry value="A3" slavedomainid="subSubSubCatCode">
+				<valid null="true" />
+				<additionalmaster value="A2" masterdomainid="subCatCode">
+					<valid value="A4"/> 
+				</additionalmaster>
+				<additionalmaster value="A1" masterdomainid="categoryCode">
+					<additionalmaster value="B2" masterdomainid="subCatCode">
+					<valid all="true"/> 
+					</additionalmaster>
+				</additionalmaster>
+			</entry>
+			<entry value="B3" slavedomainid="subSubSubCatCode">
+				<valid null="true" />
+				<additionalmaster value="A2" masterdomainid="subCatCode">
+					<valid value="A4"/> 
+				</additionalmaster>
+				<additionalmaster value="B1" masterdomainid="categoryCode">
+					<additionalmaster value="B2" masterdomainid="subCatCode">
+						<valid value="B4"/> 
+					</additionalmaster>
+				</additionalmaster>
+			</entry>			
 		</domain>
 		
 		<domain domainid="subSubSubCatCode" domainlistclass="test.domain.adddomain.AddDomainList" />
