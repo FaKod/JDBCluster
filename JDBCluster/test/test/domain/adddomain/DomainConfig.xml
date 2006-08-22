@@ -52,7 +52,6 @@ B1					[null]			[any],[null]		[null]
 			</entry>
 			<entry value="A2" slavedomainid="subSubCatCode">
 				<valid all="true" null="true"/>
-				<valid all="true"/>
 			</entry>
 			<entry value="B2" slavedomainid="subSubCatCode">
 				<valid null="true"/>
