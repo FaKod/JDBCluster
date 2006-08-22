@@ -18,101 +18,92 @@ B1					[null]			[any],[null]		[null]
 					
  -->
 <jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jdbcluster.xsd">
-
 	<privileges>
 		<UserPrivilegeChecker class="UserPrivilege"/>
 	</privileges>
-	
 	<clustertype>
-		<cluster class="test.domain.adddomain.AddDomainCluster" id="AddDomainCluster"/>		
+		<cluster class="test.domain.adddomain.AddDomainCluster" id="AddDomainCluster"/>
 	</clustertype>
-
 	<domaindependancy>
-	
-		<domain domainid="categoryCode" domainlistclass="test.domain.adddomain.AddDomainList" >
+		<domain domainid="categoryCode" domainlistclass="test.domain.adddomain.AddDomainList">
 			<entry null="true" slavedomainid="subCatCode">
-				<valid null="true" />
+				<valid null="true"/>
 			</entry>
 			<entry value="A1" slavedomainid="subCatCode">
-				<valid null="true" />
-				<valid value="A2" />
-				<valid value="B2" />
+				<valid null="true"/>
+				<valid value="A2"/>
+				<valid value="B2"/>
 			</entry>
 			<entry value="B1" slavedomainid="subCatCode">
-				<valid null="true" />
-				<valid value="A2" />
-				<valid value="B2" />
+				<valid null="true"/>
+				<valid value="A2"/>
+				<valid value="B2"/>
 			</entry>
 		</domain>
-		
-		<domain domainid="subCatCode" domainlistclass="test.domain.adddomain.AddDomainList" >
+		<domain domainid="subCatCode" domainlistclass="test.domain.adddomain.AddDomainList">
 			<entry null="true" slavedomainid="subSubCatCode">
-				<valid null="true" />
+				<valid null="true"/>
 				<additionalmaster value="A1" masterdomainid="categoryCode">
-					<valid null="true" all="true"/> 
+					<valid null="true" all="true"/>
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
-					<valid all="true"/> 
+					<valid null="true" all="true"/>
 				</additionalmaster>
 			</entry>
 			<entry value="A2" slavedomainid="subSubCatCode">
-				<valid null="true" />
-				<valid all="true" />
+				<valid all="true" null="true"/>
+				<valid all="true"/>
 			</entry>
 			<entry value="B2" slavedomainid="subSubCatCode">
-				<valid null="true" />	
+				<valid null="true"/>
 				<additionalmaster value="A1" masterdomainid="categoryCode">
-					<valid value="A3"/> 
+					<valid value="A3"/>
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
-					<valid value="B3"/> 
+					<valid value="B3"/>
 				</additionalmaster>
 			</entry>
 		</domain>
-		
-		<domain domainid="subSubCatCode" domainlistclass="test.domain.adddomain.AddDomainList" >
+		<domain domainid="subSubCatCode" domainlistclass="test.domain.adddomain.AddDomainList">
 			<entry null="true" slavedomainid="subSubSubCatCode">
-				<valid null="true" />
+				<valid null="true"/>
 				<additionalmaster value="A2" masterdomainid="subCatCode">
-					<valid value="A4"/> 
+					<valid value="A4"/>
 				</additionalmaster>
 				<additionalmaster value="A1" masterdomainid="categoryCode">
 					<additionalmaster value="B2" masterdomainid="subCatCode">
-					<valid all="true"/> 
+						<valid null="true" all="true"/>
 					</additionalmaster>
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
 					<additionalmaster value="B2" masterdomainid="subCatCode">
-						<valid value="B4"/> 
+						<valid value="B4"/>
 					</additionalmaster>
 				</additionalmaster>
 			</entry>
 			<entry value="A3" slavedomainid="subSubSubCatCode">
-				<valid null="true" />
+				<valid null="true"/>
 				<additionalmaster value="A2" masterdomainid="subCatCode">
-					<valid value="A4"/> 
+					<valid value="A4"/>
 				</additionalmaster>
 				<additionalmaster value="A1" masterdomainid="categoryCode">
 					<additionalmaster value="B2" masterdomainid="subCatCode">
-					<valid all="true"/> 
+						<valid null="true" all="true"/>
 					</additionalmaster>
 				</additionalmaster>
 			</entry>
 			<entry value="B3" slavedomainid="subSubSubCatCode">
-				<valid null="true" />
+				<valid null="true"/>
 				<additionalmaster value="A2" masterdomainid="subCatCode">
-					<valid value="A4"/> 
+					<valid value="A4"/>
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
 					<additionalmaster value="B2" masterdomainid="subCatCode">
-						<valid value="B4"/> 
+						<valid value="B4"/>
 					</additionalmaster>
 				</additionalmaster>
-			</entry>			
+			</entry>
 		</domain>
-		
-		<domain domainid="subSubSubCatCode" domainlistclass="test.domain.adddomain.AddDomainList" />
+		<domain domainid="subSubSubCatCode" domainlistclass="test.domain.adddomain.AddDomainList"/>
 	</domaindependancy>
 </jdbcluster>
-	
-	
