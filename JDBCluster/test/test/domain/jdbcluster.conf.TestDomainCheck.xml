@@ -72,7 +72,7 @@
 				<valid null="true"/>
 			</entry>
 			<entry value="None" slavedomainid="ColorDomain">
-				<invalid all="true"/>
+				<invalid all="true" null="false"/>
 			</entry>
 			<entry value="All" slavedomainid="ColorDomain">
 				<valid all="true" null="true"/>
