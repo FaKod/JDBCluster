@@ -113,6 +113,8 @@
 			<test name="test.service.TestService" fork="yes" haltonfailure="no" todir="${test.reports}" />
 			
 			<test name="test.clusterinterceptor.TestClusterInterceptor" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			
+			<test name="test.domain.adddomain.TestAddMasterDomain" fork="yes" haltonfailure="no" todir="${test.reports}" />
 
 		</junit>
 
