@@ -194,7 +194,7 @@ final class ValidEntryList extends ArrayList<Valid> {
 	 * @param masterValue  master domain value
 	 * @return true if a valid elements have been found
 	 */
-	private static boolean recAddMaster (ArrayList<ValidEntryList> valid, ValidEntryList ved, String[] masterDomainId, String[] masterValue) {
+	private static boolean recAddMaster(ArrayList<ValidEntryList> valid, ValidEntryList ved, String[] masterDomainId, String[] masterValue) {
 		
 		for (int i = 0; i < masterDomainId.length; i++) {
 			if (ved.addMasterMap != null) {
@@ -216,38 +216,6 @@ final class ValidEntryList extends ArrayList<Valid> {
 		}
 		return false;
 	}
-	
-//	/**
-//	 * recursive internal method to fill the ArrayList<ValidEntryList> list
-//	 * @param valid the ArrayList<ValidEntryList> list
-//	 * @param ved ValidEntryList to use
-//	 * @param masterDomainId master domain id
-//	 * @param masterValue master domain value
-//	 * @param index index in the arrays used per iteration
-//	 */
-//	private void recAddMaster (ArrayList<ValidEntryList> valid, ValidEntryList ved, String[] masterDomainId, String[] masterValue, int index) {
-//		String masterDomID = masterDomainId[index];
-//		String masterVal = masterValue[index];
-//		
-//		if(ved.addMasterMap==null)
-//			return;
-//		
-//		HashMap<String, ValidEntryList> m1 = ved.addMasterMap.get(masterVal);
-//		if(m1==null)
-//			return;
-//		
-//		ValidEntryList nextVed = m1.get(masterDomID);
-//		if(nextVed==null)
-//			return;
-//		
-//		if(nextVed.containsInValidElements || nextVed.containsValidElements)
-//			valid.add(nextVed);
-//		
-//		if(++index==masterDomainId.length)
-//			return;
-//
-//		recAddMaster(valid, nextVed, masterDomainId, masterValue, index);
-//	}
 	
 	/**
 	 * check for additional master elements
