@@ -142,13 +142,16 @@ final class ValidEntryList extends ArrayList<Valid> {
 			mapValuesToValid.put(v.value, v);
 		}
 		
+		/**
+		 * given attribute validation
+		 */
 		if(v.value != null && v.value.length()>0) {
-			if(allTmp.length()>0 || nullTmp.length()>0)
+			if(v.all!=null || v.nullValue!=null)
 				throw new ConfigurationException("given value attribute (<valid value=\"...\">) requires unset null and all attribute");
 		}
 		else {
-			if(allTmp.length()==0)
-				if(nullTmp.length()==0)
+			if(v.all==null)
+				if(v.nullValue==null)
 					throw new ConfigurationException("missing all attribute (<valid all=\"...\">) requires existing null attribute");
 		}
 		

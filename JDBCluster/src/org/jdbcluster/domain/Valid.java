@@ -34,10 +34,10 @@ final class Valid {
 	/*
 	 * content of the all tag. False if there was'nt one
 	 */
-	boolean all = false;
+	Boolean all = null;
 	
 	/*
 	 * content of the null tag. False if there was'nt one
 	 */
-	boolean nullValue = false;
+	Boolean nullValue = null;
 }

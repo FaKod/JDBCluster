@@ -85,27 +85,42 @@ public abstract class DomainBase {
 		}
 
 		for (Valid v : valid) {
-			if(v.all) {
+			
+			if(v.all!=null && v.all) {
 				if (v.valid) {
+					if (v.nullValue==null)
+						return true;
+					
 					if (v.nullValue)
 						return true;
 					else
 						return slaveValue != null;
 				}
 				else {
+					if (v.nullValue==null)
+						return false;
+					
 					if (v.nullValue)
 						return false;
 					else
 						return slaveValue == null;
 				}
 			}
-			else {
+			
+			if(v.all!=null && !v.all) {
 				if (v.valid) {
+					if (v.nullValue==null)
+						return false;
+					
 					if (v.nullValue)
 						return slaveValue == null;
 					else
 						return slaveValue != null;
-				} else { 
+				} 
+				else { 
+					if (v.nullValue==null)
+						return true;
+					
 					if (v.nullValue) {
 						return slaveValue != null;
 					}
@@ -113,6 +128,22 @@ public abstract class DomainBase {
 						return slaveValue == null;
 				}
 			}
+			
+			if(v.all==null) {
+				if (v.valid) {
+					if(v.nullValue!=null && v.nullValue)
+						return slaveValue == null;
+					else
+						return slaveValue != null;
+				}
+				else {
+					if(v.nullValue!=null && v.nullValue)
+						return slaveValue != null;
+					else
+						return slaveValue == null;
+				}
+			}
+					
 		}
 		
 		if(valid.isContainsValidElements())
