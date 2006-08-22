@@ -17,7 +17,7 @@ B1					[null]			[any],[null]		[null]
 					B2				B3,[null]			B4,[null]
 					
  -->
-<jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jdbcluster.xsd">
+<jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jdbcluster.sourceforge.net/jdbcluster.xsd">
 	<privileges>
 		<UserPrivilegeChecker class="UserPrivilege"/>
 	</privileges>
