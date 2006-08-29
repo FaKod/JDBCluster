@@ -92,13 +92,17 @@ B1					[null]			[any],[null]		[null]
 				</additionalmaster>
 			</entry>
 			<entry value="B3" slavedomainid="subSubSubCatCode">
-				<valid null="true"/>
+				<valid all="false" null="true"/>
+				<valid value="AA4"/>
 				<additionalmaster value="A2" masterdomainid="subCatCode">
 					<valid value="A4"/>
 				</additionalmaster>
 				<additionalmaster value="B1" masterdomainid="categoryCode">
 					<additionalmaster value="B2" masterdomainid="subCatCode">
+						<valid all="true" null="true"/>
 						<valid value="B4"/>
+						<invalid value="A4"/>
+						<invalid value="AA4"/>
 					</additionalmaster>
 				</additionalmaster>
 			</entry>

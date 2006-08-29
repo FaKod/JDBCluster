@@ -248,6 +248,12 @@ public class TestAddMasterDomain extends TestCase {
 			ex.printStackTrace();
 			fail("");
 		}		
+		try {
+			cluster.setCodes("B1", "B2", "B3", "AA4");
+			fail("AA4 should not be possible");
+		} catch (DomainException ex) {
+			ex.printStackTrace();		
+		}		
 	}
 
 }
