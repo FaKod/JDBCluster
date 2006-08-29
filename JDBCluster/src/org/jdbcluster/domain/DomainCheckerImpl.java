@@ -228,12 +228,17 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 		boolean hadValidEntries = false;
 		ValidEntryList vel = slaveEntries.get(slaveDomainId);
 		ArrayList<ValidEntryList> v = vel.getValidFromDomainEntry(addMasterDomainId, addMasterValue);
-		for (int i = v.size(); i > 0;) {
-			ValidEntryList ved = v.get(--i);
+		
+		for (int i = v.size() - 1; i >= 0; i--) {
+			ValidEntryList ved = v.get(i);
 			Valid validDomEntry = ved.getValidFromDomainEntry(slaveValue);
 			if (validDomEntry != null) {
 				return validDomEntry.valid;
 			}
+		}
+		
+		for (int i = v.size() - 1; i >= 0; i--) {
+			ValidEntryList ved = v.get(i);
 			if (!ved.isEmpty())
 				return validate(ved, slaveValue);
 
@@ -329,11 +334,11 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param masterDomainId master domain id
 	 * @param masterValue master value
 	 * @param slaveDomainId slave domain id
-	 * @param addDomIdArr array of additional master domain ids
-	 * @param addDomValArr array of additional master domain values
+	 * @param addMasterDomainId array of additional master domain ids
+	 * @param addMasterValue array of additional master domain values
 	 * @return ValidDomainEntries<String> of all valid domain entries
 	 */
-	ValidDomainEntries<String> getValidDomainEntries(String masterDomainId, String masterValue, String slaveDomainId, String[] addDomIdArr, String[] addDomValArr) {
+	ValidDomainEntries<String> getValidDomainEntries(String masterDomainId, String masterValue, String slaveDomainId, String[] addMasterDomainId, String[] addMasterValue) {
 		ValidDomainEntries<String> wholeList = getValidDomainEntries(masterDomainId, masterValue, slaveDomainId);
 		ValidDomainEntries<String> possibleValueList = getPossibleDomainEntries(slaveDomainId);
 
@@ -365,7 +370,8 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			resultList.setNullAllowed(true);
 		}
 
-		ArrayList<ValidEntryList> al = valid.getValidFromDomainEntry(addDomIdArr, addDomValArr);
+		ArrayList<ValidEntryList> al = valid.getValidFromDomainEntry(addMasterDomainId, addMasterValue);
+		
 		for (int i = 0; i < al.size(); i++) {
 			ValidEntryList ved = al.get(i);
 
@@ -380,7 +386,11 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 					resultList.remove(s);
 				}
 			}
-
+		}
+		
+		for (int i = 0; i < al.size(); i++) {
+			ValidEntryList ved = al.get(i);
+			
 			for (Valid v : ved) {
 				if (v.valid) {
 					if (v.value == null)
