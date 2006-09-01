@@ -312,7 +312,7 @@ public abstract class CCFilterBase implements CCFilter {
 					throw new BindingException("cannot find getter for Property Path [" + propPath + "] in Class [" + this.getClassName() + "]", ce);
 				}
 				if (logger.isDebugEnabled())
-					logger.debug("using value = " + val.toString());
+					logger.debug("using value = " + val!=null?val.toString():"null");
 				// set the binding to the query
 				queryTemplate.getQuery().setParameter(paramName, val);
 
