@@ -205,10 +205,8 @@ final class ValidEntryList extends ArrayList<Valid> {
 				if (domValueMap != null) {
 					ValidEntryList nextVed = domValueMap.get(masterValue[i]);
 					if (nextVed != null) {
-						if (nextVed.containsInValidElements || nextVed.containsValidElements) {
+						if (nextVed.containsInValidElements || nextVed.containsValidElements)
 							valid.add(nextVed);
-							return true;
-						}
 						if (nextVed.addMasterMap != null) {
 							if (recAddMaster(valid, nextVed, masterDomainId, masterValue))
 								return true;
