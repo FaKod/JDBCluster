@@ -187,7 +187,7 @@ public class HibernateSession implements SessionTemplate {
 			ccf.doBindings(queryTemplate);
 
 		} else {
-			String queryString = " from " + ccf.getSelectStatementDAO() + orderBy;
+			String queryString = " from " + ccf.getSelectStatementDAO() + " " + qStr + " " + orderBy;
 
 			if (logger.isDebugEnabled())
 				logger.debug("using query string [" + queryString + "]");
