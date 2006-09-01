@@ -24,6 +24,7 @@ import org.hibernate.Session;
 import org.jdbcluster.dao.Dao;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.annotation.DaoLink;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.QueryTemplate;
@@ -224,6 +225,8 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(cluster, "Cluster may not be null");
 		
 		hibernateSession.refresh(cluster.getDao());
+		
+		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
 
 	/**
@@ -258,6 +261,9 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(id, "id may not be null");
 
 		hibernateSession.load(cluster.getDao(), id);
+		
+		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		
 		return cluster;
 	}
 
@@ -297,6 +303,9 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(id, "id may not be null");
 
 		cluster.setDao((Dao) hibernateSession.get(cluster.getDao().getClass(), id));
+		
+		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		
 		return cluster;
 	}
 
@@ -317,6 +326,8 @@ public class HibernateSession implements SessionTemplate {
 
 		Dao dao = cluster.getDao();
 		cluster.setDao((Dao) hibernateSession.merge(dao));
+		
+		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
 
 	/**
@@ -349,6 +360,8 @@ public class HibernateSession implements SessionTemplate {
 
 		Dao dao = cluster.getDao();
 		hibernateSession.persist(dao);
+		
+		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
 	
 }

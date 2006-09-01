@@ -28,4 +28,8 @@ public final class DefaultClusterInterceptor implements ClusterInterceptor {
 		return true;
 	}
 
+	public boolean clusterRefresh(Cluster cluster) {
+		return true;
+	}
+
 }

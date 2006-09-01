@@ -30,5 +30,13 @@ public interface ClusterInterceptor {
 	 * @return boolean true if successful
 	 */
 	public boolean clusterNew(Cluster cluster);
+	
+	/**
+	 * called after a cluster is reloaded from database
+	 * used in session methods
+	 * @param cluster refreshed cluster
+	 * @return boolean reserved return true
+	 */
+	public boolean clusterRefresh(Cluster cluster);
 
 }
