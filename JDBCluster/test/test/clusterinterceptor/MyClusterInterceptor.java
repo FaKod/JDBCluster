@@ -16,4 +16,8 @@ public class MyClusterInterceptor implements ClusterInterceptor {
 		return false;
 	}
 
+	public boolean clusterRefresh(Cluster cluster) {
+		return true;
+	}
+
 }
