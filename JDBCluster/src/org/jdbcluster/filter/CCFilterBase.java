@@ -10,6 +10,7 @@
  */
 package org.jdbcluster.filter;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -314,8 +315,10 @@ public abstract class CCFilterBase implements CCFilter {
 				if (logger.isDebugEnabled())
 					logger.debug("using value = " + val!=null?val.toString():"null");
 				// set the binding to the query
-				queryTemplate.getQuery().setParameter(paramName, val);
-
+				if(val instanceof Collection)
+					queryTemplate.getQuery().setParameterList(paramName, (Collection)val);
+				else
+					queryTemplate.getQuery().setParameter(paramName, val);
 			}
 		}
 		// call the method recursive with the appended filter as an argument
