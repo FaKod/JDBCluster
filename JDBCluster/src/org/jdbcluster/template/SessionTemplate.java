@@ -53,4 +53,5 @@ public interface SessionTemplate {
 	public void evict(ClusterBase cluster);
 	public void persist(ClusterBase cluster);
 	public <T> T getNativeSession();
+	public TransactionTemplate getTransactionTemplate();
 }

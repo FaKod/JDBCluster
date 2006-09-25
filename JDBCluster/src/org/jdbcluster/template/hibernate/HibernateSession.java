@@ -47,13 +47,19 @@ public class HibernateSession implements SessionTemplate {
 	protected Session hibernateSession;
 
 	protected HibernateSessionFactory factory;
+	
+	protected HibernateTransaction tx;
 
 	public HibernateSession() {
 	}
 
 	public TransactionTemplate beginTransaction() {
-		HibernateTransaction tx = new HibernateTransaction();
+		tx = new HibernateTransaction();
 		tx.setTransaction(hibernateSession.beginTransaction());
+		return tx;
+	}
+	
+	public TransactionTemplate getTransactionTemplate() {
 		return tx;
 	}
 
@@ -363,5 +369,7 @@ public class HibernateSession implements SessionTemplate {
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
+
+	
 	
 }
