@@ -10,6 +10,7 @@ import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilterFactory;
+import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
@@ -17,6 +18,8 @@ import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
 import org.jdbcluster.template.TransactionTemplate;
+
+import dao.Car;
 
 import test.testfilter.NameFilter;
 
@@ -173,4 +176,12 @@ public class TestClusterAndDB extends TestCase {
 		
 		assertEquals("BMW Session 2", bmw.getName());
 	}
+	
+	public void testClusterClassFromDao() {
+		Car car = new Car();
+		Class<? extends ClusterBase> c = ClusterFactory.getClusterFromDao(car);
+		ClusterBase cb = ClusterFactory.newInstance(c, car);
+		assertSame(CCar.class, cb.getClass());
+	}
+
 }
