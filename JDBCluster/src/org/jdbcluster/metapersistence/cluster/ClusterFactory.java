@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.metapersistence.cluster;
 
+import java.util.List;
+
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeBase;
@@ -23,6 +25,7 @@ import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.ClusterTypeException;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.exception.PrivilegeException;
+import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegedCluster;
@@ -193,6 +196,33 @@ public abstract class ClusterFactory {
 		
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
 		return getClusterClass(ct);
+	}
+	
+	/**
+	 * get the cluster class object from a Dao instance
+	 * @param dao Dao instance to search cluster
+	 * @return Class<? extends ClusterBase> class of corresponding cluster
+	 */
+	public static Class<? extends ClusterBase> getClusterFromDao(Dao dao) {
+		
+		Assert.notNull(dao, "Dao dao may not be null");
+		
+		List<String> clusterIDs = ClusterTypeBase.getClusterTypeConfig().getClusterIDs();
+		for( String s : clusterIDs) {
+			Class<? extends ClusterBase> clusterClass = null;
+			String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(s);
+			try {
+				clusterClass = (Class<? extends ClusterBase>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+				DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
+				if (classAnno != null) {
+					if(classAnno.dAOClass() == dao.getClass())
+						return clusterClass;
+				}
+			} catch (ClassNotFoundException e) {
+				throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
+			}
+		}
+		return null;
 	}
 	
 }
