@@ -370,6 +370,15 @@ public class HibernateSession implements SessionTemplate {
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
 
-	
-	
+	/**
+	 * Does this <tt>Session</tt> contain any changes which must be
+	 * synchronized with the database? Would any SQL be executed if
+	 * we flushed this session?
+	 *
+	 * @return boolean
+	 */
+	public boolean isDirty() {
+		return hibernateSession.isDirty();
+	}
+
 }

@@ -54,4 +54,5 @@ public interface SessionTemplate {
 	public void persist(ClusterBase cluster);
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
+	public boolean isDirty();
 }
