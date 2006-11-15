@@ -125,6 +125,32 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 
 		return check(cluster, fSlave, slaveValue, ddSlave);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.ClusterBase,
+	 *      java.lang.String, java.lang.Object)
+	 */
+	public boolean check(ClusterBase cluster, String propSlavePath, Object propValue) {
+		
+		Assert.notNull(cluster, "ClusterBase may not be null");
+		Assert.hasLength(propSlavePath, "propSlavePath may not be null");
+		
+		if(propValue instanceof String) {
+			String slaveValue = (String) propValue;
+			Field fSlave = JDBClusterUtil.getField(propSlavePath, cluster);
+			DomainDependancy ddSlave = fSlave.getAnnotation(DomainDependancy.class);
+	
+			if (logger.isDebugEnabled())
+				logger.debug("check for cluster [" + cluster.getClass().getName() + "] and Property Slave Path [" + propSlavePath + "] and Slave Value [" + slaveValue + "] and Domain Dependancy Domain Id ["
+						+ ddSlave.domainId() + "]");
+			
+			return check(cluster, fSlave, slaveValue, ddSlave);
+		}
+		throw new DomainException("while checking property [" + propSlavePath + "] and value [" + propValue + "]" + " at Cluster [" + cluster + "]."
+				+ " Property is not of type " + String.class.getName());
+	}
 
 	/**
 	 * for package wide use

@@ -27,6 +27,16 @@ public interface DomainChecker {
 	 * @return true if value is valid
 	 */
 	public abstract boolean check(ClusterBase cluster, String propSlavePath);
+	
+	/**
+	 * Check if propValue is a valid value
+	 * This can be used to avoid a setter exception
+	 * @param cluster ClusterBase objects to test
+	 * @param propSlavePath path to slave property (usually the name)
+	 * @param propValue the property value to check
+	 * @return true if value is valid
+	 */
+	public abstract boolean check(ClusterBase cluster, String propSlavePath, Object propValue);
 
 	/**
 	 * calculates set of valid domain values (master or slave)
