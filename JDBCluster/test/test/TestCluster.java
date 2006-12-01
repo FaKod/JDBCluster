@@ -18,7 +18,7 @@ public class TestCluster extends TestCase {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		CCar cAuto = ClusterFactory.newInstance(cAutoType);
 
-		CSet<CSparePart> ersatzList = cAuto.getCersatzteile();
+		CSet<CSparePart> ersatzList = cAuto.getCsparepart();
 		CSparePart ersatz = new CSparePart();
 
 		ersatzList.add(ersatz);
@@ -28,7 +28,7 @@ public class TestCluster extends TestCase {
 		ersatzList.add(ersatz2);
 		assertEquals(2, ersatzList.size());
 
-		CSet<CSparePart> ersatzList2 = cAuto.getCersatzteile();
+		CSet<CSparePart> ersatzList2 = cAuto.getCsparepart();
 		assertEquals(2, ersatzList2.size());
 
 		ersatzList.remove(ersatz);
@@ -45,7 +45,7 @@ public class TestCluster extends TestCase {
 		cAuto.getName();
 
 		CSparePart ersatz = new CSparePart();
-		CSet<CSparePart> ersatzList = cAuto.getCersatzteile();
+		CSet<CSparePart> ersatzList = cAuto.getCsparepart();
 		ersatzList.add(ersatz);
 
 		ersatz.setLieferant("Picard");
