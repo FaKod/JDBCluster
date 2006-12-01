@@ -10,7 +10,7 @@
 		<id name="id" column="VEHICLE_ID" type="long">
 			<generator class="native"/>
 		</id>
-		<property name="name" type="string" column="NAME"/>
+		<property name="name" type="string" column="NAME" length="15"/>
 		
 	</class>
 

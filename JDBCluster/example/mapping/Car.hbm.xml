@@ -6,7 +6,7 @@
 <hibernate-mapping>
 	<joined-subclass extends="dao.Vehicle" name="dao.Car" table="CAR">
 		 <key column="AUTO_ID" />
-		<set name="ersatzteile" table="CAR_SPAREPART">
+		<set name="sparePart" table="CAR_SPAREPART">
 			<key column="AUTO_ID"/>
 			<many-to-many column="SPARPART_ID" class="dao.SparePart"/>
 		</set>

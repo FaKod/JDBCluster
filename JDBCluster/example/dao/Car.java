@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Car extends Vehicle {
 
-	Set ersatzteile = new HashSet();
+	Set sparePart = new HashSet();
 	Set besitzer = new HashSet();
 	double longitude;
 	double latitude;
@@ -37,12 +37,12 @@ public class Car extends Vehicle {
 		this.id = id;
 	}
 
-	public Set getErsatzteile() {
-		return ersatzteile;
+	public Set getSparePart() {
+		return sparePart;
 	}
 
-	public void setErsatzteile(Set ersatzteile) {
-		this.ersatzteile = ersatzteile;
+	public void setSparePart(Set ersatzteile) {
+		this.sparePart = ersatzteile;
 	}
 
 	public Set getBesitzer() {

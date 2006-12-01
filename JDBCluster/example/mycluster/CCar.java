@@ -15,14 +15,11 @@ public class CCar extends CVehicle {
 
 	//DAO assoc to Ersatzteile
 	@DaoLink(dAOClass = SparePart.class)
-	CSet<CSparePart> cersatzteile;
+	CSet<CSparePart> csparepart;
 	
 	//DAO assoc to Besitzer
 	@DaoLink(dAOClass = Owner.class)
 	MyRemoveSpecialTreatmentCSet<COwner> cbesitzer;
-
-	
-	
 
 	public String getName() {
 		return name;
@@ -32,12 +29,12 @@ public class CCar extends CVehicle {
 		this.name = name;
 	}
 
-	public CSet<CSparePart> getCersatzteile() {
-		return cersatzteile;
+	public CSet<CSparePart> getCsparepart() {
+		return csparepart;
 	}
 
-	public void setCersatzteile(CSet<CSparePart> cersatzteile) {
-		this.cersatzteile = cersatzteile;
+	public void setCsparepart(CSet<CSparePart> cersatzteile) {
+		this.csparepart = cersatzteile;
 	}
 
 	public MyRemoveSpecialTreatmentCSet<COwner> getCbesitzer() {
