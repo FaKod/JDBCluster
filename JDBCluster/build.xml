@@ -38,7 +38,7 @@
 				<path refid="hibernate3.1.class.path" />
 				<path refid="commons-lang-2.1.class.path" />
 				<path refid="aspectj.path" />
-				<path refid="spring2.0-m1.path" />
+				<path refid="spring2.0.1.path" />
 			</classpath>
 		</iajc>
 	</target>
@@ -61,7 +61,7 @@
 				<path refid="hibernate3.1.class.path" />
 				<path refid="commons-lang-2.1.class.path" />
 				<path refid="aspectj.path" />
-				<path refid="spring2.0-m1.path" />
+				<path refid="spring2.0.1.path" />
 			</classpath>
 			<inpath>
 				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
@@ -92,7 +92,7 @@
 				<path refid="hibernate3.1.class.path" />
 				<path refid="commons-lang-2.1.class.path" />
 				<path refid="aspectj.path" />
-				<path refid="spring2.0-m1.path" />
+				<path refid="spring2.0.1.path" />
 				<path refid="jdbc.class.path" />
 				<pathelement location="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" />
 				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
