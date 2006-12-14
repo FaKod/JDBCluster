@@ -54,7 +54,7 @@ public aspect DaoNew {
 		for(String prop : hm.keySet()) {
 			String value = hm.get(prop);
 			Class propClass = beanWrapper.getPropertyType(prop);
-            Object o = beanWrapper.doTypeConversionIfNecessary(value, propClass);
+            Object o = beanWrapper.convertIfNecessary(value, propClass);
             beanWrapper.setPropertyValue(new PropertyValue(prop, o));
 		}
 	}
