@@ -15,10 +15,18 @@
  */
 package org.jdbcluster.template.hibernate;
 
+import java.util.Iterator;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.mapping.Column;
+import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
+import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.template.ConfigurationTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
+import org.springframework.util.Assert;
 
 /**
  * HBMConfiguration is an implementation of ConfigurationTemplate
@@ -72,6 +80,32 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 	@SuppressWarnings("unchecked")
 	public <T> T getNativeConfiguration() {
 		return (T) cfg;
+	}
+
+	/**
+	 * calculated the max length of an attribute of type String
+	 * @param c Cluster that holds the attribute
+	 * @param attributeName name of the attribute
+	 * @return max allowed length of the attribute
+	 */
+	public int getLenthOfStringAttribute(Cluster c, String attributeName) {
+		
+		Assert.notNull(c, "c may not be null");
+		Assert.notNull(attributeName, "attributeName may not be null");
+		
+		PersistentClass pc = cfg.getClassMapping(c.getDaoClass().getName());
+		
+		if(pc==null)
+			throw new ConfigurationException("Persistent Dao Class from Cluster " + c.getClass().getName() + " is not Hibernate configured");
+		
+    Property p = pc.getProperty(attributeName);
+    
+    if(p==null)
+    	throw new ConfigurationException("Property " + attributeName + " in cluster " + c.getClass().getName() + " not found");
+    
+    Iterator<Column> i = (Iterator<Column>) p.getValue().getColumnIterator();
+    Column column = i.next();
+    return column.getLength();
 	}
 
 }

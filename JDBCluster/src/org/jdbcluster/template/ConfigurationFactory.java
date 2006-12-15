@@ -27,6 +27,10 @@ public abstract class ConfigurationFactory {
 
 	private static ConfigurationTemplate config = null;
 	
+	/**
+	 * instanciate the ConfigurationTemplate class and holds is static
+	 * @param TClass name of the ConfigurationTemplate class
+	 */
 	public static void setConfigurationClass(String TClass) {
 		Class clazz;
 		
@@ -42,10 +46,23 @@ public abstract class ConfigurationFactory {
 		}
 		
 	}
+	
+	/**
+	 * get the ConfigurationTemplate instance
+	 * @return instance of ConfigurationTemplate
+	 */
 	public static ConfigurationTemplate getInstance() {
 		if (config == null) {
 			throw new ConfigurationException("Configuration Class has not been set!", new Throwable());
 		}
 		return config;
+	}
+	
+	/**
+	 * since JDBCluster must not be configured
+	 * @return true if JDBCluster hold a instance of ConfigurationTemplate
+	 */
+	public static boolean isConfigured() {
+		return config != null;
 	}
 }

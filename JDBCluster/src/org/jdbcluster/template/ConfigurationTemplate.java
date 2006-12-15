@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.template;
 
+import org.jdbcluster.metapersistence.cluster.Cluster;
+
 /**
  * 
  * @author Philipp Noggler
@@ -34,6 +36,14 @@ public interface ConfigurationTemplate {
 	 * @return SessionFactoryTemplate
 	 */
 	public SessionFactoryTemplate buildSessionFactory();
+	
+	/**
+	 * calculated the max length of an attribute of type String
+	 * @param c Cluster that holds the attribute
+	 * @param attributeName name of the attribute
+	 * @return max allowed length of the attribute
+	 */
+	public int getLenthOfStringAttribute(Cluster c, String attributeName);
 	
 	/**
 	 * returns the native configuration object
