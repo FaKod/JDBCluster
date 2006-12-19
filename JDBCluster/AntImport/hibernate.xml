@@ -1,0 +1,19 @@
+<project name="Hibernate" basedir=".">
+	<property name="hibernate3.0.5.lib.dir" value="${tools.dir}/hibernate-3.0/lib"/>
+	<property name="hibernate3.0.5.jar" value="${tools.dir}/hibernate-3.0/hibernate3.jar"/>
+	<path id="hibernate3.0.5.class.path">
+		<fileset dir="${hibernate3.0.5.lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement path="${hibernate3.0.5.jar}"/>
+	</path>
+	
+	<property name="hibernate3.1.lib.dir" value="${tools.dir}/hibernate-3.1/lib"/>
+	<property name="hibernate3.1.jar" value="${tools.dir}/hibernate-3.1/hibernate3.jar"/>
+	<path id="hibernate3.1.class.path">
+		<fileset dir="${hibernate3.1.lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement path="${hibernate3.1.jar}"/>
+	</path>
+</project>
