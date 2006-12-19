@@ -101,6 +101,7 @@
 			<formatter type="xml" />
 
 			<test name="test.TestClusterAndDB" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.TestCluster" fork="yes" haltonfailure="no" todir="${test.reports}" />
 			<test name="test.TestFilter" fork="yes" haltonfailure="no" todir="${test.reports}" />
 
 			<test name="test.domain.TestDomainCheck" fork="yes" haltonfailure="no" todir="${test.reports}" />
