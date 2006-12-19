@@ -3,11 +3,11 @@
 
 	<!-- Import Tools -->
 	<property name="tools.dir" value="../Tools" />
-	<import file="${tools.dir}/AntImport/hibernate.xml" />
-	<import file="${tools.dir}/AntImport/commons-lang.xml" />
-	<import file="${tools.dir}/AntImport/aspectj.xml" />
-	<import file="${tools.dir}/AntImport/spring.xml" />
-	<import file="${tools.dir}/AntImport/jdbc.xml" />
+	<import file="AntImport/hibernate.xml" />
+	<import file="AntImport/commons-lang.xml" />
+	<import file="AntImport/aspectj.xml" />
+	<import file="AntImport/spring.xml" />
+	<import file="AntImport/jdbc.xml" />
 
 	<!-- AspectJ Taskdefinition -->
 	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
