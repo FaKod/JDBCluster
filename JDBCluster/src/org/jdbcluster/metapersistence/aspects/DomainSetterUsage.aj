@@ -1,5 +1,6 @@
 package org.jdbcluster.metapersistence.aspects;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.annotation.DomainSetterReplaced;
 import org.jdbcluster.domain.DomainCheck;
@@ -13,6 +14,7 @@ public aspect DomainSetterUsage {
 	
 	declare precedence: DomainSetterUsage, DomainCheck, ClusterAttribute, *;
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	pointcut useDomainSetter(): 
 		call(* Cluster+.set*(..)) && 
 		!within(Cluster+) &&

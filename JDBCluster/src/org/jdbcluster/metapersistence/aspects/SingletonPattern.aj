@@ -2,6 +2,8 @@ package org.jdbcluster.metapersistence.aspects;
 
 import java.util.*;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
+
 /**
  * implementation of a singleton pattern
  */
@@ -16,6 +18,7 @@ public abstract aspect SingletonPattern issingleton( )
 	// of all Classes that extend Singleton
 	pointcut selectSingletons() : call((Singleton +).new (..));
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around() : selectSingletons( )
 	{
 		Class<Singleton> singleton = thisJoinPoint.getSignature().getDeclaringType();

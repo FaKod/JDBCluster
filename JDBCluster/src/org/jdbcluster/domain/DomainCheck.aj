@@ -17,6 +17,7 @@ package org.jdbcluster.domain;
 
 import java.lang.reflect.Field;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.FieldSignature;
 import org.jdbcluster.exception.DomainException;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
@@ -57,6 +58,7 @@ public aspect DomainCheck {
 		!@annotation(DomainDependancy) && 
 		target(c) && args(s);
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c, String s):setDepAttribute(c, s) {
 		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
@@ -79,6 +81,7 @@ public aspect DomainCheck {
 		return o;
 	}
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c, String s):setAttribute(c, s) {
 		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();

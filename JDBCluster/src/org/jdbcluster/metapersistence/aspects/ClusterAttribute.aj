@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 
 import org.aspectj.lang.SoftException;
 import org.aspectj.lang.reflect.FieldSignature;
+import org.aspectj.lang.annotation.*;
 
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.metapersistence.cluster.*;
@@ -41,6 +42,7 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 		(set(* Cluster+.*) || set(* AssocCluster+.*)) &&
 		!set(CSet+ Cluster+.*) && !@annotation(NoDAO) && target(c);
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c):getAttribute(c) {
 		// get attribute name
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
@@ -57,6 +59,7 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 		return proceed(c);
 	}
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c):setAttribute(c) {
 		Object o = proceed(c);
 		// get attribute name

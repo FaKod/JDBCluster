@@ -17,6 +17,7 @@ package org.jdbcluster.privilege;
 
 import java.lang.reflect.Method;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
@@ -37,6 +38,7 @@ public aspect PrivilegeAspect {
 		execution( !@NoPrivilegeCheck public * PrivilegedService+.*(..)) &&
 		target(ser);
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	before(ClusterBase c) : execClusterMethod(c) {
 		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
 		
@@ -50,6 +52,7 @@ public aspect PrivilegeAspect {
 					m.getName());
 	}
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	before(PrivilegedService ser) : execServiceMethod(ser) {
 		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
 		

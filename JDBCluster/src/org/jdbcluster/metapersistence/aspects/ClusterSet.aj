@@ -21,6 +21,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Set;
 
 import org.aspectj.lang.SoftException;
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.FieldSignature;
 
 import org.jdbcluster.metapersistence.annotation.*;
@@ -57,6 +58,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 	pointcut cSetRemove(CSet s):
 		execution(* CSet+.remove*(..)) && within(CSet) && target(s);
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(Cluster c):getCSet(c) {
 		Object o = proceed(c);
 		if (o != null)
@@ -108,6 +110,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 		}
 	}
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	after(CSet s) returning:cSetAdd(s) {
 		// get Cluster Object to Add
 		Object[] args = thisJoinPoint.getArgs();
@@ -126,6 +129,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 		}
 	}
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	after(CSet s) returning:cSetRemove(s) {
 		// get Cluster Object to Add
 		Object[] args = thisJoinPoint.getArgs();

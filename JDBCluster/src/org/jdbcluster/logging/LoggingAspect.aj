@@ -16,6 +16,7 @@
 package org.jdbcluster.logging;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.jdbcluster.tracing.TracingAspect;
 
 /**
@@ -32,11 +33,13 @@ public abstract aspect LoggingAspect extends TracingAspect {
 				exceptionsToBeLogged( ) &&
 				!pointsToBeExcluded( );
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	before( ) : filteredExceptionCapture( )
 	{
 		logException(thisJoinPoint);
 	}
 	
+	@SuppressAjWarnings("adviceDidNotMatch")
 	after( ) throwing: logExceptionThrow( )
 	{
 		logExceptionThrow(thisJoinPoint);

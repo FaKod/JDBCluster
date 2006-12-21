@@ -18,6 +18,7 @@ package org.jdbcluster.metapersistence.aspects;
 import java.util.HashMap;
 import java.lang.reflect.Method;
 import org.jdbcluster.metapersistence.aspects.XmlCache;
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.MethodSignature;
 
 /**
@@ -41,6 +42,7 @@ public abstract aspect XmlCache {
 	/**
 	 * around advice for no parameter methods
 	 */
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(XmlCachable xmlc) : xmlCache0(xmlc) {
 		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
 		if(isInCache(xmlc, ms.getMethod()))
@@ -54,6 +56,7 @@ public abstract aspect XmlCache {
 	/**
 	 * around advice for one String parameter methods
 	 */
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(XmlCachable xmlc, String str) : xmlCache1(xmlc, str) {
 		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
 		if(isInCache(xmlc, ms.getMethod(), str))
@@ -67,6 +70,7 @@ public abstract aspect XmlCache {
 	/**
 	 * around advice for two String parameter methods
 	 */
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(XmlCachable xmlc, String str, String str2) : xmlCache2(xmlc, str, str2) {
 		MethodSignature ms = (MethodSignature) thisJoinPoint.getSignature();
 		if(isInCache(xmlc, ms.getMethod(), str, str2))

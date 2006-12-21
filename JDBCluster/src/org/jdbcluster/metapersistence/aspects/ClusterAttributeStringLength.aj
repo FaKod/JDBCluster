@@ -6,6 +6,7 @@ import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
+import org.aspectj.lang.annotation.*;
 
 /**
  * Aspect to automatically cut the length of a attribute to the max length
@@ -27,6 +28,7 @@ public aspect ClusterAttributeStringLength {
 	/**
 	 * advice uses currenty HibernateConfiguration to get max String length
 	 */
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c, String s):checkRange(c, s) {
 		if (ConfigurationFactory.isConfigured() && s != null) {
 			ConfigurationTemplate cf = ConfigurationFactory.getInstance();

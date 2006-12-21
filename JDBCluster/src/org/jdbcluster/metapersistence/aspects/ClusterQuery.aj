@@ -24,6 +24,7 @@ import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.DaoException;
 import org.apache.log4j.Logger;
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 
 /**
  * Aspect used after a native (fe. hibernate) query was
@@ -40,6 +41,7 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		within(HibernateQuery) && 
 		target(q);
 
+	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(HibernateQuery q):resultList(q) {
 		ClusterType ct = q.getClusterType();
 		List dAOResultSet = (List) proceed(q);
