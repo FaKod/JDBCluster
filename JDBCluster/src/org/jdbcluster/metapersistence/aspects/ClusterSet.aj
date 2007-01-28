@@ -28,7 +28,6 @@ import org.jdbcluster.metapersistence.annotation.*;
 import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.dao.Dao;
 
 /**
  * @author Christopher Schmidt
@@ -96,7 +95,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 			// copy elements from DAO to Cluster
 			for (Object daoElement : dAOSet) {
 				Cluster cSetElement = (Cluster) argTypeClass.newInstance();
-				cSetElement.setDao( (Dao) daoElement);
+				cSetElement.setDao(daoElement);
 				cSet.add(cSetElement);
 			}
 
@@ -118,7 +117,7 @@ public aspect ClusterSet extends ClusterBaseAspect {
 
 		try {
 			// get DAO Class
-				Dao dAO = (Dao) s.dAOClass.newInstance();
+				Object dAO = s.dAOClass.newInstance();
 				if(objectToAdd.getDao()==null) {
 					objectToAdd.setDao(dAO);
 					objectToAdd.setDaoClass(s.dAOClass);

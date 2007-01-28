@@ -16,23 +16,22 @@
 package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
-import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.DaoException;
 import org.springframework.util.Assert;
 
 public abstract class ClusterBase implements ICluster {
 
-	private Dao dao;
+	private Object dao;
 
 	private Class daoClass;
 
 	private ClusterType clusterType;
 
-	public Dao getDao() {
+	public Object getDao() {
 		return dao;
 	}
 
-	public void setDao(Dao dao) {
+	public void setDao(Object dao) {
 
 		Assert.notNull(dao, "dao may not be null");
 

@@ -288,7 +288,7 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(id, "id may not be null");
 
 		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
-		cb.setDao((Dao) hibernateSession.get(cb.getDao().getClass(), id));
+		cb.setDao(hibernateSession.get(cb.getDao().getClass(), id));
 		return cb;
 	}
 
@@ -308,7 +308,7 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		cluster.setDao((Dao) hibernateSession.get(cluster.getDao().getClass(), id));
+		cluster.setDao(hibernateSession.get(cluster.getDao().getClass(), id));
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 		
@@ -330,8 +330,8 @@ public class HibernateSession implements SessionTemplate {
 
 		Assert.notNull(cluster, "cluster may not be null");
 
-		Dao dao = cluster.getDao();
-		cluster.setDao((Dao) hibernateSession.merge(dao));
+		Object dao = cluster.getDao();
+		cluster.setDao(hibernateSession.merge(dao));
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
@@ -348,7 +348,7 @@ public class HibernateSession implements SessionTemplate {
 		
 		Assert.notNull(cluster, "cluster may not be null");
 
-		Dao dao = cluster.getDao();
+		Object dao = cluster.getDao();
 		hibernateSession.evict(dao);
 	}
 
@@ -364,7 +364,7 @@ public class HibernateSession implements SessionTemplate {
 
 		Assert.notNull(cluster, "cluster may not be null");
 
-		Dao dao = cluster.getDao();
+		Object dao = cluster.getDao();
 		hibernateSession.persist(dao);
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);

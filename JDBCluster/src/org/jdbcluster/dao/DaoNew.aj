@@ -17,7 +17,6 @@ package org.jdbcluster.dao;
 
 import org.jdbcluster.exception.ConfigurationException;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.PropertyValue;
 import java.util.HashMap;
 
 /**
@@ -44,7 +43,8 @@ public aspect DaoNew {
 	 */
 
 	after (Dao dao) returning : newDao(dao) {
-		Class<?> daoClass = dao.getClass();
+		//moved to Dao used as DaoFactory now
+		/*Class<?> daoClass = dao.getClass();
 		HashMap<String, String> hm = classToPropsMap.get(daoClass);
 		if(hm==null)
 			hm=putCacheMap(daoClass);
@@ -56,7 +56,7 @@ public aspect DaoNew {
 			Class propClass = beanWrapper.getPropertyType(prop);
             Object o = beanWrapper.convertIfNecessary(value, propClass);
             beanWrapper.setPropertyValue(new PropertyValue(prop, o));
-		}
+		}*/
 	}
 	
 	private HashMap<String, String> putCacheMap(Class<?> daoClass) {

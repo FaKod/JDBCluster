@@ -67,7 +67,7 @@ public abstract class ClusterFactory {
 	 * @param clusterType cluster type string as configured
 	 * @return cluster instance
 	 */
-	public static <T extends Cluster> T newInstance(String clusterType, Dao dao) {
+	public static <T extends Cluster> T newInstance(String clusterType, Object dao) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
 		return newInstance(ct, dao);
 	}
@@ -95,7 +95,7 @@ public abstract class ClusterFactory {
 	 * @param dao dao object to be presetted
 	 * @return Cluster
 	 */
-	public static <T extends Cluster> T newInstance(ClusterType ct, Dao dao) {
+	public static <T extends Cluster> T newInstance(ClusterType ct, Object dao) {
 		T cluster = newInstance(getClusterClass(ct), dao);
 		cluster.setClusterType(ct);
 		return cluster;
@@ -111,7 +111,7 @@ public abstract class ClusterFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao) {
+	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Object dao) {
 		return newInstance(clusterClass, dao, dao!=null);
 	}
 	
@@ -125,7 +125,7 @@ public abstract class ClusterFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Dao dao, boolean daoIsPersistent) {
+	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Object dao, boolean daoIsPersistent) {
 		
 		Assert.notNull(clusterClass, "Class<?> may not be null");
 		
@@ -147,7 +147,7 @@ public abstract class ClusterFactory {
 			DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
 			if (classAnno != null) {
 				cluster.setDaoClass(classAnno.dAOClass());
-				cluster.setDao( (Dao) JDBClusterUtil.createClassObject(classAnno.dAOClass()));
+				cluster.setDao(Dao.newInstance(classAnno.dAOClass()));
 			}
 		}
 		
@@ -212,7 +212,7 @@ public abstract class ClusterFactory {
 	 * @param dao Dao instance to search cluster
 	 * @return Class<? extends ClusterBase> class of corresponding cluster
 	 */
-	public static Class<? extends ClusterBase> getClusterFromDao(Dao dao) {
+	public static Class<? extends ClusterBase> getClusterFromDao(Object dao) {
 		
 		Assert.notNull(dao, "Dao dao may not be null");
 		

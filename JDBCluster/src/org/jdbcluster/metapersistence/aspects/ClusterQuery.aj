@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.ArrayList;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.dao.Dao;
-import org.jdbcluster.exception.DaoException;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.SuppressAjWarnings;
 
@@ -55,12 +53,8 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 			if(logger.isDebugEnabled())
 				logger.debug("converting " + dao.getClass().getName() + " to Cluster");
 			
-			if(dao instanceof Dao) {
-				Cluster c = ClusterFactory.newInstance(ct, (Dao) dao);
-				clusterResultSet.add(c);
-			}
-			else
-				throw new DaoException("resultset instance has no Dao Superclass");
+			Cluster c = ClusterFactory.newInstance(ct, dao);
+			clusterResultSet.add(c);
 		}
 		return clusterResultSet;
 	}
