@@ -1,8 +1,7 @@
 package dao;
 
-import org.jdbcluster.dao.Dao;
 
-public class SparePart extends Dao{
+public class SparePart {
 
 	String lieferant;
 	long id;

@@ -1,8 +1,7 @@
 package dao;
 
-import org.jdbcluster.dao.Dao;
 
-public class Owner extends Dao{
+public class Owner {
 	boolean historical;
 
 	String name;

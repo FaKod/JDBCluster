@@ -1,8 +1,7 @@
 package dao;
 
-import org.jdbcluster.dao.Dao;
 
-public class Vehicle extends Dao{
+public class Vehicle {
 
 	String name;
 	long id;
