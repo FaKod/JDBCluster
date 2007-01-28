@@ -134,13 +134,22 @@ public abstract class ClusterFactory {
 		try {
 			//create a new instance with given classname
 			cluster = (Cluster) clusterClass.newInstance();
-			if(dao!=null)
-				cluster.setDao(dao);
 		} catch (InstantiationException e) {
 			throw new ClusterTypeException("specified class [" + clusterClass.getName() + "] object cannot be instantiated because it is an interface or is an abstract class", e);
 		} catch (IllegalAccessException e) {
 			throw new ClusterTypeException("the currently executed ctor for class [" + clusterClass.getName() + "] does not have access", e);
 		} 
+		
+		if(dao!=null)
+			cluster.setDao(dao);
+		else
+		{
+			DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
+			if (classAnno != null) {
+				cluster.setDaoClass(classAnno.dAOClass());
+				cluster.setDao( (Dao) JDBClusterUtil.createClassObject(classAnno.dAOClass()));
+			}
+		}
 		
 		if(!daoIsPersistent) {
 			/*

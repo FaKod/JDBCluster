@@ -16,9 +16,6 @@
 package org.jdbcluster.metapersistence.aspects;
 
 import org.aspectj.lang.annotation.SuppressAjWarnings;
-import org.jdbcluster.JDBClusterUtil;
-import org.jdbcluster.dao.Dao;
-import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 
 /**
@@ -36,11 +33,6 @@ public aspect ClusterNew extends ClusterBaseAspect {
 
 	@SuppressAjWarnings("adviceDidNotMatch")
 	after(Cluster c) returning : newCluster(c) {
-		//get the Class Annotations
-		DaoLink classAnno = c.getClass().getAnnotation(DaoLink.class);
-		if (classAnno != null) {
-			c.setDaoClass(classAnno.dAOClass());
-			c.setDao( (Dao) JDBClusterUtil.createClassObject(classAnno.dAOClass()));
-		}
+		//this code moved to ClusterFactory
 	}
 }
