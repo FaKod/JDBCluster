@@ -2,15 +2,23 @@ package test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import mycluster.CCar;
+import mycluster.COwner;
+import mycluster.CSparePart;
+import mycluster.MyRemoveSpecialTreatmentCSet;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.hibernate.HibernateException;
+import org.hibernate.LazyInitializationException;
+import org.hibernate.Session;
 import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilterFactory;
+import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
@@ -23,6 +31,8 @@ import org.jdbcluster.template.hibernate.HibernateQuery;
 import test.testfilter.NameFilter;
 import test.testfilter.PositionFilter;
 import dao.Car;
+import dao.Owner;
+import dao.SparePart;
 
 /**
  * @author Philipp Noggler JUnit test to determine if returning select string is
@@ -180,4 +190,50 @@ public class TestFilter extends TestCase {
 		System.out.println("Exec time: " + (System.currentTimeMillis() - start));
 	}
 
+	public void testFetch() {
+		Car car1 = new Car();
+		car1.setName("Mazda");
+		Car car2 = new Car();
+		car2.setName("Audi");
+		Car car3 = new Car();
+		car3.setName("BMW neu");
+		Owner besitzer = new Owner();
+		besitzer.setName("Nils");		
+		Set<Owner> set1 = car1.getBesitzer();
+		set1.add(besitzer);
+		Set<Owner> set2 = car2.getBesitzer();
+		set2.add(besitzer);
+		
+		SparePart sparePart = new SparePart();
+		sparePart.setLieferant("Klaus");
+		Set<SparePart> set3 = car1.getSparePart();
+		set3.add(sparePart);		
+				
+		TransactionTemplate tx = session.beginTransaction();
+		Session s = session.getNativeSession();
+		s.saveOrUpdate(car1);
+		s.saveOrUpdate(car2);
+		s.saveOrUpdate(car3);
+		tx.commit();
+		session.close();
+		
+		session = sf.openSession();		
+		// test mapping configuration first
+		List<?> l1 = session.createQuery(CCFilterFactory.newInstance("car", "simple")).list();
+		session.close();
+		
+		CCar c = (CCar) l1.get(0);
+		try {
+			c.getSpareParts();
+			fail("spareparts shouldn't be initialized.");
+		} catch (LazyInitializationException ex) {}
+		
+		session = sf.openSession();
+		List<?> l2 = session.createQuery(CCFilterFactory.newInstance("car", "fetchFilter")).list();
+		session.close();
+		
+		c = (CCar) l2.get(0);
+		c.getSpareParts();
+		c.getOwner();		
+	}
 }

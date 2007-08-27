@@ -5,14 +5,12 @@ import java.util.Set;
 
 public class Car extends Vehicle {
 
-	Set sparePart = new HashSet();
-	Set besitzer = new HashSet();
+	Set<SparePart> sparePart = new HashSet<SparePart>();
+	Set<Owner> besitzer = new HashSet<Owner>();
 	double longitude;
 	double latitude;
 	long id;
 	
-	
-
 	public double getLatitude() {
 		return latitude;
 	}
@@ -37,19 +35,19 @@ public class Car extends Vehicle {
 		this.id = id;
 	}
 
-	public Set getSparePart() {
+	public Set<SparePart> getSparePart() {
 		return sparePart;
 	}
 
-	public void setSparePart(Set ersatzteile) {
+	public void setSparePart(Set<SparePart> ersatzteile) {
 		this.sparePart = ersatzteile;
 	}
 
-	public Set getBesitzer() {
+	public Set<Owner> getBesitzer() {
 		return besitzer;
 	}
 
-	public void setBesitzer(Set besitzer) {
+	public void setBesitzer(Set<Owner> besitzer) {
 		this.besitzer = besitzer;
 	}
 }

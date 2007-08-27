@@ -51,6 +51,8 @@ public abstract class CCFilterBase implements CCFilter {
 	private String orderBy;
 
 	private String selectStatementDAO;
+	
+	private String fetch;
 
 	private ClusterType clusterType;
 
@@ -245,6 +247,25 @@ public abstract class CCFilterBase implements CCFilter {
 
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
+	}
+
+	public String getFetch() {
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null) {
+			String tmp = appendedFilter.getFetch();
+			if (tmp != null && tmp.length() > 0) {
+				if(fetch != null && fetch.length() > 0) {	
+					return fetch + " " + tmp;
+				}else {
+					return tmp;
+				}
+			} 
+		}
+		return fetch;
+	}
+
+	public void setFetch(String fetch) {
+		this.fetch = fetch;
 	}
 
 	/**

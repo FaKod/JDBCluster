@@ -145,6 +145,31 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 		
 		return node.valueOf("@class");	
 	}
+	
+	/**
+	 * @param clusterType identifies the ClusterType
+	 * @param SelectID selects the SelectID
+	 * @return all fetched attributes or an empty String
+	 */
+	@SuppressWarnings("unchecked")
+	public String getFetch(ClusterType clusterType, String SelectID) {
+		String clusterId = clusterType.getName();
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']" + "/fetch";
+
+		List<Node> nodes = document.selectNodes(xPath); // List content instanceof Node!
+		
+		String alias = getAlias(clusterType, SelectID);
+		if (alias == null || alias.isEmpty()) {
+			alias = "";
+		} else {
+			alias = alias + ".";
+		}
+		StringBuilder builder = new StringBuilder();
+		for (Node node : nodes) {
+			builder.append(' ').append(node.valueOf("@joinType")).append(" join fetch ").append(alias).append(node.valueOf("@property"));
+		}
+		return builder.toString();
+	}
 
 	/**
 	 * gets the configuration path of "selects.xml"
@@ -212,4 +237,5 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 			return null;
 		return node.valueOf("@statementAttribute");	
 	}
+
 }

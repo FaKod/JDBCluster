@@ -78,6 +78,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		String ext = CCFilterBase.getSelect().getExt(ct, selId);
 		String orderBy = CCFilterBase.getSelect().getOrderBy(ct, selId);
 		String staticStatement = CCFilterBase.getSelect().getStaticStatementAttribute(ct, selId, filterClassName);
+		String fetch = CCFilterBase.getSelect().getFetch(ct, selId);
 		HashMap<String, String> binding = CCFilterBase.getSelect().getBinding(ct, selId, filterClassName);
 
 		CCFilterBase filter = null;
@@ -104,6 +105,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		filter.setAlias(alias);
 		filter.setExt(ext);
 		filter.setOrderBy(orderBy);
+		filter.setFetch(fetch);
 		filter.setStaticStatementAttribute(staticStatement);
 		filter.setSelectStatementDAO(selectDAO);
 		return (T) filter;

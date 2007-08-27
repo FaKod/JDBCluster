@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jdbcluster.sourceforge.net/jdbcluster.xsd">
+<jdbcluster xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jdbcluster.xsd">
 	<privileges>
 		<UserPrivilegeChecker class="mycluster.privilege.UserPrivilege"/>
 	</privileges>
@@ -27,12 +27,20 @@
 					<binding var="LATONLY" attribute="latitude"/>
 				</FilterClass>
 			</select>
+			<select id="simple">
+				<FilterClass class="test.testfilter.MyCCTestFilter"/>
+			</select>
+			<select id="fetchFilter" alias="c">
+				<FilterClass class="test.testfilter.MyCCTestFilter"/>
+				<fetch property="besitzer"/>
+				<fetch property="sparePart" joinType="left"/>
+			</select>
 		</cluster>
 		<!--configure cluster CFahrrad-->
 		<cluster id="bicycle" class="mycluster.CBicycle"/>
 	</clustertype>
 	
-	<!--confure available dao classes-->
+	<!--configure available dao classes-->
 	<daotype>
 		<!--configure dao class Auto-->
 		<dao id="Car" class="dao.Car">
@@ -51,7 +59,7 @@
 		</dao>
 	</daotype>
 	
-	<!-- configure domain dependancies-->
+	<!-- configure domain dependencies-->
 	<!-- this Example is shown in CFahrrad...-->
 	<domaindependancy>
 		<!-- define all "not" masterdomains -->

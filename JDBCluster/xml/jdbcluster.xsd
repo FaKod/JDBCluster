@@ -20,7 +20,7 @@
 	<xs:element name="privileges">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="UserPrivilegeChecker" minOccurs="1"/>
+				<xs:element ref="UserPrivilegeChecker"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -70,24 +70,38 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="FilterClass" minOccurs="0"/>
+				<xs:element ref="fetch" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<!-- the hql statement (where clause)-->
 			<xs:attribute name="hql" type="xs:string" use="optional"/>
-			<!-- settable alias for type of resultset-->
 			<xs:attribute name="alias" type="xs:string" use="optional"/>
-			<!-- extension for part after "from" -->
 			<xs:attribute name="ext" type="xs:string" use="optional"/>
-			<!-- for order by statement -->
 			<xs:attribute name="orderby" type="xs:string" use="optional"/>
-			<!-- filter id -->
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<!-- the hql statement (where clause)-->
+			<!-- settable alias for type of resultset-->
+			<!-- extension for part after "from" -->
+			<!-- for order by statement -->
+			<!-- filter id -->
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fetch">
+		<xs:complexType>
+			<xs:attribute name="property" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="joinType" use="optional" default="inner">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="inner"/>
+						<xs:enumeration value="left"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="FilterClass">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="binding" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="static" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="static" minOccurs="0"/>
 			</xs:sequence>
 			<xs:attribute name="class" type="xs:NMTOKEN" use="required"/>
 		</xs:complexType>
@@ -170,10 +184,10 @@
 			<xs:choice maxOccurs="unbounded">
 				<xs:element ref="additionalmaster" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="invalid" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="valid" minOccurs="0" maxOccurs="unbounded"/>	
+				<xs:element ref="valid" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:choice>
-			<xs:attribute name="value"  type="xs:string" use="required"/>
-			<xs:attribute name="masterdomainid"  type="xs:string" use="required"/>
+			<xs:attribute name="value" type="xs:string" use="required"/>
+			<xs:attribute name="masterdomainid" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

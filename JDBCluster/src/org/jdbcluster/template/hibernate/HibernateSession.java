@@ -163,16 +163,22 @@ public class HibernateSession implements SessionTemplate {
 		/**
 		 * part after from before where
 		 */
-		String qStr = new String(alias);
+		StringBuilder qStr = new StringBuilder(alias);
+		
+		String fetch = ccf.getFetch();
+		if (fetch != null && fetch.length() > 0) {
+			qStr.append(fetch);
+		}
+				
 		String ext = ccf.getExt();
 		if (ext != null && ext.length() > 0)
-			qStr = qStr + ", " + ext;
+			qStr.append(", ").append(ext);
 
 		if (logger.isDebugEnabled())
 			logger.debug("using from ... statement [" + qStr + "]");
 
 		String select = "";
-		if (alias != null && alias.length() > 0)
+		if (alias != null && alias.length() > 0) // sollte hier nich besser auf ext abgeprüft werden ("from Car c" geht, aber "from Car, Bike" ist anders als erwartet)
 			select = "select " + alias + " ";
 
 		/**

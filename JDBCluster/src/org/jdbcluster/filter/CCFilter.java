@@ -127,6 +127,12 @@ public interface CCFilter {
 	public String getOrderBy();
 	
 	/**
+	 * Returns the fetch statement (e.g. from Car c<b> join fetch c.parts</b>).
+	 * @return the fetch statement.
+	 */
+	public String getFetch();
+	
+	/**
 	 * recursive method that retrieves all appended filters and their bindings
 	 * 
 	 * @param queryTemplate HibernateQuery Query to bind parameter

@@ -25,7 +25,6 @@ import org.jdbcluster.clustertype.ClusterType;
  * @author Philipp Noggler
  *
  */
-
 public interface ClusterSelect {
 	
 	/**
@@ -85,4 +84,12 @@ public interface ClusterSelect {
 	 * @return String
 	 */
 	public String getOrderBy(ClusterType clusterType, String SelectID);
+	
+	/**
+	 * Returns a String with all collection attributes which should be fetch together with the cluster.
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return a String like 'left join fetch cat.cittens', or an empty String if no fetch is defined.
+	 */
+	public String getFetch(ClusterType clusterType, String SelectID);
 }
