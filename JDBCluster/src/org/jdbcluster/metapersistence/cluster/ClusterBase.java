@@ -47,6 +47,7 @@ public abstract class ClusterBase implements ICluster {
 		}
 
 		this.dao = dao;
+		this.daoClass = dao.getClass();
 	}
 
 	public void setClusterType(ClusterType ct) {

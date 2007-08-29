@@ -145,10 +145,8 @@ public abstract class ClusterFactory {
 		else
 		{
 			DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
-			if (classAnno != null) {
-				cluster.setDaoClass(classAnno.dAOClass());
+			if (classAnno != null)
 				cluster.setDao(Dao.newInstance(classAnno.dAOClass()));
-			}
 		}
 		
 		if(!daoIsPersistent) {
