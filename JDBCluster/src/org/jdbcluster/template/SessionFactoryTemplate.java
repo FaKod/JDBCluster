@@ -24,8 +24,30 @@ package org.jdbcluster.template;
  */
 public interface SessionFactoryTemplate {
 
+	/**
+	 * Opens a new standard Session.
+	 * 
+	 * @return a new instance of SessionTemplate.
+	 */
 	public SessionTemplate openSession();
+	/**
+	 * Opens a new stateless Session. This session can be used for bulk operations. All retrieved objects are not bounded to the session.
+	 *  
+	 * @return a new instance of StatelessSessionTemplate.
+	 */
+	public StatelessSessionTemplate openStatelessSession();
+	/**
+	 * Returns the current session.
+	 * 
+	 * @return a new instance of SessionTemplate with underlying current Session.
+	 */
 	public SessionTemplate getSession();
+	/**
+	 * Returns the native SessionFactory.
+	 * 
+	 * @param <T> a trick to avoid the necessary cast.
+	 * @return the SessionFactory of the underlying 
+	 */
 	public <T> T getNativeSessionFactory();
 
 }

@@ -28,10 +28,8 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 
 	protected org.hibernate.SessionFactory factory;
 	
-	private HibernateSession session;
-	
 	/*
-	 * HIBERNATE Special teatment
+	 * HIBERNATE Special treatment
 	 * use standard method getNativeSessionFactory
 	 */
 	private Interceptor interceptor = null;
@@ -41,12 +39,18 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	}
 
 	public HibernateSession openSession() {
-		session = new HibernateSession();
+		HibernateSession session = new HibernateSession();
 
 		if(interceptor==null)
 			session.setHibernateSession(factory.openSession());
 		else
 			session.setHibernateSession(factory.openSession(interceptor));
+		return session;
+	}
+	
+	public HibernateStatelessSession openStatelessSession() {
+		HibernateStatelessSession session = new HibernateStatelessSession();
+		session.setHibernateSession(factory.openStatelessSession());		
 		return session;
 	}
 	
@@ -59,11 +63,9 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	}
 
 	public HibernateSession getSession() {
+		HibernateSession session = new HibernateSession();
+		session.setHibernateSession(factory.getCurrentSession());
 		return session;
-	}
-
-	public void setSession(HibernateSession session) {
-		this.session = session;
 	}
 
 	@SuppressWarnings("unchecked")
