@@ -159,7 +159,7 @@ public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
 		List<Node> nodes = document.selectNodes(xPath); // List content instanceof Node!
 		
 		String alias = getAlias(clusterType, SelectID);
-		if (alias == null || alias.isEmpty()) {
+		if (alias == null || alias.length()==0) {
 			alias = "";
 		} else {
 			alias = alias + ".";
