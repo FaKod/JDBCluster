@@ -1,18 +1,20 @@
 <project name="JDBCluster" default="dist" basedir=".">
 	<description> This is the build file for JDBCluster.jar </description>
 
-	<!-- Import Tools -->
-	<property name="tools.dir" value="../Tools" />
-	<import file="AntImport/hibernate.xml" />
-	<import file="AntImport/commons-lang.xml" />
-	<import file="AntImport/aspectj.xml" />
-	<import file="AntImport/spring.xml" />
-	<import file="AntImport/jdbc.xml" />
+	<!-- declare ant4eclipse -->
+	<taskdef resource="net/sf/ant4eclipse/antlib.xml" />
+
+	<property name="project.name" value="JDBCluster" />
+	<property name="JDBCluster_ThirdParty" value="D:/Projekte/ThirdParty" />
+	<property name="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER" value="C:/Programme/Eclipse33/ep/ajdt33/eclipse/plugins/org.aspectj.runtime_1.5.4.200705211336/aspectjrt.jar" />
+	<property name="JUNIT_HOME" value="C:\Programme\Eclipse33\eclipse33\plugins\org.junit4_4.3.1" />
+	
+	<getEclipseClasspath pathId="myClasspath" workspace="${basedir}/.." projectName="${project.name}" />
 
 	<!-- AspectJ Taskdefinition -->
 	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
 		<classpath>
-			<path refid="aspectj.path" />
+			<path refid="myClasspath" />
 		</classpath>
 	</taskdef>
 
@@ -35,10 +37,7 @@
 	<target name="compile" depends="init" description="compile the source">
 		<iajc source="1.5" target="1.5" srcdir="${src}" destdir="${build}" excludes="${src.excludes}" >
 			<classpath>
-				<path refid="hibernate3.1.class.path" />
-				<path refid="commons-lang-2.1.class.path" />
-				<path refid="aspectj.path" />
-				<path refid="spring2.0.1.path" />
+				<path refid="myClasspath" />
 			</classpath>
 		</iajc>
 	</target>
@@ -58,10 +57,7 @@
 	<target name="compileTest" depends="dist" description="compile the tests">
 		<iajc source="1.5" target="1.5" srcdir="${example};${test}" destdir="${build}">
 			<classpath>
-				<path refid="hibernate3.1.class.path" />
-				<path refid="commons-lang-2.1.class.path" />
-				<path refid="aspectj.path" />
-				<path refid="spring2.0.1.path" />
+				<path refid="myClasspath" />
 			</classpath>
 			<inpath>
 				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
@@ -89,11 +85,7 @@
 
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>
-				<path refid="hibernate3.1.class.path" />
-				<path refid="commons-lang-2.1.class.path" />
-				<path refid="aspectj.path" />
-				<path refid="spring2.0.1.path" />
-				<path refid="jdbc.class.path" />
+				<path refid="myClasspath" />
 				<pathelement location="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" />
 				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
 			</classpath>
