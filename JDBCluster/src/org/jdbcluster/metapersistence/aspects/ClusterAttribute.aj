@@ -27,6 +27,7 @@ import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.metapersistence.cluster.*;
 import org.jdbcluster.metapersistence.annotation.*;
 import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.exception.DaoException;
 
 /**
  * @author Christopher Schmidt
@@ -44,6 +45,10 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 
 	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c):getAttribute(c) {
+		
+		if(c.getDao()==null || c.getDaoClass()==null)
+			throw new DaoException("Dao instance is not set (don't use cluster attibutes in a ctor)");
+		
 		// get attribute name
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();
@@ -61,6 +66,10 @@ public aspect ClusterAttribute extends ClusterBaseAspect {
 
 	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(ClusterBase c):setAttribute(c) {
+		
+		if(c.getDao()==null || c.getDaoClass()==null)
+			throw new DaoException("Dao instance is not set (don't use cluster attibutes in a ctor)");
+		
 		Object o = proceed(c);
 		// get attribute name
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
