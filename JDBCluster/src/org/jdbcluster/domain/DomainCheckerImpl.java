@@ -27,7 +27,7 @@ import org.jdbcluster.metapersistence.annotation.AddDomainDependancy;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.springframework.util.Assert;
@@ -78,9 +78,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param propPath path to the master or slave property
 	 * @return String domain id
 	 */
-	public String getDomainId(ClusterBase cluster, String propPath) {
+	public String getDomainId(Cluster cluster, String propPath) {
 		
-		Assert.notNull(cluster, "ClusterBase may not be null");
+		Assert.notNull(cluster, "Cluster may not be null");
 		Assert.hasLength(propPath, "propPath may not be null");
 		
 		if (logger.isDebugEnabled())
@@ -107,12 +107,12 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.ClusterBase,
+	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.Cluster,
 	 *      java.lang.String)
 	 */
-	public boolean check(ClusterBase cluster, String propSlavePath) {
+	public boolean check(Cluster cluster, String propSlavePath) {
 
-		Assert.notNull(cluster, "ClusterBase may not be null");
+		Assert.notNull(cluster, "Cluster may not be null");
 		Assert.hasLength(propSlavePath, "propSlavePath may not be null");
 
 		Field fSlave = JDBClusterUtil.getField(propSlavePath, cluster);
@@ -129,12 +129,12 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.ClusterBase,
+	 * @see org.jdbcluster.domain.DomainChecker#check(org.jdbcluster.metapersistence.cluster.Cluster,
 	 *      java.lang.String, java.lang.Object)
 	 */
-	public boolean check(ClusterBase cluster, String propSlavePath, Object propValue) {
+	public boolean check(Cluster cluster, String propSlavePath, Object propValue) {
 		
-		Assert.notNull(cluster, "ClusterBase may not be null");
+		Assert.notNull(cluster, "Cluster may not be null");
 		Assert.hasLength(propSlavePath, "propSlavePath may not be null");
 		
 		if(propValue instanceof String) {
@@ -161,7 +161,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param ddSlave the annotation
 	 * @return true if value is allowed
 	 */
-	boolean check(ClusterBase cluster, Field fSlave, String slaveValue, DomainDependancy ddSlave) {
+	boolean check(Cluster cluster, Field fSlave, String slaveValue, DomainDependancy ddSlave) {
 
 		String slaveDomainId = getDomainIdFromField(fSlave, true);
 		String propMasterPath = ddSlave.dependsFromProperty();
@@ -291,9 +291,9 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param propPath path to the master or slave property
 	 * @return ValidDomainEntries<String> with the valid domain values
 	 */
-	public ValidDomainEntries<String> getValidDomainEntries(ClusterBase cluster, String propPath) {
+	public ValidDomainEntries<String> getValidDomainEntries(Cluster cluster, String propPath) {
 
-		Assert.notNull(cluster, "ClusterBase may not be null");
+		Assert.notNull(cluster, "Cluster may not be null");
 		Assert.hasLength(propPath, "propPath may not be null");
 
 		if (logger.isDebugEnabled())

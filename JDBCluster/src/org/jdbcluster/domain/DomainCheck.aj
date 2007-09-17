@@ -26,7 +26,6 @@ import org.jdbcluster.metapersistence.aspects.ClusterAttribute;
 import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import java.util.Set;
@@ -44,14 +43,14 @@ public aspect DomainCheck {
 	
 	declare precedence: DomainCheck, ClusterAttribute, *;
 	
-	pointcut setDepAttribute(ClusterBase c, String s):
+	pointcut setDepAttribute(Cluster c, String s):
 		(set(* Cluster+.*) || set(* AssocCluster+.*)) && 
 		!set(CSet+ Cluster+.*) && 
 		@annotation(DomainDependancy) && 
 		!@annotation(Domain) &&
 		target(c) && args(s);
 	
-	pointcut setAttribute(ClusterBase c, String s):
+	pointcut setAttribute(Cluster c, String s):
 		(set(* Cluster+.*) || set(* AssocCluster+.*)) && 
 		!set(CSet+ Cluster+.*) && 
 		@annotation(Domain) &&
@@ -59,7 +58,7 @@ public aspect DomainCheck {
 		target(c) && args(s);
 	
 	@SuppressAjWarnings("adviceDidNotMatch")
-	Object around(ClusterBase c, String s):setDepAttribute(c, s) {
+	Object around(Cluster c, String s):setDepAttribute(c, s) {
 		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();
@@ -82,7 +81,7 @@ public aspect DomainCheck {
 	}
 	
 	@SuppressAjWarnings("adviceDidNotMatch")
-	Object around(ClusterBase c, String s):setAttribute(c, s) {
+	Object around(Cluster c, String s):setAttribute(c, s) {
 		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		FieldSignature sig = (FieldSignature) thisJoinPoint.getSignature();
 		Field fField = sig.getField();

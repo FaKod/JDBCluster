@@ -18,7 +18,7 @@ package org.jdbcluster.template;
 import java.io.Serializable;
 
 import org.jdbcluster.filter.CCFilter;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 
 public interface StatelessSessionTemplate {
 
@@ -32,12 +32,12 @@ public interface StatelessSessionTemplate {
 	 */
 	public QueryTemplate createQuery(CCFilter ccf);
 	public QueryTemplate getNamedQuery(String queryName);
-	public void delete(ClusterBase cluster);
+	public void delete(Cluster cluster);
 	public void close();
-	public void update(ClusterBase cluster);
-	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id);
-	public ClusterBase get(ClusterBase cluster, Serializable id);
-	public void refresh(ClusterBase cluster);
+	public void update(Cluster cluster);
+	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id);
+	public Cluster get(Cluster cluster, Serializable id);
+	public void refresh(Cluster cluster);
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
 	

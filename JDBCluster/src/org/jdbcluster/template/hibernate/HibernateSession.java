@@ -23,7 +23,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
@@ -61,7 +60,7 @@ public class HibernateSession implements SessionTemplate {
 		return tx;
 	}
 
-	public void save(ClusterBase cluster) {
+	public void save(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.save(cluster.getDao());
 	}
@@ -104,22 +103,22 @@ public class HibernateSession implements SessionTemplate {
 		return new HibernateQuery(query);
 	}
 
-	public void delete(ClusterBase cluster) {
+	public void delete(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.delete(cluster.getDao());
 	}
 
-	public void saveOrUpdate(ClusterBase cluster) {
+	public void saveOrUpdate(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.saveOrUpdate(cluster.getDao());
 	}
 
-	public void update(ClusterBase cluster) {
+	public void update(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.update(cluster.getDao());
 	}
 
-	public void save(String id, ClusterBase cluster) {
+	public void save(String id, Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.save(id, cluster.getDao());
 	}
@@ -230,7 +229,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param object a persistent or detached cluster instance
 	 */
-	public void refresh(ClusterBase cluster) {
+	public void refresh(Cluster cluster) {
 		
 		Assert.notNull(cluster, "Cluster may not be null");
 		
@@ -247,12 +246,12 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id) {
+	public Cluster load(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
+		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true);
 		hibernateSession.load(cb.getDao(), id);
 		return cb;
 	}
@@ -265,7 +264,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase load(ClusterBase cluster, Serializable id) {
+	public Cluster load(Cluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -286,12 +285,12 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id) {
+	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
+		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true);
 		cb.setDao(hibernateSession.get(cb.getDao().getClass(), id));
 		return cb;
 	}
@@ -307,7 +306,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase get(ClusterBase cluster, Serializable id) {
+	public Cluster get(Cluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -330,7 +329,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param cluster cluster object
 	 */
-	public void merge(ClusterBase cluster) {
+	public void merge(Cluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 
@@ -348,7 +347,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param object a persistent instance
 	 * @throws HibernateException
 	 */
-	public void evict(ClusterBase cluster) {
+	public void evict(Cluster cluster) {
 		
 		Assert.notNull(cluster, "cluster may not be null");
 
@@ -364,7 +363,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param object a transient instance to be made persistent
 	 */
-	public void persist(ClusterBase cluster) {
+	public void persist(Cluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 

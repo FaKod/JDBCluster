@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.clustertype;
 
+import org.jdbcluster.metapersistence.cluster.Cluster;
+
 /**
  * interface ClusterType defines methods to get a specific 
  * ClusterType and it's name.
@@ -33,6 +35,12 @@ public interface ClusterType {
 	public String getClusterType(String CTName);
 	
 	/**
+	 * gets the specific Cluster Class by a given name
+	 * @return Class of corresponding cluster
+	 */
+	public Class<? extends Cluster> getClusterClass();
+	
+	/**
 	 * gets the ClusterType name
 	 * @return String
 	 */
@@ -40,7 +48,9 @@ public interface ClusterType {
 	
 	/**
 	 * gets the configured Cluster Class Name as a String
+	 * @deprecated use {@link ClusterType.getClusterClass()} instead
 	 * @return Class Name of Cluster Object
 	 */
+	@Deprecated
 	public String getClusterClassName();
 }

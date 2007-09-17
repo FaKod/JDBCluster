@@ -29,7 +29,6 @@ import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.domain.DomainChecker;
 import org.jdbcluster.domain.DomainCheckerImpl;
 import org.jdbcluster.domain.DomainPrivilegeList;
-import org.jdbcluster.exception.ClusterTypeException;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
@@ -38,6 +37,7 @@ import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.service.PrivilegedService;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -110,13 +110,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 		Assert.hasLength(clusterType, "clusterType may not be null or \"\"");
 
-		String className = ClusterTypeFactory.newInstance(clusterType).getClusterClassName();
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-		} catch (ClassNotFoundException e) {
-			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
-		}
+		Class<? extends Cluster> clazz = ClusterTypeFactory.newInstance(clusterType).getClusterClass();
+
 		// if Cluster is no PrivilegedCluster creation is always possible
 		if (!PrivilegedCluster.class.isAssignableFrom(clazz))
 			return true;

@@ -15,14 +15,19 @@
  */
 package org.jdbcluster.clustertype;
 
+import org.jdbcluster.JDBClusterUtil;
+import org.jdbcluster.metapersistence.cluster.Cluster;
+
 
 /**
  * 
- * @author Philipp Noggler
  * class ClusterTypeImpl forwards the call to ClusterTypeConfigImpl
  * and returns the result as a string. The Constructor just saves 
  * the name (e.g. unit), that was returned by getClusterType() into the super.name
  * variable
+ * 
+ *  @author Philipp Noggler
+ *  @author FaKod
  * 
  */
 public class ClusterTypeImpl extends ClusterTypeBase implements ClusterType {
@@ -51,8 +56,24 @@ public class ClusterTypeImpl extends ClusterTypeBase implements ClusterType {
 		return getClusterTypeConfig().getClusterType(clusterTypeName);
 	}
 
+	/**
+	 * gets the configured Cluster Class Name as a String
+	 * @return Class Name of Cluster Object
+	 */
 	public String getClusterClassName() {
 		return getClusterTypeConfig().getClusterClassName(getName());
+	}
+
+	/**
+	 * gets the specific Cluster Class by a given name
+	 * @return Class of corresponding cluster
+	 */
+	@SuppressWarnings("unchecked")
+	public Class<? extends Cluster> getClusterClass() {
+		String clusterClassName = getClusterTypeConfig().getClusterClassName(getName());
+		Class<? extends Cluster> clazz = 
+			(Class<? extends Cluster>) JDBClusterUtil.createClass(clusterClassName);
+		return clazz;
 	}
 
 }

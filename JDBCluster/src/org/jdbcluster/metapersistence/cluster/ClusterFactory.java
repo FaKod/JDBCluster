@@ -111,7 +111,7 @@ public abstract class ClusterFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Object dao) {
+	public static <T extends Cluster> T newInstance(Class<? extends Cluster> clusterClass, Object dao) {
 		return newInstance(clusterClass, dao, dao!=null);
 	}
 	
@@ -125,7 +125,7 @@ public abstract class ClusterFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<?> clusterClass, Object dao, boolean daoIsPersistent) {
+	public static <T extends Cluster> T newInstance(Class<? extends Cluster> clusterClass, Object dao, boolean daoIsPersistent) {
 		
 		Assert.notNull(clusterClass, "Class<?> may not be null");
 		
@@ -170,10 +170,10 @@ public abstract class ClusterFactory {
 	/**
 	 * get the cluster class object
 	 * @param ct specifies the ClusterType class that should be returned
-	 * @return Class<? extends ClusterBase> of ClusterType
+	 * @return Class<? extends Cluster> of ClusterType
 	 */
 	@SuppressWarnings("unchecked")
-	public static Class<? extends ClusterBase> getClusterClass(ClusterType ct) {
+	public static Class<? extends Cluster> getClusterClass(ClusterType ct) {
 		
 		Assert.notNull(ct, "ClusterType may not be null");
 		
@@ -182,12 +182,8 @@ public abstract class ClusterFactory {
 			throw new ConfigurationException("unknown ClusterType [" + ct.getName() + "]");
 		}
 
-		Class<? extends ClusterBase> clusterClass;
-		try {
-			clusterClass = (Class<? extends ClusterBase>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-		} catch (ClassNotFoundException e) {
-			throw new ClusterTypeException("no definition for the class [" + className + "] with the specified name could be found", e);
-		}
+		Class<? extends Cluster> clusterClass;
+		clusterClass = ct.getClusterClass();
 		
 		return clusterClass;
 	}
@@ -195,9 +191,9 @@ public abstract class ClusterFactory {
 	/**
 	 *  get the cluster class object
 	 * @param clusterType specifies the ClusterType class that should be returned
-	 * @return Class<? extends ClusterBase> of ClusterType
+	 * @return Class<? extends Cluster> of ClusterType
 	 */
-	public static Class<? extends ClusterBase> getClusterClass(String clusterType) {
+	public static Class<? extends Cluster> getClusterClass(String clusterType) {
 		
 		Assert.notNull(clusterType, "String clusterType may not be null");
 		
@@ -208,18 +204,18 @@ public abstract class ClusterFactory {
 	/**
 	 * get the cluster class object from a Dao instance
 	 * @param dao Dao instance to search cluster
-	 * @return Class<? extends ClusterBase> class of corresponding cluster
+	 * @return Class<? extends Cluster> class of corresponding cluster
 	 */
-	public static Class<? extends ClusterBase> getClusterFromDao(Object dao) {
+	public static Class<? extends Cluster> getClusterFromDao(Object dao) {
 		
 		Assert.notNull(dao, "Dao dao may not be null");
 		
 		List<String> clusterIDs = ClusterTypeBase.getClusterTypeConfig().getClusterIDs();
 		for( String s : clusterIDs) {
-			Class<? extends ClusterBase> clusterClass = null;
+			Class<? extends Cluster> clusterClass = null;
 			String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(s);
 			try {
-				clusterClass = (Class<? extends ClusterBase>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+				clusterClass = (Class<? extends Cluster>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
 				DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
 				if (classAnno != null) {
 					if(classAnno.dAOClass() == dao.getClass())

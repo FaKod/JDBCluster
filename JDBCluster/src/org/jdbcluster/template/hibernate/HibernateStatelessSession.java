@@ -22,7 +22,6 @@ import org.hibernate.Query;
 import org.hibernate.StatelessSession;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
@@ -94,12 +93,12 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 		return new HibernateQuery(query);
 	}
 
-	public void delete(ClusterBase cluster) {
+	public void delete(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.delete(cluster.getDao());
 	}
 
-	public void update(ClusterBase cluster) {
+	public void update(Cluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.update(cluster.getDao());
 	}
@@ -210,7 +209,7 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * 
 	 * @param object a persistent or detached cluster instance
 	 */
-	public void refresh(ClusterBase cluster) {
+	public void refresh(Cluster cluster) {
 		
 		Assert.notNull(cluster, "Cluster may not be null");
 		
@@ -228,12 +227,12 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id) {
+	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ClusterBase cb = ClusterFactory.newInstance(clusterClass, null, true);
+		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true);
 		cb.setDao(hibernateSession.get(cb.getDao().getClass(), id));
 		return cb;
 	}
@@ -247,7 +246,7 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public ClusterBase get(ClusterBase cluster, Serializable id) {
+	public Cluster get(Cluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");

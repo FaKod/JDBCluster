@@ -32,7 +32,7 @@ public abstract class JDBClusterUtil {
 	
 	/** Logger available to subclasses */
 	static final Logger logger = Logger.getLogger(JDBClusterUtil.class);
-
+	
 	/**
 	 * creates object from class named className
 	 * 
@@ -40,12 +40,20 @@ public abstract class JDBClusterUtil {
 	 * @return Object instance of class className
 	 */
 	static public Object createClassObject(String className) {
-
+		return createClassObject(createClass(className));
+	}
+	
+	/**
+	 * creates Class<?> from class named className
+	 * @param className name of the class
+	 * @return Class instance of class className
+	 */
+	static public Class<?> createClass(String className) {
+		
 		Assert.hasLength(className, "className may not be null or \"\"");
 
 		try {
-			Class<?> clazz = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-			return createClassObject(clazz);
+			return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
 		} catch (ClassNotFoundException e) {
 			throw new ConfigurationException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}

@@ -18,7 +18,7 @@ package org.jdbcluster.template;
 import java.io.Serializable;
 
 import org.jdbcluster.filter.CCFilter;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 
 /**
  * 
@@ -38,20 +38,20 @@ public interface SessionTemplate {
 	 */
 	public QueryTemplate createQuery(CCFilter ccf);
 	public QueryTemplate getNamedQuery(String queryName);
-	public void delete(ClusterBase cluster);
-	public void saveOrUpdate(ClusterBase cluster);
-	public void merge(ClusterBase cluster);
-	public void save(ClusterBase cluster);
+	public void delete(Cluster cluster);
+	public void saveOrUpdate(Cluster cluster);
+	public void merge(Cluster cluster);
+	public void save(Cluster cluster);
 	public void close();
-	public void update(ClusterBase cluster);
-	public void save(String id, ClusterBase cluster);
-	public ClusterBase load(Class<? extends ClusterBase> clusterClass, Serializable id);
-	public ClusterBase load(ClusterBase cluster, Serializable id);
-	public ClusterBase get(Class<? extends ClusterBase> clusterClass, Serializable id);
-	public ClusterBase get(ClusterBase cluster, Serializable id);
-	public void refresh(ClusterBase cluster);
-	public void evict(ClusterBase cluster);
-	public void persist(ClusterBase cluster);
+	public void update(Cluster cluster);
+	public void save(String id, Cluster cluster);
+	public Cluster load(Class<? extends Cluster> clusterClass, Serializable id);
+	public Cluster load(Cluster cluster, Serializable id);
+	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id);
+	public Cluster get(Cluster cluster, Serializable id);
+	public void refresh(Cluster cluster);
+	public void evict(Cluster cluster);
+	public void persist(Cluster cluster);
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
 	public boolean isDirty();

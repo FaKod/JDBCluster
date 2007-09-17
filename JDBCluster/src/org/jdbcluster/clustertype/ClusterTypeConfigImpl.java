@@ -93,9 +93,11 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 	
 	/**
 	 * returns the classname of the given ClusterType
+	 * @deprecated use {@link ClusterType.getClusterClass()} instead
 	 * @param ct ClusterType
 	 * @return String
 	 */
+	@Deprecated
 	public String getClusterClassName(String clusterTypeName) {
 		//xPath expression to get the classname
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterTypeName + "']";
