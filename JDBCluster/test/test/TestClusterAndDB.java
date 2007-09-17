@@ -10,6 +10,7 @@ import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilterFactory;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
@@ -179,8 +180,8 @@ public class TestClusterAndDB extends TestCase {
 	
 	public void testClusterClassFromDao() {
 		Car car = new Car();
-		Class<? extends ClusterBase> c = ClusterFactory.getClusterFromDao(car);
-		ClusterBase cb = ClusterFactory.newInstance(c, car);
+		Class<? extends Cluster> c = ClusterFactory.getClusterFromDao(car);
+		Cluster cb = ClusterFactory.newInstance(c, car);
 		assertSame(CCar.class, cb.getClass());
 	}
 
