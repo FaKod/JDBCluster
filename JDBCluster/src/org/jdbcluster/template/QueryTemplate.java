@@ -41,6 +41,17 @@ public interface QueryTemplate {
 	public List list() throws JDBClusterException;
 	
 	/**
+	 * Return the query results as a <tt>List</tt>. If the query contains
+	 * multiple results pre row, the results are returned in an instance
+	 * of <tt>Object[]</tt>. 
+	 * No copies of the same instance are returned
+	 *
+	 * @return the result list
+	 * @throws JDBClusterException
+	 */
+	public List listUnique() throws JDBClusterException;
+	
+	/**
 	 * stores instance of corresponding ClusterType
 	 * @param clusterType
 	 */

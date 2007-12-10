@@ -73,7 +73,25 @@ public class HibernateQuery implements QueryTemplate {
 	 * @return the result list
 	 * @throws JDBClusterException
 	 */
+	@SuppressWarnings("unchecked")
 	public List list()throws JDBClusterException {
+		try {
+			return query.list();
+		} catch (HibernateException e) {
+			throw new DBException("underlaying Hibernate exception", e);
+		}
+	}
+	
+	/**
+	 * Return the query results as a <tt>List</tt>. If the query contains
+	 * multiple results pre row, the results are returned in an instance
+	 * of <tt>Object[]</tt>.
+	 *
+	 * @return the result list
+	 * @throws JDBClusterException
+	 */
+	@SuppressWarnings("unchecked")
+	public List listUnique()throws JDBClusterException {
 		try {
 			return query.list();
 		} catch (HibernateException e) {

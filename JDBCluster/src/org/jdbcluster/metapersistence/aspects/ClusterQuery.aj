@@ -23,6 +23,8 @@ import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.SuppressAjWarnings;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Aspect used after a native (fe. hibernate) query was
@@ -38,7 +40,13 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		execution(* HibernateQuery+.list(..)) && 
 		within(HibernateQuery) && 
 		target(q);
+	
+	pointcut resultListUnique(HibernateQuery q):
+		execution(* HibernateQuery+.listUnique(..)) && 
+		within(HibernateQuery) && 
+		target(q);
 
+	@SuppressWarnings("unchecked")
 	@SuppressAjWarnings("adviceDidNotMatch")
 	Object around(HibernateQuery q):resultList(q) {
 		ClusterType ct = q.getClusterType();
@@ -49,13 +57,33 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 			logger.debug("Query result converting " + dAOResultSet.size() + " elements to Cluster");
 		
 		for (Object dao : dAOResultSet) {
-			
-			if(logger.isDebugEnabled())
-				logger.debug("converting " + dao.getClass().getName() + " to Cluster");
-			
 			Cluster c = ClusterFactory.newInstance(ct, dao);
 			clusterResultSet.add(c);
 		}
+
+		return clusterResultSet;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@SuppressAjWarnings("adviceDidNotMatch")
+	Object around(HibernateQuery q):resultListUnique(q) {
+		ClusterType ct = q.getClusterType();
+		List dAOResultSet = (List) proceed(q);
+		List<Cluster> clusterResultSet = new ArrayList<Cluster>();
+		
+		/*
+		 * create unique result
+		 */
+		Set dAOSet = new HashSet(dAOResultSet);
+		
+		if(logger.isDebugEnabled())
+			logger.debug("Query result converting " + dAOSet.size() + "unique elements to Cluster");
+		
+		for (Object dao : dAOSet) {
+			Cluster c = ClusterFactory.newInstance(ct, dao);
+			clusterResultSet.add(c);
+		}
+	
 		return clusterResultSet;
 	}
 }
