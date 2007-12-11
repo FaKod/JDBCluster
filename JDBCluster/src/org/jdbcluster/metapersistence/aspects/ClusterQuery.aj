@@ -74,15 +74,18 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		/*
 		 * create unique result
 		 */
-		Set dAOSet = new HashSet(dAOResultSet);
+		Set uniqueSet = new HashSet();
+		
+		for (Object dao : dAOResultSet) {
+			if(!uniqueSet.contains(dao)) {
+				uniqueSet.add(dao);
+				Cluster c = ClusterFactory.newInstance(ct, dao);
+				clusterResultSet.add(c);
+			}
+		}
 		
 		if(logger.isDebugEnabled())
-			logger.debug("Query result converting " + dAOSet.size() + "unique elements to Cluster");
-		
-		for (Object dao : dAOSet) {
-			Cluster c = ClusterFactory.newInstance(ct, dao);
-			clusterResultSet.add(c);
-		}
+			logger.debug("Query result converting " + clusterResultSet.size() + "unique elements to Cluster");
 	
 		return clusterResultSet;
 	}
