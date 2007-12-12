@@ -77,8 +77,7 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		Set uniqueSet = new HashSet();
 		
 		for (Object dao : dAOResultSet) {
-			if(!uniqueSet.contains(dao)) {
-				uniqueSet.add(dao);
+			if(uniqueSet.add(dao)) { 
 				Cluster c = ClusterFactory.newInstance(ct, dao);
 				clusterResultSet.add(c);
 			}
