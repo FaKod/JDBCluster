@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
-	<classpathentry kind="var" path="JUNIT_HOME/junit.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip"/>
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-adapters-1.1.jar"/>
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-api-1.1.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/asm/unknown/lib/asm-attrs.jar"/>
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/jta/1.0.1b/lib/jta.jar"/>
 	<classpathentry kind="var" path="JDBCluster_ThirdParty/antlr/2.7.6/lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

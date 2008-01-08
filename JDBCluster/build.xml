@@ -5,9 +5,10 @@
 	<taskdef resource="net/sf/ant4eclipse/antlib.xml" />
 
 	<property name="project.name" value="JDBCluster" />
-	<property name="JDBCluster_ThirdParty" value="D:/Projekte/ThirdParty" />
-	<property name="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER" value="C:/Programme/Eclipse33/ep/ajdt33/eclipse/plugins/org.aspectj.runtime_1.5.4.200705211336/aspectjrt.jar" />
-	<property name="JUNIT_HOME" value="C:\Programme\Eclipse33\eclipse33\plugins\org.junit4_4.3.1" />
+	
+	<property name="JDBCluster_ThirdParty" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty" />
+	<property name="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty/aspectj/1.5.3/lib/aspectjrt.jar" />
+	<property name="JUNIT_HOME" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty/junit/4.3.1/lib" />
 	
 	<getEclipseClasspath pathId="myClasspath" workspace="${basedir}/.." projectName="${project.name}" />
 
@@ -58,6 +59,7 @@
 		<iajc source="1.5" target="1.5" srcdir="${example};${test}" destdir="${build}">
 			<classpath>
 				<path refid="myClasspath" />
+				<pathelement path="${JUNIT_HOME}/junit-4.3.1.jar"/>
 			</classpath>
 			<inpath>
 				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
