@@ -1,0 +1,35 @@
+1    INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE]
+24   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+25   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+25   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, NeedsRight4[ColorType]DomainValue[Color]]
+26   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [NeedsRight4[ColorType]DomainValue[Color]]
+27   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+28   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+28   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+28   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+28   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, NeedsRight4[ColorType]DomainValue[Color]]
+34   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [NeedsRight4[Color]DomainValue[RED]]
+34   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+35   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+35   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+35   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+35   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+36   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, SETCOLSHADE, NeedsRight4[ColorType]DomainValue[Color]]
+39   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [GETCOLOR, BIKE]
+39   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+43   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+44   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+44   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+44   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+44   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, NeedsRight4[ColorType]DomainValue[Color]]
+44   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+45   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+45   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+45   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+45   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+49   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+49   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [NestedPRIV1, BIKE, NestedPRIV2, NestedPRIV3, SETCOLSHADE, NeedsRight4[ColorType]DomainValue[Color]]
+50   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [GETCOLOR, BIKE]
+50   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+50   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+

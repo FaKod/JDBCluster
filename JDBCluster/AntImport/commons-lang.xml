@@ -1,0 +1,7 @@
+<project name="commons-lang" basedir=".">
+	<property name="commons-lang-2.1.jar" value="${tools.dir}/commons-lang-2.1/commons-lang-2.1.jar"/>
+	
+	<path id="commons-lang-2.1.class.path">
+		<pathelement path="${commons-lang-2.1.jar}"/>
+	</path>
+</project>

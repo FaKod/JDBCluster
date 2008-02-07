@@ -1,0 +1,21 @@
+0    INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE]
+1    INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+29   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [GETCOLOR, BIKE]
+30   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKEPAINT, BIKESERVCIE, NeedsRight4[Color]DomainValue[NULL]]
+36   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+36   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+36   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, NeedsRight4[ColorType]DomainValue[Color]]
+38   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [NeedsRight4[ColorType]DomainValue[Color]]
+39   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+39   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETNESTED]
+39   INFO  [main] org.jdbcluster.privilege.PrivilegeCheckerImpl     property [nested.nestedDomain] is not accessable. Skipping Priv test
+39   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, NeedsRight4[ColorType]DomainValue[Color]]
+40   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [NeedsRight4[Color]DomainValue[RED]]
+40   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+41   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+41   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [GETCOLOR, BIKE]
+41   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKEPAINT, BIKESERVCIE, NeedsRight4[Color]DomainValue[RED]]
+41   INFO  [main]     mycluster.privilege.UserPrivilege     Priv list cleared -------------------------------------------------------------
+42   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE, GETCOLTYPE]
+42   INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKESERVCIE, NeedsRight4[ColorType]DomainValue[Color], BIKEPAINT_CP]
+

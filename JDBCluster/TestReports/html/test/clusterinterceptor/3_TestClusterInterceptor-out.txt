@@ -1,0 +1,3 @@
+0    INFO  [main]     mycluster.privilege.UserPrivilege     needed privileges: [BIKE]
+ClusterInterceptor [test.clusterinterceptor.MyClusterInterceptor] returned false
+

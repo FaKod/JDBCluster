@@ -1,0 +1,125 @@
+<project name="JDBCluster" default="dist" basedir=".">
+	<description> This is the build file for JDBCluster.jar </description>
+
+	<!-- declare ant4eclipse -->
+	<taskdef resource="net/sf/ant4eclipse/antlib.xml" />
+
+	<property name="project.name" value="JDBCluster" />
+	
+	<property name="JDBCluster_ThirdParty" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty" />
+	<property name="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty/aspectj/1.5.3/lib/aspectjrt.jar" />
+	<property name="JUNIT_HOME" value="/Users/christopherschmidt/Code/Projekte/Java/ThirdParty/junit/4.3.1/lib" />
+	
+	<getEclipseClasspath pathId="myClasspath" workspace="${basedir}/.." projectName="${project.name}" />
+
+	<!-- AspectJ Taskdefinition -->
+	<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+		<classpath>
+			<path refid="myClasspath" />
+		</classpath>
+	</taskdef>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="example" location="example" />
+	<property name="test" location="test" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="test.reports" location="TestReports" />
+	
+	<property file="build.ajproperties" />
+
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build}" />
+		<mkdir dir="${test.reports}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source">
+		<iajc source="1.5" target="1.5" srcdir="${src}" destdir="${build}" excludes="${src.excludes}" >
+			<classpath>
+				<path refid="myClasspath" />
+			</classpath>
+		</iajc>
+	</target>
+
+	<target name="dist" depends="compile" description="generate the distribution">
+		<mkdir dir="${dist}/lib" />
+		<jar jarfile="${dist}/lib/JDBCluster-${DSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/lib/JDBCluster.jar" basedir="${build}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+		<delete dir="${test.reports}" />
+	</target>
+
+	<target name="compileTest" depends="dist" description="compile the tests">
+		<iajc source="1.5" target="1.5" srcdir="${example};${test}" destdir="${build}">
+			<classpath>
+				<path refid="myClasspath" />
+				<pathelement path="${JUNIT_HOME}/junit-4.3.1.jar"/>
+			</classpath>
+			<inpath>
+				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
+			</inpath>
+		</iajc>
+		<copy todir="${build}">
+			<fileset dir="${example}">
+				<include name="**/*.xml" />
+				<include name="META-INF/**" />
+			</fileset>
+		</copy>
+		<copy todir="${build}">
+			<fileset dir="${test}">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="distTest" depends="compileTest" description="generate the distribution">
+		<jar jarfile="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/lib/JDBClusterTest.jar" basedir="${build}" />
+	</target>
+
+	<target name="JDBClusterTest" depends="distTest">
+
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath>
+				<path refid="myClasspath" />
+				<pathelement location="${dist}/lib/JDBClusterTest-${DSTAMP}.jar" />
+				<pathelement location="${dist}/lib/JDBCluster-${DSTAMP}.jar" />
+			</classpath>
+
+			<formatter type="xml" />
+
+			<test name="test.TestClusterAndDB" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.TestCluster" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.TestFilter" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.domain.TestDomainCheck" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainCheck2" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainList" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			<test name="test.domain.TestDomainList2" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.privilege.TestPrivilege" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+			<test name="test.service.TestService" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			
+			<test name="test.clusterinterceptor.TestClusterInterceptor" fork="yes" haltonfailure="no" todir="${test.reports}" />
+			
+			<test name="test.domain.adddomain.TestAddMasterDomain" fork="yes" haltonfailure="no" todir="${test.reports}" />
+
+		</junit>
+
+		<junitreport todir="${test.reports}">
+			<fileset dir="${test.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.reports}/html" />
+		</junitreport>
+
+	</target>
+
+</project>
