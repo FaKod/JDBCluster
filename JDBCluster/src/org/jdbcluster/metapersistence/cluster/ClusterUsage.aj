@@ -19,13 +19,13 @@ import org.jdbcluster.metapersistence.annotation.DaoLink;
 
 /**
  * aspect to prevent new(...)
- * and a forgotton @DaoLink annotation
+ * and a forgotten @DaoLink annotation
  * @author FaKod
  */
 public aspect ClusterUsage {
 	
 	/**
-	 * new Cluster only allowed throught ClusterFactory
+	 * new Cluster only allowed thought ClusterFactory
 	 */
 	pointcut newCluster(): 
 		call(Cluster+.new(..)) && 
@@ -33,7 +33,7 @@ public aspect ClusterUsage {
 	
 	/**
 	 * Cluster only allowed with DaoLink Annotation
-	 * for abstract classes use @DaoLink(dAOClass = Dao.class) allthough its not
+	 * for abstract classes use @DaoLink(dAOClass = Dao.class) although its not
 	 * used
 	 */
 	pointcut clusterWithoutDAOAnno(): 
