@@ -40,7 +40,7 @@ public abstract class ClusterTypeFactory extends ClusterTypeBase{
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(clusterTypeName);
 		//if no name was defined, throw an exception
 		if (className == null) {
-			throw new ClusterTypeException("No ClusterType of type " + clusterTypeName + "found!", new Throwable());
+			throw new ClusterTypeException("No ClusterType of type " + clusterTypeName + " found!", new Throwable());
 		}
 		
 		ClusterTypeBase clusterType = new ClusterTypeImpl();
