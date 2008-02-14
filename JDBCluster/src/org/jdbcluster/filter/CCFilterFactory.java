@@ -54,11 +54,14 @@ public abstract class CCFilterFactory extends CCFilterBase{
 	static public <T extends CCFilterBase> T newInstance(ClusterType ct, String selId) throws CCFilterException {
 		//get the classname of the object
 		String filterClassName = CCFilterBase.getSelect().getClassName(ct, selId);
+		String clusterClassName = ct.getClusterClass().getName();
+		
 		if (filterClassName == null) {
 			//set the selectstatement, without any bindungs because it's supposed to be 
 			//a generic filter
+				
 			CCFilterImpl impl = new CCFilterImpl(ct);
-			impl.setSelectStatementDAO(ct.getClusterClassName());
+			impl.setSelectStatementDAO(clusterClassName);
 			impl.setBinding(new HashMap<String, String>());
 			impl.setClassName(CCFilterImpl.class.getName());
 			impl.setWhereStatement("");
@@ -85,7 +88,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		filter = (CCFilterBase) JDBClusterUtil.createClassObject(filterClassName);
 		// get select statement
 		String selectDAO="";
-		String clusterClassName = ct.getClusterClassName();
+
 		try {
 			Class<?> clusterClass = Class.forName(clusterClassName, false, Thread.currentThread().getContextClassLoader());
 			DaoLink daoLink = clusterClass.getAnnotation(DaoLink.class);
