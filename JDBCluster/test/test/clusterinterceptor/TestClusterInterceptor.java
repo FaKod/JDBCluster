@@ -1,7 +1,7 @@
 package test.clusterinterceptor;
 
 import mycluster.CBicycle;
-import mycluster.CCar;
+import mycluster.ICar;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jdbcluster.JDBClusterSimpleConfig;
@@ -38,7 +38,7 @@ public class TestClusterInterceptor extends TestCase {
 		// create a Cluster and persist it
 		// but interceptor returning false -> exception
 		try {
-			CCar bmw = ClusterFactory.newInstance(cAutoType);
+			ICar bmw = ClusterFactory.newInstance(cAutoType);
 			Assert.fail("bmw Interceptor should return false");
 		} catch (ConfigurationException e) {
 			System.out.println(e.getMessage());

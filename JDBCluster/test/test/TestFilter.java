@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import mycluster.CCar;
 import mycluster.COwner;
 import mycluster.CSparePart;
+import mycluster.ICar;
 import mycluster.MyRemoveSpecialTreatmentCSet;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -222,7 +223,7 @@ public class TestFilter extends TestCase {
 		List<?> l1 = session.createQuery(CCFilterFactory.newInstance("car", "simple")).list();
 		session.close();
 		
-		CCar c = (CCar) l1.get(0);
+		ICar c = (ICar) l1.get(0);
 		try {
 			c.getSpareParts();
 			fail("spareparts shouldn't be initialized.");
@@ -232,7 +233,7 @@ public class TestFilter extends TestCase {
 		List<?> l2 = session.createQuery(CCFilterFactory.newInstance("car", "fetchFilter")).list();
 		session.close();
 		
-		c = (CCar) l2.get(0);
+		c = (ICar) l2.get(0);
 		c.getSpareParts();
 		c.getOwner();		
 	}

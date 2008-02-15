@@ -2,8 +2,8 @@ package test;
 
 import junit.framework.TestCase;
 import mycluster.CBicycle;
-import mycluster.CCar;
 import mycluster.CSparePart;
+import mycluster.ICar;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jdbcluster.JDBClusterSimpleConfig;
@@ -41,7 +41,7 @@ public class TestCluster extends TestCase {
 	
 	public void testAssociations() {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
-		CCar cAuto = ClusterFactory.newInstance(cAutoType);
+		ICar cAuto = ClusterFactory.newInstance(cAutoType);
 
 		CSet<CSparePart> ersatzList = cAuto.getCsparepart();
 		CSparePart ersatz = new CSparePart();
@@ -64,7 +64,7 @@ public class TestCluster extends TestCase {
 
 	public void testAttributes() {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
-		CCar cAuto = ClusterFactory.newInstance(cAutoType);
+		ICar cAuto = ClusterFactory.newInstance(cAutoType);
 		
 		cAuto.setName("Borg");
 		cAuto.getName();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import mycluster.CCar;
+import mycluster.ICar;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jdbcluster.JDBClusterSimpleConfig;
@@ -11,7 +12,6 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilterFactory;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
@@ -20,9 +20,8 @@ import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
 import org.jdbcluster.template.TransactionTemplate;
 
-import dao.Car;
-
 import test.testfilter.NameFilter;
+import dao.Car;
 
 public class TestClusterAndDB extends TestCase {
 	
@@ -61,7 +60,7 @@ public class TestClusterAndDB extends TestCase {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		
 		//create a Cluster and persist it
-		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
 		assertEquals("MyDefaultAutoName", bmw.getName());
 		
 		bmw.setName("BMW");
@@ -77,8 +76,8 @@ public class TestClusterAndDB extends TestCase {
 		nameFilter.setName("BMW");
 		QueryTemplate nameFilterQuery = session.createQuery(nameFilter);
 		
-		List<CCar> list = nameFilterQuery.list();
-		CCar myQueriedAuto = list.get(0);
+		List<ICar> list = nameFilterQuery.list();
+		ICar myQueriedAuto = list.get(0);
 		assertEquals("BMW", myQueriedAuto.getName());
 	}
 	
@@ -88,28 +87,28 @@ public class TestClusterAndDB extends TestCase {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		
 		//create a Cluster and persist it
-		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
 		bmw.setName("BMWforTest");
-		session.save(bmw);
+		session.save((Cluster)bmw);
 		tx.commit();
 		
 		// test in a second session
 		SessionTemplate session2 = sf.openSession();
 		
-		CCar car2 = (CCar) session2.load(CCar.class, bmw.getId());
+		ICar car2 = (ICar) session2.load("car", bmw.getId());
 		assertEquals("BMWforTest", car2.getName());
 		session2.close();
 		
 		// test in a third session
 		SessionTemplate session3 = sf.openSession();
-		CCar car3 = ClusterFactory.newInstance(cAutoType);
+		ICar car3 = ClusterFactory.newInstance(cAutoType);
 		session3.load(car3, bmw.getId());
 		assertEquals("BMWforTest", car3.getName());
 		session3.close();
 		
 		// test in a forth session
 		SessionTemplate session4 = sf.openSession();
-		CCar car4 = ClusterFactory.newInstance(cAutoType);
+		ICar car4 = ClusterFactory.newInstance(cAutoType);
 		session4.get(car4, bmw.getId());
 		assertEquals("BMWforTest", car4.getName());
 		session4.close();
@@ -121,7 +120,7 @@ public class TestClusterAndDB extends TestCase {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		
 		//create a Cluster and persist it
-		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
 		bmw.setName("BMWforTest");
 		session.save(bmw);
 		tx.commit();
@@ -132,8 +131,7 @@ public class TestClusterAndDB extends TestCase {
 		
 		SessionTemplate session2 = sf.openSession();
 		TransactionTemplate tx2 = session2.beginTransaction();
-		CCar car1 = (CCar) session1.get(CCar.class, bmw.getId());
-		CCar car2 = (CCar) session2.get(CCar.class, bmw.getId());
+		ICar car2 = (ICar) session2.get("car", bmw.getId());
 		car2.setName("changed");
 		
 		//session2.merge(car2);
@@ -151,7 +149,7 @@ public class TestClusterAndDB extends TestCase {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
 		
 		//create a Cluster and persist it
-		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
 		bmw.setName("BMWforTest");
 		session.save(bmw);
 		long id = bmw.getId();
@@ -163,7 +161,7 @@ public class TestClusterAndDB extends TestCase {
 		SessionTemplate session2 = sf.openSession();
 		TransactionTemplate tx2 = session2.beginTransaction();
 		
-		CCar bmw2 = (CCar) session2.get(CCar.class, id);
+		ICar bmw2 = (ICar) session2.get("car", id);
 		bmw2.setName("BMW Session 2");
 		tx2.commit();
 		session2.close();
