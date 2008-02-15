@@ -8,7 +8,7 @@ import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.privilege.PrivilegedCluster;
 
 @DaoLink(dAOClass = Dao.class)
-public abstract class CVehicle extends Cluster implements PrivilegedCluster {
+public abstract class CVehicle extends Cluster implements PrivilegedCluster, IVehicle {
 
 	long id;
 	

@@ -11,7 +11,7 @@ import dao.Owner;
 import dao.SparePart;
 
 @DaoLink(dAOClass = Car.class)
-public class CCar extends CVehicle {
+public class CCar extends CVehicle implements ICar {
 
 	//DAO Field name
 	private String name;
