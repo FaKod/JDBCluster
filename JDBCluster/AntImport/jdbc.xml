@@ -1,7 +1,0 @@
-<project name="jdbc" basedir=".">
-	<property name="hsqldb.jar" value="${tools.dir}/hsqldb/lib/hsqldb.jar"/>
-	
-	<path id="jdbc.class.path">
-		<pathelement path="${hsqldb.jar}"/>
-	</path>
-</project>
