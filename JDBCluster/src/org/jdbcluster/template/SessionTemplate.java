@@ -17,8 +17,10 @@ package org.jdbcluster.template;
 
 import java.io.Serializable;
 
+import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 /**
  * 
@@ -38,20 +40,27 @@ public interface SessionTemplate {
 	 */
 	public QueryTemplate createQuery(CCFilter ccf);
 	public QueryTemplate getNamedQuery(String queryName);
-	public void delete(Cluster cluster);
-	public void saveOrUpdate(Cluster cluster);
-	public void merge(Cluster cluster);
-	public void save(Cluster cluster);
+	public void delete(ICluster cluster);
+	public void saveOrUpdate(ICluster cluster);
+	public void merge(ICluster cluster);
+	public void save(ICluster cluster);
 	public void close();
-	public void update(Cluster cluster);
-	public void save(String id, Cluster cluster);
-	public Cluster load(Class<? extends Cluster> clusterClass, Serializable id);
-	public Cluster load(Cluster cluster, Serializable id);
-	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id);
-	public Cluster get(Cluster cluster, Serializable id);
-	public void refresh(Cluster cluster);
-	public void evict(Cluster cluster);
-	public void persist(Cluster cluster);
+	public void update(ICluster cluster);
+	public void save(String id, ICluster cluster);
+	
+	public ICluster load(Class<? extends Cluster> clusterClass, Serializable id);
+	public ICluster load(ClusterType clusterType, Serializable id);
+	public ICluster load(String clusterTypeName, Serializable id);
+	public ICluster load(ICluster cluster, Serializable id);
+	
+	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id);
+	public ICluster get(ClusterType clusterType, Serializable id);
+	public ICluster get(String clusterTypeName, Serializable id);
+	public ICluster get(ICluster cluster, Serializable id);
+	
+	public void refresh(ICluster cluster);
+	public void evict(ICluster cluster);
+	public void persist(ICluster cluster);
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
 	public boolean isDirty();

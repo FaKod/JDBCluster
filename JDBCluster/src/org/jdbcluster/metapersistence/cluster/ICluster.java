@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.metapersistence.cluster;
 
+import org.jdbcluster.clustertype.ClusterType;
+
 
 /**
  * 
@@ -22,5 +24,13 @@ package org.jdbcluster.metapersistence.cluster;
  *
  */
 public interface ICluster {
-	//Cluster loadById(long id);
+	
+	Object getDao();
+
+	ClusterType getClusterType();
+
+	Class<? extends Object> getDaoClass();
+	
+	Class<? extends Cluster> getClusterClass();
+	
 }

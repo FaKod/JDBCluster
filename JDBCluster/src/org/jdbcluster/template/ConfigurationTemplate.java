@@ -16,6 +16,7 @@
 package org.jdbcluster.template;
 
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 /**
  * 
@@ -43,7 +44,7 @@ public interface ConfigurationTemplate {
 	 * @param attributeName name of the attribute
 	 * @return max allowed length of the attribute
 	 */
-	public int getLenthOfStringAttribute(Cluster c, String attributeName);
+	public int getLenthOfStringAttribute(ICluster c, String attributeName);
 	
 	/**
 	 * returns the native configuration object

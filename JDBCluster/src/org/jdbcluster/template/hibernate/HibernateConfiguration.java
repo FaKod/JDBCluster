@@ -24,6 +24,7 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.ConfigurationTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.springframework.util.Assert;
@@ -88,7 +89,7 @@ public class HibernateConfiguration implements ConfigurationTemplate {
 	 * @param attributeName name of the attribute
 	 * @return max allowed length of the attribute
 	 */
-	public int getLenthOfStringAttribute(Cluster c, String attributeName) {
+	public int getLenthOfStringAttribute(ICluster c, String attributeName) {
 		
 		Assert.notNull(c, "c may not be null");
 		Assert.notNull(attributeName, "attributeName may not be null");

@@ -22,6 +22,7 @@ import org.hibernate.Query;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.DBException;
 import org.jdbcluster.exception.JDBClusterException;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.QueryTemplate;
 
 /**
@@ -74,7 +75,7 @@ public class HibernateQuery implements QueryTemplate {
 	 * @throws JDBClusterException
 	 */
 	@SuppressWarnings("unchecked")
-	public List list()throws JDBClusterException {
+	public <T extends ICluster> List<T> list() throws JDBClusterException {
 		try {
 			return query.list();
 		} catch (HibernateException e) {
@@ -91,7 +92,7 @@ public class HibernateQuery implements QueryTemplate {
 	 * @throws JDBClusterException
 	 */
 	@SuppressWarnings("unchecked")
-	public List listUnique()throws JDBClusterException {
+	public <T extends ICluster> List<T> listUnique() throws JDBClusterException {
 		try {
 			return query.list();
 		} catch (HibernateException e) {

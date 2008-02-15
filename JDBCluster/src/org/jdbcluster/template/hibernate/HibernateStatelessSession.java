@@ -23,6 +23,7 @@ import org.hibernate.StatelessSession;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.StatelessSessionTemplate;
@@ -93,12 +94,12 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 		return new HibernateQuery(query);
 	}
 
-	public void delete(Cluster cluster) {
+	public void delete(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.delete(cluster.getDao());
 	}
 
-	public void update(Cluster cluster) {
+	public void update(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.update(cluster.getDao());
 	}
@@ -209,7 +210,7 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * 
 	 * @param object a persistent or detached cluster instance
 	 */
-	public void refresh(Cluster cluster) {
+	public void refresh(ICluster cluster) {
 		
 		Assert.notNull(cluster, "Cluster may not be null");
 		
@@ -227,7 +228,7 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id) {
+	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -246,12 +247,12 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public Cluster get(Cluster cluster, Serializable id) {
+	public ICluster get(ICluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		cluster.setDao(hibernateSession.get(cluster.getDao().getClass(), id));
+		((Cluster)cluster).setDao(hibernateSession.get(cluster.getDao().getClass(), id));
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 		

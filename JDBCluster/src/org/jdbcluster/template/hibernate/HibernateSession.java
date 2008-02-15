@@ -21,9 +21,13 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.clustertype.ClusterTypeBase;
+import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
@@ -60,7 +64,7 @@ public class HibernateSession implements SessionTemplate {
 		return tx;
 	}
 
-	public void save(Cluster cluster) {
+	public void save(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.save(cluster.getDao());
 	}
@@ -103,22 +107,22 @@ public class HibernateSession implements SessionTemplate {
 		return new HibernateQuery(query);
 	}
 
-	public void delete(Cluster cluster) {
+	public void delete(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.delete(cluster.getDao());
 	}
 
-	public void saveOrUpdate(Cluster cluster) {
+	public void saveOrUpdate(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.saveOrUpdate(cluster.getDao());
 	}
 
-	public void update(Cluster cluster) {
+	public void update(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.update(cluster.getDao());
 	}
 
-	public void save(String id, Cluster cluster) {
+	public void save(String id, ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
 		hibernateSession.save(id, cluster.getDao());
 	}
@@ -229,7 +233,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param object a persistent or detached cluster instance
 	 */
-	public void refresh(Cluster cluster) {
+	public void refresh(ICluster cluster) {
 		
 		Assert.notNull(cluster, "Cluster may not be null");
 		
@@ -246,7 +250,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public Cluster load(Class<? extends Cluster> clusterClass, Serializable id) {
+	public ICluster load(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -264,7 +268,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public Cluster load(Cluster cluster, Serializable id) {
+	public ICluster load(ICluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -274,6 +278,37 @@ public class HibernateSession implements SessionTemplate {
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 		
 		return cluster;
+	}
+	
+	/**
+	 * Read the persistent state associated with the given identifier into the
+	 * given instance. Assuming that the instance exists. non-existence would be
+	 * an actual error.
+	 * 
+	 * @param clusterType existing cluster object
+	 * @param id primary id of cluster
+	 */
+	public ICluster load(ClusterType clusterType, Serializable id) {
+
+		Assert.notNull(clusterType, "clusterType may not be null");
+		
+		return load(clusterType.getClusterClass(), id);
+	}
+
+	/**
+	 * Read the persistent state associated with the given identifier into the
+	 * given instance. Assuming that the instance exists. non-existence would be
+	 * an actual error.
+	 * 
+	 * @param clusterTypeName existing cluster object
+	 * @param id primary id of cluster
+	 */
+	public ICluster load(String clusterTypeName, Serializable id) {
+
+		Assert.notNull(clusterTypeName, "clusterType may not be null");
+			
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterTypeName);
+		return load(ct.getClusterClass(), id);
 	}
 
 	/**
@@ -285,7 +320,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id) {
+	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -294,7 +329,39 @@ public class HibernateSession implements SessionTemplate {
 		cb.setDao(hibernateSession.get(cb.getDao().getClass(), id));
 		return cb;
 	}
+	
+	/**
+	 * creates a new Cluster Object and return the persistent instance of the
+	 * given entity class with the given identifier, or null if there is no such
+	 * persistent instance. (If the instance, or a proxy for the instance, is
+	 * already associated with the session, return that instance or proxy.)
+	 * 
+	 * @param clusterType class of cluster
+	 * @param id primary id of cluster
+	 */
+	public ICluster get(ClusterType clusterType, Serializable id) {
+		
+		Assert.notNull(clusterType, "clusterType may not be null");
+		
+		return get(clusterType.getClusterClass(), id);
+	}
 
+	/**
+	 * creates a new Cluster Object and return the persistent instance of the
+	 * given entity class with the given identifier, or null if there is no such
+	 * persistent instance. (If the instance, or a proxy for the instance, is
+	 * already associated with the session, return that instance or proxy.)
+	 * 
+	 * @param clusterTypeName class of cluster
+	 * @param id primary id of cluster
+	 */
+	public ICluster get(String clusterTypeName, Serializable id) {
+		
+		Assert.notNull(clusterTypeName, "clusterTypeName may not be null");
+		
+		ClusterType ct = ClusterTypeFactory.newInstance(clusterTypeName);
+		return get(ct.getClusterClass(), id);
+	}
 
 
 	/**
@@ -306,12 +373,12 @@ public class HibernateSession implements SessionTemplate {
 	 * @param cluster existing cluster object
 	 * @param id primary id of cluster
 	 */
-	public Cluster get(Cluster cluster, Serializable id) {
+	public ICluster get(ICluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		cluster.setDao(hibernateSession.get(cluster.getDao().getClass(), id));
+		((Cluster)cluster).setDao(hibernateSession.get(cluster.getDao().getClass(), id));
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 		
@@ -329,12 +396,12 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param cluster cluster object
 	 */
-	public void merge(Cluster cluster) {
+	public void merge(ICluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 
 		Object dao = cluster.getDao();
-		cluster.setDao(hibernateSession.merge(dao));
+		((Cluster)cluster).setDao(hibernateSession.merge(dao));
 		
 		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
 	}
@@ -347,7 +414,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param object a persistent instance
 	 * @throws HibernateException
 	 */
-	public void evict(Cluster cluster) {
+	public void evict(ICluster cluster) {
 		
 		Assert.notNull(cluster, "cluster may not be null");
 
@@ -363,7 +430,7 @@ public class HibernateSession implements SessionTemplate {
 	 * 
 	 * @param object a transient instance to be made persistent
 	 */
-	public void persist(Cluster cluster) {
+	public void persist(ICluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 

@@ -16,14 +16,13 @@
 package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
-import org.jdbcluster.exception.DaoException;
 import org.springframework.util.Assert;
 
 public abstract class ClusterBase implements ICluster {
 
 	private Object dao;
 
-	private Class daoClass;
+	private Class<? extends Object> daoClass;
 
 	private ClusterType clusterType;
 
@@ -35,16 +34,20 @@ public abstract class ClusterBase implements ICluster {
 
 		Assert.notNull(dao, "dao may not be null");
 
-		if (false) {
-			if (daoClass != null) {
-				if (!daoClass.equals(dao.getClass()) && !daoClass.isAssignableFrom(dao.getClass())) {
-					throw new DaoException("Assigning wrong Dao type in ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]. Dao class is [" + dao.getClass().getName()
-							+ "] and should be [" + daoClass.getName() + "]");
-				}
-			} else
-				throw new DaoException("No Dao class set for ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]");
-
-		}
+		/*
+		 * @TODO
+		 * This was a try to implement a assignment check. Stay tuned ;-)
+		 */
+//		if (false) {
+//			if (daoClass != null) {
+//				if (!daoClass.equals(dao.getClass()) && !daoClass.isAssignableFrom(dao.getClass())) {
+//					throw new DaoException("Assigning wrong Dao type in ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]. Dao class is [" + dao.getClass().getName()
+//							+ "] and should be [" + daoClass.getName() + "]");
+//				}
+//			} else
+//				throw new DaoException("No Dao class set for ClusterType [" + ((clusterType != null) ? clusterType.getClusterClassName() : "unknown") + "]");
+//
+//		}
 
 		this.dao = dao;
 		this.daoClass = dao.getClass();
@@ -61,14 +64,18 @@ public abstract class ClusterBase implements ICluster {
 		return clusterType;
 	}
 
-	public Class getDaoClass() {
+	public Class<? extends Object> getDaoClass() {
 		return daoClass;
 	}
 
-	public void setDaoClass(Class daoClass) {
+	public void setDaoClass(Class<? extends Object> daoClass) {
 
 		Assert.notNull(daoClass, "daoClass may not be null");
 
 		this.daoClass = daoClass;
+	}
+	
+	public Class<? extends Cluster> getClusterClass() {
+		return clusterType.getClusterClass();
 	}
 }

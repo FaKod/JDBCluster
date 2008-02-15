@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.JDBClusterException;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 
 /**
@@ -38,7 +39,7 @@ public interface QueryTemplate {
 	 * @return the result list
 	 * @throws JDBClusterException
 	 */
-	public List list() throws JDBClusterException;
+	public <T extends ICluster> List<T> list() throws JDBClusterException;
 	
 	/**
 	 * Return the query results as a <tt>List</tt>. If the query contains
@@ -49,7 +50,7 @@ public interface QueryTemplate {
 	 * @return the result list
 	 * @throws JDBClusterException
 	 */
-	public List listUnique() throws JDBClusterException;
+	public <T extends ICluster> List<T> listUnique() throws JDBClusterException;
 	
 	/**
 	 * stores instance of corresponding ClusterType

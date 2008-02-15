@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 public interface StatelessSessionTemplate {
 
@@ -32,12 +33,12 @@ public interface StatelessSessionTemplate {
 	 */
 	public QueryTemplate createQuery(CCFilter ccf);
 	public QueryTemplate getNamedQuery(String queryName);
-	public void delete(Cluster cluster);
+	public void delete(ICluster cluster);
 	public void close();
-	public void update(Cluster cluster);
-	public Cluster get(Class<? extends Cluster> clusterClass, Serializable id);
-	public Cluster get(Cluster cluster, Serializable id);
-	public void refresh(Cluster cluster);
+	public void update(ICluster cluster);
+	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id);
+	public ICluster get(ICluster cluster, Serializable id);
+	public void refresh(ICluster cluster);
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
 	

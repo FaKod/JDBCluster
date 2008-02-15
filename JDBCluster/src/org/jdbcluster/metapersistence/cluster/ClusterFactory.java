@@ -48,7 +48,7 @@ public abstract class ClusterFactory {
 	 * @param ct specifies the ClusterType class that should be returned
 	 * @return Cluster
 	 */
-	public static <T extends Cluster> T newInstance(ClusterType ct) {
+	public static <T extends ICluster> T newInstance(ClusterType ct) {
 		return newInstance(ct, null);
 	}
 	
@@ -57,7 +57,7 @@ public abstract class ClusterFactory {
 	 * @param clusterType cluster type string as configured
 	 * @return cluster instance
 	 */
-	public static <T extends Cluster> T newInstance(String clusterType) {
+	public static <T extends ICluster> T newInstance(String clusterType) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
 		return newInstance(ct, null);
 	}
@@ -67,7 +67,7 @@ public abstract class ClusterFactory {
 	 * @param clusterType cluster type string as configured
 	 * @return cluster instance
 	 */
-	public static <T extends Cluster> T newInstance(String clusterType, Object dao) {
+	public static <T extends ICluster> T newInstance(String clusterType, Object dao) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
 		return newInstance(ct, dao);
 	}
@@ -95,10 +95,11 @@ public abstract class ClusterFactory {
 	 * @param dao dao object to be presetted
 	 * @return Cluster
 	 */
-	public static <T extends Cluster> T newInstance(ClusterType ct, Object dao) {
-		T cluster = newInstance(getClusterClass(ct), dao);
+	@SuppressWarnings("unchecked")
+	public static <T extends ICluster> T newInstance(ClusterType ct, Object dao) {
+		Cluster cluster = newInstance(getClusterClass(ct), dao);
 		cluster.setClusterType(ct);
-		return cluster;
+		return (T) cluster;
 	}
 	
 	/**
@@ -206,6 +207,7 @@ public abstract class ClusterFactory {
 	 * @param dao Dao instance to search cluster
 	 * @return Class<? extends Cluster> class of corresponding cluster
 	 */
+	@SuppressWarnings("unchecked")
 	public static Class<? extends Cluster> getClusterFromDao(Object dao) {
 		
 		Assert.notNull(dao, "Dao dao may not be null");
