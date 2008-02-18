@@ -15,7 +15,7 @@
  */
 package org.jdbcluster.domain;
 
-import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 public interface DomainChecker {
 
@@ -26,7 +26,7 @@ public interface DomainChecker {
 	 * @param propSlavePath path to slave property (usually the name)
 	 * @return true if value is valid
 	 */
-	public abstract boolean check(Cluster cluster, String propSlavePath);
+	public abstract boolean check(ICluster cluster, String propSlavePath);
 	
 	/**
 	 * Check if propValue is a valid value
@@ -36,7 +36,7 @@ public interface DomainChecker {
 	 * @param propValue the property value to check
 	 * @return true if value is valid
 	 */
-	public abstract boolean check(Cluster cluster, String propSlavePath, Object propValue);
+	public abstract boolean check(ICluster cluster, String propSlavePath, Object propValue);
 
 	/**
 	 * calculates set of valid domain values (master or slave)
@@ -44,7 +44,7 @@ public interface DomainChecker {
 	 * @param propPath path to the master or slave property
 	 * @return ValidDomainEntries<String> with the valid domain values
 	 */
-	public abstract ValidDomainEntries<String> getValidDomainEntries(Cluster cluster, String propPath);
+	public abstract ValidDomainEntries<String> getValidDomainEntries(ICluster cluster, String propPath);
 	
 	/**
 	 * returns the corresponding domain id
@@ -52,7 +52,7 @@ public interface DomainChecker {
 	 * @param propPath path to the master or slave property
 	 * @return String domain id
 	 */
-	public abstract String getDomainId(Cluster cluster, String propPath);
+	public abstract String getDomainId(ICluster cluster, String propPath);
 
 	/**
 	 * returns all values for domain slaveDomainId
