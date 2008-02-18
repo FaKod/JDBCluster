@@ -22,7 +22,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jdbcluster.clustertype.ClusterType;
-import org.jdbcluster.clustertype.ClusterTypeBase;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
@@ -239,7 +238,7 @@ public class HibernateSession implements SessionTemplate {
 		
 		hibernateSession.refresh(cluster.getDao());
 		
-		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
 	/**
@@ -255,7 +254,7 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true);
+		ICluster cb = ClusterFactory.newInstance(clusterClass, null, true);
 		hibernateSession.load(cb.getDao(), id);
 		return cb;
 	}
@@ -275,7 +274,7 @@ public class HibernateSession implements SessionTemplate {
 
 		hibernateSession.load(cluster.getDao(), id);
 		
-		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 		
 		return cluster;
 	}
@@ -380,7 +379,7 @@ public class HibernateSession implements SessionTemplate {
 
 		((Cluster)cluster).setDao(hibernateSession.get(cluster.getDao().getClass(), id));
 		
-		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 		
 		return cluster;
 	}
@@ -403,7 +402,7 @@ public class HibernateSession implements SessionTemplate {
 		Object dao = cluster.getDao();
 		((Cluster)cluster).setDao(hibernateSession.merge(dao));
 		
-		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
 	/**
@@ -437,7 +436,7 @@ public class HibernateSession implements SessionTemplate {
 		Object dao = cluster.getDao();
 		hibernateSession.persist(dao);
 		
-		ClusterFactory.getClusterInterceptor().clusterRefresh((Cluster) cluster);
+		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
 	/**
