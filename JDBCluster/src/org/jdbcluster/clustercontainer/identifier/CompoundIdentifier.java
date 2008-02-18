@@ -15,6 +15,7 @@
  */
 package org.jdbcluster.clustercontainer.identifier;
 
+@SuppressWarnings("serial")
 public class CompoundIdentifier extends IdentifierImpl {
 
 }
