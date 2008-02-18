@@ -24,11 +24,11 @@ package org.jdbcluster.metapersistence.cluster;
  */
 public final class DefaultClusterInterceptor implements ClusterInterceptor {
 
-	public boolean clusterNew(Cluster cluster) {
+	public boolean clusterNew(ICluster cluster) {
 		return true;
 	}
 
-	public boolean clusterRefresh(Cluster cluster) {
+	public boolean clusterRefresh(ICluster cluster) {
 		return true;
 	}
 

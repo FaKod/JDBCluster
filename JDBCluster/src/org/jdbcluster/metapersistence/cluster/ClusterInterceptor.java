@@ -29,7 +29,7 @@ public interface ClusterInterceptor {
 	 * @param cluster created cluster object
 	 * @return boolean true if successful
 	 */
-	public boolean clusterNew(Cluster cluster);
+	public boolean clusterNew(ICluster cluster);
 	
 	/**
 	 * called after a cluster is reloaded from database
@@ -37,6 +37,6 @@ public interface ClusterInterceptor {
 	 * @param cluster refreshed cluster
 	 * @return boolean reserved return true
 	 */
-	public boolean clusterRefresh(Cluster cluster);
+	public boolean clusterRefresh(ICluster cluster);
 
 }
