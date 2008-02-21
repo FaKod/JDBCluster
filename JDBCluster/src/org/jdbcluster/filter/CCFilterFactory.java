@@ -90,7 +90,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		String selectDAO="";
 
 		try {
-			Class<?> clusterClass = Class.forName(clusterClassName, false, Thread.currentThread().getContextClassLoader());
+			Class<?> clusterClass = Class.forName(clusterClassName);
 			DaoLink daoLink = clusterClass.getAnnotation(DaoLink.class);
 			if(daoLink==null)
 				throw new CCFilterException("need " + DaoLink.class.getSimpleName() + "annotation");

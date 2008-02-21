@@ -35,7 +35,7 @@ public abstract class ConfigurationFactory {
 		Class clazz;
 		
 		try {
-			clazz = Class.forName(TClass, false, Thread.currentThread().getContextClassLoader());
+			clazz = Class.forName(TClass);
 			config = (ConfigurationTemplate) clazz.newInstance();
 		} catch (ClassNotFoundException e) {
 			throw new ConfigurationException("no definition for the class [" + TClass + "] with the specified name could be found", e);

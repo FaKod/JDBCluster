@@ -217,7 +217,7 @@ public abstract class ClusterFactory {
 			Class<? extends Cluster> clusterClass = null;
 			String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(s);
 			try {
-				clusterClass = (Class<? extends Cluster>) Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+				clusterClass = (Class<? extends Cluster>) Class.forName(className);
 				DaoLink classAnno = clusterClass.getAnnotation(DaoLink.class);
 				if (classAnno != null) {
 					if(classAnno.dAOClass() == dao.getClass())

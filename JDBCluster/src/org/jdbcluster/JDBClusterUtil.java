@@ -53,7 +53,7 @@ public abstract class JDBClusterUtil {
 		Assert.hasLength(className, "className may not be null or \"\"");
 
 		try {
-			return Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+			return Class.forName(className);
 		} catch (ClassNotFoundException e) {
 			throw new ConfigurationException("no definition for the class [" + className + "] with the specified name could be found", e);
 		}
