@@ -90,8 +90,13 @@ public abstract class CCFilterBase implements CCFilter {
 		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
 		if (appendedFilter != null) {
 			String tmp = appendedFilter.getWhereStatement();
-			if (tmp != null && tmp.length() > 0)
-				return "(" + whereStatement + ") AND (" + tmp + ")";
+			if (tmp != null && tmp.length() > 0) {
+				String tempWhere = "";
+				if(whereStatement != null && whereStatement.length() > 0) {
+					tempWhere = "(" + whereStatement + ") AND ";
+				}
+				return tempWhere + "(" + tmp + ")";
+			}
 		}
 		return whereStatement;
 	}
