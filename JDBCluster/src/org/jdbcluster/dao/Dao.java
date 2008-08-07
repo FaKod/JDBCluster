@@ -61,6 +61,7 @@ public abstract class Dao {
 	 */
 	public static Object newInstance(Class<?> daoClass) {
 		Object dao = JDBClusterUtil.createClassObject(daoClass);
+		//get property of DAO and initial value from jdbcluster.dao.conf.xml
 		HashMap<String, String> hm = classToPropsMap.get(daoClass);
 		if(hm==null)
 			hm=putCacheMap(daoClass);
@@ -69,8 +70,11 @@ public abstract class Dao {
 
 		for(String prop : hm.keySet()) {
 			String value = hm.get(prop);
+			//get property of DAO
 			Class propClass = beanWrapper.getPropertyType(prop);
+			//convert to Type if necessary
             Object o = beanWrapper.convertIfNecessary(value, propClass);
+            //set the value of the predefined property read from jdbcluster.dao.conf.xml
             beanWrapper.setPropertyValue(new PropertyValue(prop, o));
 		}
 		return dao;
