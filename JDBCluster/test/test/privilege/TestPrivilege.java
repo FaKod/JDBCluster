@@ -2,6 +2,7 @@ package test.privilege;
 
 import java.util.Set;
 
+import junit.framework.TestCase;
 import mycluster.CBicycle;
 import mycluster.NestedPropertyForPrivTest;
 import mycluster.privilege.UserPrivilege;
@@ -11,8 +12,6 @@ import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
-
-import junit.framework.TestCase;
 
 public class TestPrivilege extends TestCase {
 

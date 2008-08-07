@@ -1,5 +1,6 @@
 package test.domain;
 
+import junit.framework.TestCase;
 import mycluster.CBicycle;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -10,8 +11,6 @@ import org.jdbcluster.domain.DomainChecker;
 import org.jdbcluster.domain.DomainCheckerImpl;
 import org.jdbcluster.domain.ValidDomainEntries;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
-
-import junit.framework.TestCase;
 
 public class TestDomainList2 extends TestCase {
 	@Override

@@ -27,7 +27,6 @@ import org.jdbcluster.metapersistence.annotation.AddDomainDependancy;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
-import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;

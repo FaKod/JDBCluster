@@ -15,7 +15,6 @@
  */
 package org.jdbcluster.tracing;
 
-import org.jdbcluster.tracing.TracingAspect;
 import org.apache.log4j.Logger;
 
 /**

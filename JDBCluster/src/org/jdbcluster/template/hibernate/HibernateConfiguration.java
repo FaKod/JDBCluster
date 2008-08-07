@@ -23,7 +23,6 @@ import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.jdbcluster.exception.ConfigurationException;
-import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.ConfigurationTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;

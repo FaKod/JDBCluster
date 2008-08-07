@@ -1,5 +1,7 @@
 package test.clusterinterceptor;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
 import mycluster.CBicycle;
 import mycluster.ICar;
 
@@ -9,9 +11,6 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 public class TestClusterInterceptor extends TestCase {
 

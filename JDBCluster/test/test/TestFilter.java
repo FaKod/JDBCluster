@@ -6,20 +6,15 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 import mycluster.CCar;
-import mycluster.COwner;
-import mycluster.CSparePart;
 import mycluster.ICar;
-import mycluster.MyRemoveSpecialTreatmentCSet;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.hibernate.HibernateException;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.jdbcluster.JDBClusterSimpleConfig;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.clustertype.ClusterTypeFactory;
 import org.jdbcluster.filter.CCFilterFactory;
-import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;

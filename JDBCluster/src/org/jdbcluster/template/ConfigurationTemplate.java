@@ -15,7 +15,6 @@
  */
 package org.jdbcluster.template;
 
-import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ICluster;
 
 /**

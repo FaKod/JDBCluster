@@ -15,7 +15,7 @@
  */
 package org.jdbcluster.metapersistence.cluster;
 
-import java.util.*;
+import java.util.Vector;
 
 /**
  * 
