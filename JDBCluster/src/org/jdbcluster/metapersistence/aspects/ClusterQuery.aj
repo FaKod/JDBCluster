@@ -15,16 +15,17 @@
  */
 package org.jdbcluster.metapersistence.aspects;
 
-import org.jdbcluster.template.hibernate.HibernateQuery;
-import org.jdbcluster.clustertype.ClusterType;
-import java.util.List;
 import java.util.ArrayList;
-import org.jdbcluster.metapersistence.cluster.ClusterFactory;
-import org.jdbcluster.metapersistence.cluster.Cluster;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.SuppressAjWarnings;
-import java.util.Set;
-import java.util.HashSet;
+import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ClusterFactory;
+import org.jdbcluster.template.hibernate.HibernateQuery;
 
 /**
  * Aspect used after a native (fe. hibernate) query was

@@ -18,10 +18,9 @@ package org.jdbcluster.clustertype;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdbcluster.JDBClusterConfigurationBase;
 
 /**
  * class ClusterTypeConfig is an implementation of ClusterTypeConfig.
@@ -31,12 +30,8 @@ import org.dom4j.io.SAXReader;
  * @author Tobi
  */
 
-public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfig {
-	
-	//path to config file
-	private String configuration;
-	private Document document;
-	
+public class ClusterTypeConfigImpl extends JDBClusterConfigurationBase implements ClusterTypeConfig {
+		
 	/**
 	 * Default constructor
 	 *
@@ -72,6 +67,7 @@ public class ClusterTypeConfigImpl extends SAXReader implements ClusterTypeConfi
 			throw new RuntimeException(e);
 		}
 	}
+	
 	
 	/**
 	 * returns the name of the specified clustertype 

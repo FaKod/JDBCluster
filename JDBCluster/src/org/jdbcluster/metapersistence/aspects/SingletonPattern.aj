@@ -1,6 +1,6 @@
 package org.jdbcluster.metapersistence.aspects;
 
-import java.util.*;
+import java.util.Hashtable;
 
 import org.aspectj.lang.annotation.SuppressAjWarnings;
 

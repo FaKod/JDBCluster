@@ -15,12 +15,14 @@
  */
 package org.jdbcluster.dao;
 
+import org.jdbcluster.JDBClusterConfiguration;
+
 /**
  * 
  * @author Christopher Schmidt
  * Interface for Dao configuration
  */
-public interface DaoConfig {
+public interface DaoConfig extends JDBClusterConfiguration{
 	
 	String getDaoClass(String daoId);
 	String getDaoId(String daoClass);

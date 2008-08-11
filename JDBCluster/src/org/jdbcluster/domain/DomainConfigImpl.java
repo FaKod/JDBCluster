@@ -18,10 +18,9 @@ package org.jdbcluster.domain;
 import java.util.HashMap;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdbcluster.JDBClusterConfigurationBase;
 import org.jdbcluster.exception.ConfigurationException;
 
 /**
@@ -29,17 +28,7 @@ import org.jdbcluster.exception.ConfigurationException;
  * @author Christopher Schmidt
  *
  */
-public class DomainConfigImpl extends SAXReader implements DomainConfig {
-
-	/**
-	 * stores Path to Configuration XML File
-	 */
-	private String configuration;
-
-	/**
-	 * Stores SAX Document
-	 */
-	private Document document;
+public class DomainConfigImpl extends JDBClusterConfigurationBase implements DomainConfig {
 	
 	/**
 	 * holds all entries of Domain Dependancy Configuration

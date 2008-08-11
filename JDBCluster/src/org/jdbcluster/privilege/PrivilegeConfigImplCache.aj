@@ -15,8 +15,8 @@
  */
 package org.jdbcluster.privilege;
 
-import org.jdbcluster.metapersistence.aspects.XmlCache;
 import org.jdbcluster.metapersistence.aspects.XmlCachable;
+import org.jdbcluster.metapersistence.aspects.XmlCache;
 
 /**
  * Implementing cache of class PrivilegeConfigImpl

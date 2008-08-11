@@ -15,12 +15,14 @@
  */
 package org.jdbcluster.domain;
 
+import org.jdbcluster.JDBClusterConfiguration;
+
 /**
  * 
  * @author Christopher Schmidt
  * basic interface 
  */
-public interface DomainConfig {
+public interface DomainConfig extends JDBClusterConfiguration{
 	
 	/**
 	 * returns instance of EntrySet for a specific domain

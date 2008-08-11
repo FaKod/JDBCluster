@@ -15,8 +15,8 @@
  */
 package org.jdbcluster.domain;
 
-import org.jdbcluster.metapersistence.aspects.XmlCache;
 import org.jdbcluster.metapersistence.aspects.XmlCachable;
+import org.jdbcluster.metapersistence.aspects.XmlCache;
 
 public aspect DomainConfigImplCache extends XmlCache {
 	

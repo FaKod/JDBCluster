@@ -18,10 +18,9 @@ package org.jdbcluster.filter;
 import java.util.HashMap;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdbcluster.JDBClusterConfigurationBase;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.CCFilterException;
 
@@ -36,11 +35,8 @@ import org.jdbcluster.exception.CCFilterException;
  *
  */
 
-public class ClusterSelectImpl extends SAXReader implements ClusterSelect {
+public class ClusterSelectImpl extends JDBClusterConfigurationBase implements ClusterSelect {
 
-	//path to config file
-	private String configuration;
-	private Document document;
 	
 	/**
 	 * private Default constructor

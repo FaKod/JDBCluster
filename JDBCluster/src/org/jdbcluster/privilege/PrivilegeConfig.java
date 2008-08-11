@@ -15,12 +15,14 @@
  */
 package org.jdbcluster.privilege;
 
+import org.jdbcluster.JDBClusterConfiguration;
+
 /**
  * 
  * @author FaKod
  *
  */
-public interface PrivilegeConfig {
+public interface PrivilegeConfig extends JDBClusterConfiguration{
 	
 	public String getUserPrivilegeCheckerPath();
 

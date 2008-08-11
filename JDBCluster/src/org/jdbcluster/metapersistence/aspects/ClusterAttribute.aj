@@ -20,14 +20,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.aspectj.lang.SoftException;
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.FieldSignature;
-import org.aspectj.lang.annotation.*;
-
 import org.jdbcluster.JDBClusterUtil;
-import org.jdbcluster.metapersistence.cluster.*;
-import org.jdbcluster.metapersistence.annotation.*;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.exception.DaoException;
+import org.jdbcluster.metapersistence.annotation.NoDAO;
+import org.jdbcluster.metapersistence.cluster.AssocCluster;
+import org.jdbcluster.metapersistence.cluster.CSet;
+import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.cluster.ClusterBase;
 
 /**
  * @author Christopher Schmidt

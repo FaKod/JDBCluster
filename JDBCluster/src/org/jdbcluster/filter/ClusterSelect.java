@@ -17,6 +17,7 @@ package org.jdbcluster.filter;
 
 import java.util.HashMap;
 
+import org.jdbcluster.JDBClusterConfiguration;
 import org.jdbcluster.clustertype.ClusterType;
 
 /**
@@ -25,7 +26,7 @@ import org.jdbcluster.clustertype.ClusterType;
  * @author Philipp Noggler
  *
  */
-public interface ClusterSelect {
+public interface ClusterSelect extends JDBClusterConfiguration{
 	
 	/**
 	* creates a select string on "selects.xml"

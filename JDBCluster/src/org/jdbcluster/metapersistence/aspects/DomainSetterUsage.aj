@@ -1,9 +1,9 @@
 package org.jdbcluster.metapersistence.aspects;
 
 import org.aspectj.lang.annotation.SuppressAjWarnings;
-import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.metapersistence.annotation.DomainSetterReplaced;
 import org.jdbcluster.domain.DomainCheck;
+import org.jdbcluster.metapersistence.annotation.DomainSetterReplaced;
+import org.jdbcluster.metapersistence.cluster.Cluster;
 
 /**
  * declares an error if someone uses with @DomainSetterReplaced

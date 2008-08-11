@@ -15,10 +15,9 @@
  */
 package org.jdbcluster.privilege;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdbcluster.JDBClusterConfigurationBase;
 
 /**
  * class PrivilegeConfigImpl is an implementation of PrivilegeConfig.
@@ -27,12 +26,7 @@ import org.dom4j.io.SAXReader;
  * @author FaKod
  *
  */
-public class PrivilegeConfigImpl extends SAXReader implements PrivilegeConfig {
-
-//	path to config file
-	private String configuration;
-	private Document document;
-	
+public class PrivilegeConfigImpl extends JDBClusterConfigurationBase implements PrivilegeConfig {
 	
 	/**
 	 * Default constructor

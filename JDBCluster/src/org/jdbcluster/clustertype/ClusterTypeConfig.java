@@ -17,6 +17,8 @@ package org.jdbcluster.clustertype;
 
 import java.util.List;
 
+import org.jdbcluster.JDBClusterConfiguration;
+
 /**
  * interface ClusterTypeConfig is defining methods to execute
  * queries on XML file.
@@ -25,7 +27,7 @@ import java.util.List;
  * @author Tobi
  */
 
-public interface ClusterTypeConfig {
+public interface ClusterTypeConfig extends JDBClusterConfiguration{
 
 	/**
 	 * returns the name of the specified clustertype 
@@ -53,5 +55,5 @@ public interface ClusterTypeConfig {
 	 * @return String
 	 */
 	public String getClusterInterceptorClassName();
-	
+		
 }

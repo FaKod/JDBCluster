@@ -1,7 +1,7 @@
 package org.jdbcluster.dao;
 
-import org.jdbcluster.metapersistence.aspects.XmlCache;
 import org.jdbcluster.metapersistence.aspects.XmlCachable;
+import org.jdbcluster.metapersistence.aspects.XmlCache;
 
 public aspect DaoConfigImplCache extends XmlCache {
 

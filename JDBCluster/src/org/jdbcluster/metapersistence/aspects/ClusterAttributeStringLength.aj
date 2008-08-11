@@ -1,12 +1,12 @@
 package org.jdbcluster.metapersistence.aspects;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.FieldSignature;
 import org.jdbcluster.metapersistence.annotation.NoDAO;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
 import org.jdbcluster.template.ConfigurationFactory;
 import org.jdbcluster.template.ConfigurationTemplate;
-import org.aspectj.lang.annotation.*;
 
 /**
  * Aspect to automatically cut the length of a attribute to the max length

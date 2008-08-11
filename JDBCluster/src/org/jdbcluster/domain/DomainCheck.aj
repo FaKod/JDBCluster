@@ -16,22 +16,22 @@
 package org.jdbcluster.domain;
 
 import java.lang.reflect.Field;
+import java.util.Set;
 
 import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.aspectj.lang.reflect.FieldSignature;
+import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.exception.DomainException;
-import org.jdbcluster.metapersistence.annotation.DomainDependancy;
+import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.Domain;
+import org.jdbcluster.metapersistence.annotation.DomainDependancy;
+import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.aspects.ClusterAttribute;
 import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.Cluster;
-import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegeChecker;
-import java.util.Set;
-import org.jdbcluster.exception.ConfigurationException;
-import org.jdbcluster.exception.PrivilegeException;
-import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
+import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 
 /**
  * Aspect for checking Domain values in Set Methods

@@ -17,21 +17,17 @@ package org.jdbcluster.dao;
 
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdbcluster.JDBClusterConfigurationBase;
 
 /**
  * 
  * @author Christopher Schmidt
  * reads Dao configuration part
  */
-public class DaoConfigImpl extends SAXReader implements DaoConfig {
+public class DaoConfigImpl extends JDBClusterConfigurationBase implements DaoConfig {
 	
-	private String configuration;
-	private Document document;
-
 	public String getConfiguration() {
 		return configuration;
 	}
