@@ -18,7 +18,9 @@ package org.jdbcluster.filter;
 import java.util.HashMap;
 import java.util.List;
 
+import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.jdbcluster.JDBClusterConfigurationBase;
 import org.jdbcluster.clustertype.ClusterType;
@@ -51,6 +53,54 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 	public ClusterSelectImpl(String config) {
 		this.setConfiguration(config);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addExtension(String extensionPath) {
+		try {
+			Document doc = read(extensionPath);
+			String xPathClusterType = "//jdbcluster/clustertype";
+			String xPath = "//jdbcluster/clustertype/cluster";
+			String xPathExtension = "//clustertype/cluster";
+						
+			List<Element> nodes = doc.selectNodes(xPathExtension);
+			List<Element> rootNodes = document.selectNodes(xPath);
+			Element clusterType = (Element) document.selectSingleNode(xPathClusterType);
+			
+			for (Element node : nodes) {
+				for (Element rootNode : rootNodes) {
+					String clusterExtensionName = node.valueOf("@id");
+					String clusterRootName = rootNode.valueOf("@id");
+					String nodeExistenceXPath = "//jdbcluster/clustertype/cluster[@id='" + clusterExtensionName + "']";
+					Node node2 = document.selectSingleNode(nodeExistenceXPath);
+					if (node2== null) {
+						node.detach();
+						clusterType.add(node);
+						break;
+					} else if (clusterRootName.equals(clusterExtensionName)) {
+						String xPathFilter = "//jdbcluster/clustertype/cluster[@id='" + clusterRootName + "']" + "/select";
+						String xPathFilterExtensions = "//clustertype/cluster[@id='" + clusterRootName + "']" + "/select";
+						List<Element> extensionFilterNodes = doc.selectNodes(xPathFilterExtensions);
+						List<Element> filterNodes = document.selectNodes(xPathFilter);
+						for (Element extensionFilter : extensionFilterNodes) {
+							for (Element rootFilter : filterNodes) {
+								if (extensionFilter.valueOf("@id").equals(rootFilter.valueOf("@id"))) {
+									rootNode.remove(rootFilter);
+								} 
+								extensionFilter.detach();
+								rootNode.add(extensionFilter);
+							}
+						}
+						break;
+					}
+				}
+			}
+		} catch (DocumentException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
 	
 	/**
 	* creates a select string on "selects.xml"

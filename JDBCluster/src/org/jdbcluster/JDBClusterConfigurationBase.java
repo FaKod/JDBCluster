@@ -23,5 +23,4 @@ public class JDBClusterConfigurationBase extends SAXReader implements
 			throw new RuntimeException(e);
 		}
 	}
-
 }

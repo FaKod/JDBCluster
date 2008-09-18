@@ -16,6 +16,7 @@
 package org.jdbcluster.clustertype;
 
 import org.jdbcluster.exception.ClusterTypeException;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 
 /**
  * 
@@ -48,5 +49,9 @@ public abstract class ClusterTypeFactory extends ClusterTypeBase{
 		//save the name
 		clusterType.setName(clusterTypeName);
 		return (T) clusterType;
+	}
+	
+	static public <T extends ClusterType> T newInstance(Class<? extends ICluster> clazz) throws ClusterTypeException{
+		return newInstance(clazz.getSimpleName());
 	}
 }

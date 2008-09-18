@@ -18,7 +18,9 @@ package org.jdbcluster.clustertype;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.jdbcluster.JDBClusterConfigurationBase;
 
@@ -45,7 +47,7 @@ public class ClusterTypeConfigImpl extends JDBClusterConfigurationBase implement
 	public ClusterTypeConfigImpl(String config) {
 		this.setConfiguration(config);
 	}
-
+	
 	/**
 	 * returns the config path
 	 * @return String

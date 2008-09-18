@@ -48,12 +48,12 @@ public interface SessionTemplate {
 	public void update(ICluster cluster);
 	public void save(String id, ICluster cluster);
 	
-	public ICluster load(Class<? extends Cluster> clusterClass, Serializable id);
+	public ICluster load(Class<? extends ICluster> clusterClass, Serializable id);
 	public ICluster load(ClusterType clusterType, Serializable id);
 	public ICluster load(String clusterTypeName, Serializable id);
 	public ICluster load(ICluster cluster, Serializable id);
 	
-	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id);
+	public ICluster get(Class<? extends ICluster> clusterClass, Serializable id);
 	public ICluster get(ClusterType clusterType, Serializable id);
 	public ICluster get(String clusterTypeName, Serializable id);
 	public ICluster get(ICluster cluster, Serializable id);

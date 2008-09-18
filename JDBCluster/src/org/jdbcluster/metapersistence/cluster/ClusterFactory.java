@@ -126,7 +126,7 @@ public abstract class ClusterFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<? extends Cluster> clusterClass, Object dao, boolean daoIsPersistent) {
+	public static <T extends Cluster> T newInstance(Class<? extends ICluster> clusterClass, Object dao, boolean daoIsPersistent) {
 		
 		Assert.notNull(clusterClass, "Class<?> may not be null");
 		

@@ -249,7 +249,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public ICluster load(Class<? extends Cluster> clusterClass, Serializable id) {
+	public ICluster load(Class<? extends ICluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
@@ -319,7 +319,7 @@ public class HibernateSession implements SessionTemplate {
 	 * @param clusterClass class of cluster
 	 * @param id primary id of cluster
 	 */
-	public ICluster get(Class<? extends Cluster> clusterClass, Serializable id) {
+	public ICluster get(Class<? extends ICluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
