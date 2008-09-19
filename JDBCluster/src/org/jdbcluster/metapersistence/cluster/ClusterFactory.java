@@ -165,6 +165,7 @@ public abstract class ClusterFactory {
 					throw new PrivilegeException("No sufficient privileges for new Cluster class [" + clusterClass.getName() + "]");
 			}
 		}
+		cluster.setClusterType(ClusterTypeFactory.newInstance(clusterClass));
 		return (T) cluster;
 	}
 	
