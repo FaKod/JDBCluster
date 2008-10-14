@@ -51,10 +51,10 @@ public abstract class JDBClusterUtil {
 	 *            the dao class
 	 * @return the cluster id. Can be {@code null}
 	 */
-	static public String getClusterId(Class<? extends Dao> clazz) {
-		if (dao2clusterId == null) {
-			fillDao2ClusterId();
-		}
+	static synchronized public String getClusterId(Class<? extends Dao> clazz) {
+			if (dao2clusterId == null) {
+				fillDao2ClusterId();
+			}
 
 		Set<String> clusterIds = dao2clusterId.get(clazz);
 		if (clusterIds == null || clusterIds.isEmpty()) {
