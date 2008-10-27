@@ -36,6 +36,14 @@ public interface ClusterTypeConfig extends JDBClusterConfiguration{
 	 * @return String
 	 */
 	public String getClusterType(String clusterTypeName);
+	
+	/**
+	 * returns the name of the specified clustertype
+	 * from a given class name
+	 * @param className given cluster class name
+	 * @return cluster type name
+	 */
+	public String getClusterTypeFromClass(String className);
 
 	/**
 	 * returns the configures Cluster Class name

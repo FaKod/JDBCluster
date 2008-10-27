@@ -18,9 +18,7 @@ package org.jdbcluster.clustertype;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.dom4j.Node;
 import org.jdbcluster.JDBClusterConfigurationBase;
 
@@ -163,6 +161,23 @@ public class ClusterTypeConfigImpl extends JDBClusterConfigurationBase implement
 		} else {
 			//returns the classname as a String
 			return node.valueOf("@clusterInterceptor");	
+		}
+	}
+
+	/**
+	 * returns the name of the specified clustertype
+	 * from a given class name
+	 * @param className given cluster class name
+	 * @return cluster type name
+	 */
+	public String getClusterTypeFromClass(String className) {
+		String xPath = "//jdbcluster/clustertype/cluster[@class='" + className + "']";
+		Node node = document.selectSingleNode(xPath);
+
+		if (node == null) {
+			return null;
+		} else {
+			return node.valueOf("@id");
 		}
 	}
 }

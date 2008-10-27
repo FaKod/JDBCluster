@@ -17,6 +17,7 @@ package org.jdbcluster.clustertype;
 
 import org.jdbcluster.exception.ClusterTypeException;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.springframework.util.Assert;
 
 /**
  * 
@@ -37,6 +38,10 @@ public abstract class ClusterTypeFactory extends ClusterTypeBase{
 	 */
 	@SuppressWarnings("unchecked")
 	static public <T extends ClusterType> T newInstance(String clusterTypeName) throws ClusterTypeException {
+		
+		Assert.notNull(clusterTypeName, "clusterTypeName  may not be null");
+		Assert.hasLength(clusterTypeName,"clusterTypeName  may not have zero length");
+		
 		//get the classname of the object
 		String className = ClusterTypeBase.getClusterTypeConfig().getClusterClassName(clusterTypeName);
 		//if no name was defined, throw an exception
@@ -51,7 +56,11 @@ public abstract class ClusterTypeFactory extends ClusterTypeBase{
 		return (T) clusterType;
 	}
 	
-	static public <T extends ClusterType> T newInstance(Class<? extends ICluster> clazz) throws ClusterTypeException{
-		return newInstance(clazz.getSimpleName());
+	static public <T extends ClusterType> T newInstance(Class<? extends ICluster> clazz) throws ClusterTypeException {
+		
+		Assert.notNull(clazz, "Class  may not be null");
+		
+		String ct = ClusterTypeBase.getClusterTypeConfig().getClusterTypeFromClass(clazz.getName());
+		return newInstance(ct);
 	}
 }
