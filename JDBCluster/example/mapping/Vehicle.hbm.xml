@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="dao.Vehicle" table="VEHICLE" polymorphism="implicit">
+		
+		<id name="id" column="VEHICLE_ID" type="long">
+			<generator class="native"/>
+		</id>
+		<property name="name" type="string" column="NAME" length="15"/>
+		
+	</class>
+
+</hibernate-mapping>

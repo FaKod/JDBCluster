@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="cluster">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="select" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="class" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="clustertype">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="cluster" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="clusterInterceptor" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="privileges">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="UserPrivilegeChecker"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UserPrivilegeChecker">
+		<xs:complexType>
+			<xs:attribute name="class" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dao">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="class" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="daotype">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dao" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="jdbcluster">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="privileges" minOccurs="0"/>
+				<xs:element ref="clustertype" minOccurs="0"/>
+				<xs:element ref="daotype" minOccurs="0"/>
+				<xs:element ref="domaindependancy" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="property">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="value"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="value">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="select">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FilterClass" minOccurs="0"/>
+				<xs:element ref="fetch" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="hql" type="xs:string" use="optional"/>
+			<xs:attribute name="alias" type="xs:string" use="optional"/>
+			<xs:attribute name="ext" type="xs:string" use="optional"/>
+			<xs:attribute name="orderby" type="xs:string" use="optional"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<!-- the hql statement (where clause)-->
+			<!-- settable alias for type of resultset-->
+			<!-- extension for part after "from" -->
+			<!-- for order by statement -->
+			<!-- filter id -->
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fetch">
+		<xs:complexType>
+			<xs:attribute name="property" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="joinType" use="optional" default="inner">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="inner"/>
+						<xs:enumeration value="left"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FilterClass">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="binding" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="static" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="class" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="binding">
+		<xs:complexType>
+			<xs:attribute name="var" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="attribute" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="static">
+		<xs:complexType>
+			<xs:attribute name="statementAttribute" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="domain">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="domainid" type="xs:string" use="required"/>
+			<xs:attribute name="domainlistclass" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="domaindependancy">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="domain" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="entry">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="valid" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="invalid" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="additionalmaster" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="value" type="xs:string"/>
+			<xs:attribute name="slavedomainid" type="xs:string" use="required"/>
+			<xs:attribute name="null">
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="invalid">
+		<xs:complexType>
+			<xs:attribute name="value" type="xs:string"/>
+			<xs:attribute name="null">
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="all">
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="valid">
+		<xs:complexType>
+			<xs:attribute name="value" type="xs:string"/>
+			<xs:attribute name="null">
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="all">
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="additionalmaster">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="additionalmaster" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="invalid" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="valid" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:attribute name="value" type="xs:string" use="required"/>
+			<xs:attribute name="masterdomainid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
