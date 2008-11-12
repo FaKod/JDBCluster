@@ -25,23 +25,26 @@ import dao.Car;
 
 public class TestClusterAndDB extends TestCase {
 	
-	SessionTemplate session;
+	static SessionTemplate session;
 	
-	SessionFactoryTemplate sf;
+	static SessionFactoryTemplate sf = null;
 	
 	@Override
 	protected void setUp() throws Exception {
-		// configuring logging
-		PropertyConfigurator.configure("xml/logging.properties");
 		
-		JDBClusterSimpleConfig.setConfiguration("xml/jdbcluster.conf.xml");
-		JDBClusterSimpleConfig.setHibernateConfiguration(null, "mapping/hibernate.cfg.xml");
-
-		////////using HIBERNATE means
-		//get a Configuration instance
-		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
-		//get a factory for sessions
-		sf = cf.buildSessionFactory();
+		if(sf==null) {
+			// configuring logging
+			PropertyConfigurator.configure("xml/logging.properties");
+			
+			JDBClusterSimpleConfig.setConfiguration("xml/jdbcluster.conf.xml");
+			JDBClusterSimpleConfig.setHibernateConfiguration(null, "mapping/hibernate.cfg.xml");
+	
+			////////using HIBERNATE means
+			//get a Configuration instance
+			ConfigurationTemplate cf = ConfigurationFactory.getInstance();
+			//get a factory for sessions
+			sf = cf.buildSessionFactory();
+		}
 		session = sf.openSession();
 		super.setUp();
 	}
@@ -181,6 +184,59 @@ public class TestClusterAndDB extends TestCase {
 		Class<? extends Cluster> c = ClusterFactory.getClusterFromDao(car);
 		Cluster cb = ClusterFactory.newInstance(c, car);
 		assertSame(CCar.class, cb.getClass());
+	}
+	
+	public void testTransaction() {
+		TransactionTemplate tx = session.beginTransaction();
+		
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		
+		//create a Cluster and persist it
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
+		bmw.setName("BMWforTest");
+		session.save(bmw);
+		long id = bmw.getId();
+		tx.commit();
+		
+		System.out.println(id);
+	}
+	
+	public void testSessionFromCluster() {
+		TransactionTemplate tx = session.beginTransaction();
+		
+		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
+		
+		//create a Cluster and persist it
+		ICar bmw = ClusterFactory.newInstance(cAutoType);
+		bmw.setName("BMWforTest");
+		session.save(bmw);
+		long id = bmw.getId();
+		tx.commit();
+		
+		/*
+		 * session two
+		 */
+		SessionTemplate session2 = sf.openSession();
+		TransactionTemplate tx2 = session2.beginTransaction();
+		
+		ICar bmw2 = (ICar) session2.get("car", id);
+		bmw2.setName("BMW Session 2");
+		tx2.commit();
+		
+		assertSame(session, sf.getSessionFromCluster(bmw));
+		assertSame(session2,sf.getSessionFromCluster(bmw2));
+		
+		session2.close();
+		assertSame(null, sf.getSessionFromCluster(bmw2));
+		
+		SessionTemplate session3 = sf.openSession();
+		bmw2.setName("BMW Session 3");
+		session3.refresh(bmw2);
+		assertSame(session3,sf.getSessionFromCluster(bmw2));
+		
+		session2 = null;
+		System.gc();
+		System.runFinalization();
 	}
 
 }
