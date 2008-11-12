@@ -49,6 +49,10 @@ public class HibernateStatelessSession implements StatelessSessionTemplate {
 
 	public HibernateStatelessSession() {
 	}
+	
+	public void finalize() {
+		factory.removeSessionFromSessionList(this);
+	}
 
 	public TransactionTemplate beginTransaction() {
 		tx = new HibernateTransaction();

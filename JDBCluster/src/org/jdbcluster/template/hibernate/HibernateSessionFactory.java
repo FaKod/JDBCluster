@@ -15,9 +15,16 @@
  */
 package org.jdbcluster.template.hibernate;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Vector;
+
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
+import org.hibernate.impl.SessionImpl;
+import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.SessionFactoryTemplate;
+import org.jdbcluster.template.SessionTemplate;
 
 /**
  * 
@@ -33,24 +40,42 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	 * use standard method getNativeSessionFactory
 	 */
 	private Interceptor interceptor = null;
+	
+	/**
+	 * used to store sessions generated with this session factory
+	 */
+	private List<WeakReference<HibernateSession>> sessionList = null;
+	
+	/**
+	 * used to store sessions generated with this session factory
+	 */
+	private List<WeakReference<HibernateStatelessSession>> statelessSessionList = null;
 
+	/**
+	 * C tor stores hibernate factory and created two session vectors
+	 * @param hibernateFactory the linked hibernate factory
+	 */
 	public HibernateSessionFactory(SessionFactory hibernateFactory) {
 		factory = hibernateFactory;
+		sessionList = new Vector<WeakReference<HibernateSession>>();
+		statelessSessionList = new Vector<WeakReference<HibernateStatelessSession>>();
 	}
 
 	public HibernateSession openSession() {
-		HibernateSession session = new HibernateSession();
+		HibernateSession session = new HibernateSession(this);
 
 		if(interceptor==null)
 			session.setHibernateSession(factory.openSession());
 		else
 			session.setHibernateSession(factory.openSession(interceptor));
+		sessionList.add(new WeakReference<HibernateSession>(session));
 		return session;
 	}
 	
 	public HibernateStatelessSession openStatelessSession() {
 		HibernateStatelessSession session = new HibernateStatelessSession();
 		session.setHibernateSession(factory.openStatelessSession());		
+		statelessSessionList.add(new WeakReference<HibernateStatelessSession>(session));
 		return session;
 	}
 	
@@ -63,7 +88,7 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	}
 
 	public HibernateSession getSession() {
-		HibernateSession session = new HibernateSession();
+		HibernateSession session = new HibernateSession(this);
 		session.setHibernateSession(factory.getCurrentSession());
 		return session;
 	}
@@ -79,5 +104,48 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 
 	public void setInterceptor(Interceptor interceptor) {
 		this.interceptor = interceptor;
+	}
+	
+	/**
+	 * removes hibernate session from list
+	 * @param session Hibernate Session to remove
+	 */
+	public synchronized void removeSessionFromSessionList(HibernateSession session) {
+		for( int i=0; i < sessionList.size() ; i++) {
+			HibernateSession hs = sessionList.get(i).get();
+			if(hs==null || hs.equals(session)) {
+				sessionList.remove(i--);
+			}
+		}
+	}
+	
+	/**
+	 * removes hibernate session from list
+	 * @param session Hibernate Session to remove
+	 */
+	public synchronized void removeSessionFromSessionList(HibernateStatelessSession session) {
+		for( int i=0; i < statelessSessionList.size() ; i++) {
+			HibernateStatelessSession hs = statelessSessionList.get(i).get();
+			if(hs==null || hs.equals(session)) {
+				statelessSessionList.remove(i--);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the current session the cluster object is currently connected
+	 * @param cluster Cluster object
+	 * @return SessionTemplate if found. Null if the session is not found or closed.
+	 */
+	public synchronized SessionTemplate getSessionFromCluster (ICluster cluster) {
+		for(WeakReference<HibernateSession> wr : sessionList) {
+			HibernateSession hs = wr.get();
+			if(hs!=null) {
+				SessionImpl s = (SessionImpl) hs.getNativeSession();
+				if(s.isOpen() && s.contains(cluster.getDao()))
+					return hs;
+			}
+		}
+		return null;
 	}
 }

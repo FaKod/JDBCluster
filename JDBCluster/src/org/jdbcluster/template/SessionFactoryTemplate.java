@@ -15,6 +15,8 @@
  */
 package org.jdbcluster.template;
 
+import org.jdbcluster.metapersistence.cluster.ICluster;
+
 /**
  * Interface of the session factory 
  * used to create sessions
@@ -49,5 +51,10 @@ public interface SessionFactoryTemplate {
 	 * @return the SessionFactory of the underlying 
 	 */
 	public <T> T getNativeSessionFactory();
-
+	/**
+	 * Returns the current session the cluster object is currently connected
+	 * @param cluster Cluster object
+	 * @return SessionTemplate if found. Null if the session is not found or closed.
+	 */
+	public SessionTemplate getSessionFromCluster (ICluster cluster);
 }

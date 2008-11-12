@@ -52,7 +52,13 @@ public class HibernateSession implements SessionTemplate {
 	
 	protected HibernateTransaction tx;
 
-	public HibernateSession() {
+	public HibernateSession(HibernateSessionFactory factory) {
+		this.factory = factory;
+	}
+	
+	public void finalize() {
+		if(factory!=null)
+			factory.removeSessionFromSessionList(this);
 	}
 
 	public TransactionTemplate beginTransaction() {
