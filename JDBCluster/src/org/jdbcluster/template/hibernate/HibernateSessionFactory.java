@@ -97,7 +97,7 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	 * removes hibernate session from list
 	 * @param session Hibernate Session to remove
 	 */
-	public synchronized void removeSessionFromSessionList(HibernateSession session) {
+	synchronized void removeSessionFromSessionList(HibernateSession session) {
 		for( int i=0; i < sessionList.size() ; i++) {
 			HibernateSession hs = sessionList.get(i).get();
 			if(hs==null || hs.equals(session)) {
