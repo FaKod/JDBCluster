@@ -17,7 +17,6 @@ package org.jdbcluster.template;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.filter.CCFilter;
