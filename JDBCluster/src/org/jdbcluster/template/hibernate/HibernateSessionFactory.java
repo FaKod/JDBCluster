@@ -45,11 +45,6 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	 * used to store sessions generated with this session factory
 	 */
 	private List<WeakReference<HibernateSession>> sessionList = null;
-	
-	/**
-	 * used to store sessions generated with this session factory
-	 */
-	private List<WeakReference<HibernateStatelessSession>> statelessSessionList = null;
 
 	/**
 	 * C tor stores hibernate factory and created two session vectors
@@ -58,7 +53,6 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 	public HibernateSessionFactory(SessionFactory hibernateFactory) {
 		factory = hibernateFactory;
 		sessionList = new Vector<WeakReference<HibernateSession>>();
-		statelessSessionList = new Vector<WeakReference<HibernateStatelessSession>>();
 	}
 
 	public HibernateSession openSession() {
@@ -69,13 +63,6 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 		else
 			session.setHibernateSession(factory.openSession(interceptor));
 		sessionList.add(new WeakReference<HibernateSession>(session));
-		return session;
-	}
-	
-	public HibernateStatelessSession openStatelessSession() {
-		HibernateStatelessSession session = new HibernateStatelessSession();
-		session.setHibernateSession(factory.openStatelessSession());		
-		statelessSessionList.add(new WeakReference<HibernateStatelessSession>(session));
 		return session;
 	}
 	
@@ -115,19 +102,6 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 			HibernateSession hs = sessionList.get(i).get();
 			if(hs==null || hs.equals(session)) {
 				sessionList.remove(i--);
-			}
-		}
-	}
-	
-	/**
-	 * removes hibernate session from list
-	 * @param session Hibernate Session to remove
-	 */
-	public synchronized void removeSessionFromSessionList(HibernateStatelessSession session) {
-		for( int i=0; i < statelessSessionList.size() ; i++) {
-			HibernateStatelessSession hs = statelessSessionList.get(i).get();
-			if(hs==null || hs.equals(session)) {
-				statelessSessionList.remove(i--);
 			}
 		}
 	}

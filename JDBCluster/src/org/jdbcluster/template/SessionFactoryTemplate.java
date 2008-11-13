@@ -32,12 +32,7 @@ public interface SessionFactoryTemplate {
 	 * @return a new instance of SessionTemplate.
 	 */
 	public SessionTemplate openSession();
-	/**
-	 * Opens a new stateless Session. This session can be used for bulk operations. All retrieved objects are not bounded to the session.
-	 *  
-	 * @return a new instance of StatelessSessionTemplate.
-	 */
-	public StatelessSessionTemplate openStatelessSession();
+
 	/**
 	 * Returns the current session.
 	 * 
