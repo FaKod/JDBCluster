@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/jdbcluster/clustercontainer/" kind="src" path="src"/>
 	<classpathentry kind="src" path="example"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.ajdt.core.ASPECTJRT_CONTAINER"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-adapters-1.1.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-logging/1.1/lib/commons-logging-api-1.1.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/hibernate/3.2.5/lib/hibernate3.jar" sourcepath="/JDBCluster_ThirdParty/hibernate/3.2.2/src/src.zip"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/hsqldb/1.8.0.7/lib/hsqldb.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/log4j/1.2.14/lib/log4j-1.2.14.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/dom4j/1.6.1/lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/jaxen/1.1.1/lib/jaxen-1.1.1.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/commons-collections/3.2/lib/commons-collections-3.2.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/cglib/2.1.3/lib/cglib-2.1.3.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/asm/unknown/lib/asm.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/asm/unknown/lib/asm-attrs.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/jta/1.0.1b/lib/jta.jar"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/antlr/2.7.6/lib/antlr-2.7.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="var" path="JDBCluster_ThirdParty/spring/2.5.1/lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/javassist-3.4.GA.jar"/>
+	<classpathentry kind="lib" path="lib/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/spring.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
