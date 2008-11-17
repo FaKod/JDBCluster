@@ -65,11 +65,8 @@ public interface SessionTemplate {
 	public boolean isDirty();
 	
 	/**
-	 * activates a Filter on the Session with the specified name. The filter which is going to be activated has 
-	 * to be declared in an ORM specific configuration files (e.g. hibernate's mapping file).
-	 * @param filterName the filter with the given name will be activated on the session.
-	 * @param parameterName the name of the parameter binding which is the substituted by given value(s).
-	 * @param values one ore more values are set in place of the parameter binding (parameterName).
+	 * activates the given Filter on the Session. The Filter contains the name, parameter name 
+	 * @param sessionFilter the filter with the given name will be activated on the session.
 	 */
 	public void enableFilter(SessionFilter sessionFilter);
 }

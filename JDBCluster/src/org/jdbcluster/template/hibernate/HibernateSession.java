@@ -460,11 +460,8 @@ public class HibernateSession implements SessionTemplate {
 
 	
 	/**
-	 * activates a Filter on the Session with the specified name. The filter which is going to be activated has 
-	 * to be declared in Hibernate's mapping files.
-	 * @param filterName the filter with the given name will be activated on the session.
-	 * @param parameterName the name of the parameter binding which is the substituted by given value.
-	 * @param value a value is set in place of the parameter binding (parameterName).
+	 * activates the given Filter on the Session. The Filter contains the name, parameter name 
+	 * @param sessionFilter the filter with the given name will be activated on the session.
 	 */
 	public void enableFilter(SessionFilter sessionFilter) {
 		Filter filter = hibernateSession.enableFilter(sessionFilter.getFilterName());
