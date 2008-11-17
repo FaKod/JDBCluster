@@ -16,7 +16,6 @@
 package org.jdbcluster.template;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.filter.CCFilter;
@@ -72,13 +71,5 @@ public interface SessionTemplate {
 	 * @param parameterName the name of the parameter binding which is the substituted by given value(s).
 	 * @param values one ore more values are set in place of the parameter binding (parameterName).
 	 */
-	public void enableFilter(String filterName, String parameterName, Collection<Object> values);
-	/**
-	 * activates a Filter on the Session with the specified name. The filter which is going to be activated has 
-	 * to be declared in an ORM specific configuration files (e.g. hibernate's mapping file).
-	 * @param filterName the filter with the given name will be activated on the session.
-	 * @param parameterName the name of the parameter binding which is the substituted by given value.
-	 * @param value a value is set in place of the parameter binding (parameterName).
-	 */
-	public void enableFilter(String filterName, String parameterName, Object value);
+	public void enableFilter(SessionFilter sessionFilter);
 }
