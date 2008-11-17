@@ -16,7 +16,6 @@
 package org.jdbcluster.template.hibernate;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Filter;
@@ -31,6 +30,7 @@ import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.metapersistence.cluster.ICluster;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
+import org.jdbcluster.template.SessionFilter;
 import org.jdbcluster.template.SessionTemplate;
 import org.jdbcluster.template.TransactionTemplate;
 import org.springframework.util.Assert;
@@ -458,22 +458,6 @@ public class HibernateSession implements SessionTemplate {
 		return hibernateSession.isDirty();
 	}
 
-	/**
-	 * activates a Filter on the Session with the specified name. The filter which is going to be activated has 
-	 * to be declared in Hibernate's mapping files.
-	 * @param filterName the filter with the given name will be activated on the session.
-	 * @param parameterName the name of the parameter binding which is the substituted by given value(s).
-	 * @param values one ore more values are set in place of the parameter binding (parameterName).
-	 */
-	public void enableFilter(String filterName, String parameterName, Collection<Object> values) {
-		Filter filter = hibernateSession.enableFilter(filterName);
-		if (filter == null) {
-			throw new RuntimeException("Filter with name '" + filterName + "' is null - check your Hibernate filter configuration");
-		}
-		if (parameterName != null && !parameterName.equals("") && !values.isEmpty()) {
-			filter.setParameterList(parameterName, values);
-		}
-	}
 	
 	/**
 	 * activates a Filter on the Session with the specified name. The filter which is going to be activated has 
@@ -482,13 +466,15 @@ public class HibernateSession implements SessionTemplate {
 	 * @param parameterName the name of the parameter binding which is the substituted by given value.
 	 * @param value a value is set in place of the parameter binding (parameterName).
 	 */
-	public void enableFilter(String filterName, String parameterName, Object value) {
-		Filter filter = hibernateSession.enableFilter(filterName);
+	public void enableFilter(SessionFilter sessionFilter) {
+		Filter filter = hibernateSession.enableFilter(sessionFilter.getFilterName());
 		if (filter == null) {
-			throw new RuntimeException("Filter with name '" + filterName + "' is null - check your Hibernate filter configuration");
+			throw new RuntimeException("Filter with name '" + sessionFilter.getFilterName() + "' is null - check your Hibernate filter configuration");
 		}
-		if (parameterName != null && !parameterName.equals("") && value != null) {
-			filter.setParameter(parameterName, value);
+		for (Object value : sessionFilter.getValues()) {
+			if (sessionFilter.getParameterName() != null && !sessionFilter.getParameterName().equals("") && value != null) {
+				filter.setParameter(sessionFilter.getParameterName(), value);
+			}
 		}
 	}
 
