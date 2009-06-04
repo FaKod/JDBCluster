@@ -26,6 +26,7 @@ import org.jdbcluster.exception.ClusterTypeException;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.DaoLink;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.jdbcluster.privilege.PrivilegedCluster;
@@ -42,34 +43,37 @@ import org.springframework.util.Assert;
 public abstract class ClusterFactory {
 	
 	private static ClusterInterceptor clusterInterceptor;
-
+	
 	/**
 	 * creates an instance of a Cluster
 	 * @param ct specifies the ClusterType class that should be returned
+	 * @param user the User object.
 	 * @return Cluster
 	 */
-	public static <T extends ICluster> T newInstance(ClusterType ct) {
-		return newInstance(ct, null);
+	public static <T extends ICluster> T newInstance(ClusterType ct, IUser user) {
+		return newInstance(ct, null, user);
 	}
 	
 	/**
 	 * no need to create ClusterType instance
 	 * @param clusterType cluster type string as configured
+	 * @param The user object.
 	 * @return cluster instance
 	 */
-	public static <T extends ICluster> T newInstance(String clusterType) {
+	public static <T extends ICluster> T newInstance(String clusterType, IUser user) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
-		return newInstance(ct, null);
+		return newInstance(ct, null, user);
 	}
 	
 	/**
 	 * no need to create ClusterType instance
 	 * @param clusterType cluster type string as configured
+	 * @param The user object.
 	 * @return cluster instance
 	 */
-	public static <T extends ICluster> T newInstance(String clusterType, Object dao) {
+	public static <T extends ICluster> T newInstance(String clusterType, Object dao, IUser user) {
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterType);
-		return newInstance(ct, dao);
+		return newInstance(ct, dao, user);
 	}
 	
 	/**
@@ -93,11 +97,12 @@ public abstract class ClusterFactory {
 	 * Cluster privileges are <b>not checked</b> if dao!=null 
 	 * @param ct specifies the ClusterType class that should be returned
 	 * @param dao dao object to be presetted
+	 * @param The user object.
 	 * @return Cluster
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends ICluster> T newInstance(ClusterType ct, Object dao) {
-		Cluster cluster = newInstance(getClusterClass(ct), dao);
+	public static <T extends ICluster> T newInstance(ClusterType ct, Object dao, IUser user) {
+		Cluster cluster = newInstance(getClusterClass(ct), dao, user);
 		cluster.setClusterType(ct);
 		return (T) cluster;
 	}
@@ -109,11 +114,12 @@ public abstract class ClusterFactory {
 	 * If dao is not null its assumed that the dao object is persistent 
 	 * @param clusterClass class of cluster
 	 * @param dao dao object to be presetted
+	 * @param The user object.
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<? extends Cluster> clusterClass, Object dao) {
-		return newInstance(clusterClass, dao, dao!=null);
+	public static <T extends Cluster> T newInstance(Class<? extends Cluster> clusterClass, Object dao, IUser user) {
+		return newInstance(clusterClass, dao, dao!=null, user);
 	}
 	
 	/**
@@ -123,10 +129,11 @@ public abstract class ClusterFactory {
 	 * @param clusterClass class of cluster
 	 * @param dao dao object to be presetted
 	 * @param daoIsPersistent if dao Object is persistent dont call interceptor and pivilegeInterceptor
-	 * @return
+	 * @param user saves the given User object into the newly created Cluster object.
+	 * @return the new Cluster instance.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Cluster> T newInstance(Class<? extends ICluster> clusterClass, Object dao, boolean daoIsPersistent) {
+	public static <T extends Cluster> T newInstance(Class<? extends ICluster> clusterClass, Object dao, boolean daoIsPersistent, IUser user) {
 		
 		Assert.notNull(clusterClass, "Class<?> may not be null");
 		
@@ -140,7 +147,9 @@ public abstract class ClusterFactory {
 		} catch (IllegalAccessException e) {
 			throw new ClusterTypeException("the currently executed ctor for class [" + clusterClass.getName() + "] does not have access", e);
 		} 
-		
+		if(user != null) {
+			cluster.setUser(user);
+		}
 		if(dao!=null)
 			cluster.setDao(dao);
 		else
@@ -161,14 +170,13 @@ public abstract class ClusterFactory {
 			 * privilege check (only static privileges are checked)
 			 */
 			if(cluster instanceof PrivilegedCluster) {
-				if(!pc.userPrivilegeIntersect((PrivilegedCluster)cluster))
+				if(!pc.userPrivilegeIntersect(user, (PrivilegedCluster)cluster))
 					throw new PrivilegeException("No sufficient privileges for new Cluster class [" + clusterClass.getName() + "]");
 			}
 		}
 		cluster.setClusterType(ClusterTypeFactory.newInstance(clusterClass));
 		return (T) cluster;
 	}
-	
 	/**
 	 * get the cluster class object
 	 * @param ct specifies the ClusterType class that should be returned

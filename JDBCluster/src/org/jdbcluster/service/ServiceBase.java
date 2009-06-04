@@ -15,11 +15,23 @@
  */
 package org.jdbcluster.service;
 
+import org.jdbcluster.metapersistence.security.user.IUser;
+
 /**
  * Service Base class for Service interface
  * @author FaKod
  *
  */
 public class ServiceBase {
+	
+	private IUser user;
+
+	public IUser getUser() {
+		return user;
+	}
+	
+	public void setUser(IUser user) {
+		this.user = user;
+	}
 
 }

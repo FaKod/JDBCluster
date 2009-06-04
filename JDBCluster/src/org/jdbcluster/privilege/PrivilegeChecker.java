@@ -18,6 +18,7 @@ package org.jdbcluster.privilege;
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.service.PrivilegedService;
 
 /**
@@ -33,7 +34,7 @@ public interface PrivilegeChecker {
 	 * @param requiredPrivileges the required privileges
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges);
+	public boolean userPrivilegeIntersect(IUser user, Set<String> requiredPrivileges);
 
 	/**
 	 * intersects required privileges against given privileges
@@ -41,7 +42,7 @@ public interface PrivilegeChecker {
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args);
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedCluster clusterObject, Method calledMethod, Object... args);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -49,14 +50,14 @@ public interface PrivilegeChecker {
 	 * @param serviceObject service object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args);
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedService serviceObject, Method calledMethod, Object... args);
 	
 	/**
 	 * intersects required privileges without a method call (new(..)) against given privileges
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject);
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedCluster clusterObject);
 	
 	/**
 	 * intersects a specific domain value with the needed rights for this value
@@ -64,7 +65,7 @@ public interface PrivilegeChecker {
 	 * @param value the value of the domain
 	 * @return true if the user rights are sufficient
 	 */
-	public boolean userPrivilegeIntersectDomain(String domainId, String value);
+	public boolean userPrivilegeIntersectDomain(IUser user, String domainId, String value);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -73,7 +74,7 @@ public interface PrivilegeChecker {
 	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object... args);
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, String serviceMethodName, Object... args);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -83,7 +84,7 @@ public interface PrivilegeChecker {
 	 * @param argTypes array of parameter class objects
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes);
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -92,7 +93,7 @@ public interface PrivilegeChecker {
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, Method serviceMethod, Object... args);
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, Method serviceMethod, Object... args);
 	/**
 	 * intersects required privileges against given privileges
 	 * @param clusterObject cluster object instance
@@ -100,7 +101,7 @@ public interface PrivilegeChecker {
 	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args);
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, String methodName, Object... args);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -110,7 +111,7 @@ public interface PrivilegeChecker {
 	 * @param argTypes array of parameter class objects
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes);
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes);
 	
 	/**
 	 * intersects required privileges against given privileges
@@ -119,7 +120,7 @@ public interface PrivilegeChecker {
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, Method method, Object... args);
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, Method method, Object... args);
 	
 	/**
 	 * intersects required static privileges for cluster new against given
@@ -128,5 +129,5 @@ public interface PrivilegeChecker {
 	 * @param clusterType defines the Cluster to check
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkClusterNew(String clusterType);
+	public boolean checkClusterNew(IUser user, String clusterType);
 }

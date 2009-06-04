@@ -23,6 +23,7 @@ import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.exception.DBException;
 import org.jdbcluster.exception.JDBClusterException;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.template.QueryTemplate;
 
 /**
@@ -37,13 +38,21 @@ public class HibernateQuery implements QueryTemplate {
 
 	// query object which contains information about the result after execution
 	private Query query;
+	
+	private IUser user;
+
+	public IUser getUser() {
+		return user;
+	}
 
 	private ClusterType clusterType;
 
-	public HibernateQuery() {
+	public HibernateQuery(IUser user) {
+		this.user = user;
 	}
 	
-	public HibernateQuery(Query query) {
+	public HibernateQuery(IUser user,Query query) {
+		this.user = user;
 		setQuery(query);
 	}
 
@@ -107,6 +116,10 @@ public class HibernateQuery implements QueryTemplate {
 
 	public ClusterType getClusterType() {
 		return clusterType;
+	}
+	
+	public void setMaxResult(int size) {
+		query.setMaxResults(size);
 	}
 
 }

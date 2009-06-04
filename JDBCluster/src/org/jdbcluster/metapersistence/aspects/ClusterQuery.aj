@@ -53,12 +53,12 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		ClusterType ct = q.getClusterType();
 		List dAOResultSet = (List) proceed(q);
 		List<Cluster> clusterResultSet = new ArrayList<Cluster>();
-		
+				
 		if(logger.isDebugEnabled())
 			logger.debug("Query result converting " + dAOResultSet.size() + " elements to Cluster");
 		
 		for (Object dao : dAOResultSet) {
-			Cluster c = ClusterFactory.newInstance(ct, dao);
+			Cluster c = ClusterFactory.newInstance(ct, dao, q.getUser());
 			clusterResultSet.add(c);
 		}
 
@@ -79,7 +79,7 @@ public aspect ClusterQuery extends ClusterBaseAspect {
 		
 		for (Object dao : dAOResultSet) {
 			if(uniqueSet.add(dao)) { 
-				Cluster c = ClusterFactory.newInstance(ct, dao);
+				Cluster c = ClusterFactory.newInstance(ct, dao, q.getUser());
 				clusterResultSet.add(c);
 			}
 		}

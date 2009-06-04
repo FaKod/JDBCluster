@@ -16,6 +16,7 @@
 package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.metapersistence.security.user.IUser;
 
 
 /**
@@ -33,4 +34,8 @@ public interface ICluster {
 	
 	Class<? extends Cluster> getClusterClass();
 	
+	IUser getUser();
+
+	void setUser(IUser user);
+		
 }

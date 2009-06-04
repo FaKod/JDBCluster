@@ -16,6 +16,7 @@
 package org.jdbcluster.template;
 
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 
 /**
  * Interface of the session factory 
@@ -31,14 +32,14 @@ public interface SessionFactoryTemplate {
 	 * 
 	 * @return a new instance of SessionTemplate.
 	 */
-	public SessionTemplate openSession();
+	public SessionTemplate openSession(IUser user);
 
 	/**
 	 * Returns the current session.
 	 * 
 	 * @return a new instance of SessionTemplate with underlying current Session.
 	 */
-	public SessionTemplate getSession();
+	public SessionTemplate getSession(IUser user);
 	/**
 	 * Returns the native SessionFactory.
 	 * 

@@ -23,6 +23,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.impl.SessionImpl;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionTemplate;
 
@@ -55,8 +56,8 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 		sessionList = new Vector<WeakReference<HibernateSession>>();
 	}
 
-	public HibernateSession openSession() {
-		HibernateSession session = new HibernateSession(this);
+	public HibernateSession openSession(IUser user) {
+		HibernateSession session = new HibernateSession(user, this);
 
 		if(interceptor==null)
 			session.setHibernateSession(factory.openSession());
@@ -74,8 +75,8 @@ public class HibernateSessionFactory implements SessionFactoryTemplate {
 		this.factory = factory;
 	}
 
-	public HibernateSession getSession() {
-		HibernateSession session = new HibernateSession(this);
+	public HibernateSession getSession(IUser user) {
+		HibernateSession session = new HibernateSession(user, this);
 		session.setHibernateSession(factory.getCurrentSession());
 		return session;
 	}

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 
 /**
  * 
@@ -63,10 +64,18 @@ public interface SessionTemplate {
 	public <T> T getNativeSession();
 	public TransactionTemplate getTransactionTemplate();
 	public boolean isDirty();
+	/**
+	 * determines whether the given cluster object is in the session or not.
+	 * @param cluster which is in session or not.
+	 * @return true if the given cluster object is in the session, false otherwise.
+	 */
+	public boolean contains(ICluster cluster);
 	
 	/**
 	 * activates the given Filter on the Session. The Filter contains the name, parameter name 
 	 * @param sessionFilter the filter with the given name will be activated on the session.
 	 */
 	public void enableFilter(SessionFilter sessionFilter);
+	
+	public IUser getUser();
 }

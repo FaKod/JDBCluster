@@ -57,4 +57,10 @@ public interface QueryTemplate {
 	 * @param clusterType
 	 */
 	public void setClusterType(ClusterType clusterType);
+	
+	/**
+	 * sets the maximum resultset of a query.
+	 * @param size
+	 */
+	public void setMaxResult(int size);
 }

@@ -16,12 +16,15 @@
 package org.jdbcluster.metapersistence.cluster;
 
 import org.jdbcluster.clustertype.ClusterType;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.springframework.util.Assert;
 
 public abstract class ClusterBase implements ICluster {
 
 	private Object dao;
-
+	
+	private IUser user;
+	
 	private Class<? extends Object> daoClass;
 
 	private ClusterType clusterType;
@@ -52,6 +55,14 @@ public abstract class ClusterBase implements ICluster {
 		this.dao = dao;
 		this.daoClass = dao.getClass();
 	}
+		
+	public void setUser(IUser user) {
+		this.user = user;
+	}
+	
+	public IUser getUser() {
+		return user;
+	}
 
 	public void setClusterType(ClusterType ct) {
 
@@ -78,4 +89,5 @@ public abstract class ClusterBase implements ICluster {
 	public Class<? extends Cluster> getClusterClass() {
 		return clusterType.getClusterClass();
 	}
+		
 }

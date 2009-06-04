@@ -28,6 +28,7 @@ import org.jdbcluster.dao.Dao;
 import org.jdbcluster.exception.ConfigurationException;
 import org.jdbcluster.metapersistence.annotation.DaoLink;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.springframework.util.Assert;
 
 /**

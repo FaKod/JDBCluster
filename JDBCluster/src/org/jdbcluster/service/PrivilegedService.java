@@ -15,11 +15,15 @@
  */
 package org.jdbcluster.service;
 
+import org.jdbcluster.metapersistence.security.user.IUser;
+
 /**
  * Marker for a privileged service interface
  * @author Christopher Schmidt
  *
  */
 public interface PrivilegedService {
+	
+	public IUser getUser();
 
 }

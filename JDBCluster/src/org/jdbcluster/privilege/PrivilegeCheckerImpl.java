@@ -38,6 +38,7 @@ import org.jdbcluster.metapersistence.annotation.PrivilegesMethod;
 import org.jdbcluster.metapersistence.annotation.PrivilegesParameter;
 import org.jdbcluster.metapersistence.annotation.PrivilegesService;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.service.PrivilegedService;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.NullValueInNestedPathException;
@@ -52,6 +53,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/** Logger available to subclasses */
 	protected final Logger logger = Logger.getLogger(getClass());
+	
+	private static PrivilegeChecker instance;
 
 	/**
 	 * always reused instance of springs internal bean wrapper class for Cluster
@@ -71,7 +74,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesCluster = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
 
 	/**
-	 * maps: Class -> Servicce Method -> HashSet of privileges
+	 * maps: Class -> Service Method -> HashSet of privileges
 	 */
 	private static HashMap<Class<?>, HashMap<Method, HashSet<String>>> privilegesService = new HashMap<Class<?>, HashMap<Method, HashSet<String>>>();
 
@@ -87,18 +90,13 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return PrivilegeChecker
 	 */
 	public static PrivilegeChecker getInstance() {
-		return getImplInstance();
+		if(instance == null) {
+			instance = new PrivilegeCheckerImpl();
+		}
+		return instance;
 	}
 
-	/**
-	 * package instance getter
-	 * 
-	 * @return PrivilegeCheckerImpl
-	 */
-	static PrivilegeCheckerImpl getImplInstance() {
-		return new PrivilegeCheckerImpl();
-	}
-
+	
 	/**
 	 * intersects required static privileges for cluster new against given
 	 * privileges
@@ -106,7 +104,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param clusterType defines the Cluster to check
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkClusterNew(String clusterType) {
+	public boolean checkClusterNew(IUser user, String clusterType) {
 
 		Assert.hasLength(clusterType, "clusterType may not be null or \"\"");
 
@@ -118,7 +116,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 		Class<? extends PrivilegedCluster> clusterClass = clazz.asSubclass(PrivilegedCluster.class);
 		Set<String> requiredPrivileges = calcStaticClusterPrivileges(clusterClass);
-		return userPrivilegeIntersect(requiredPrivileges);
+		return userPrivilegeIntersect(user, requiredPrivileges);
 	}
 
 	/**
@@ -128,8 +126,8 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param requiredPrivileges the required privileges
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
-		return getUserPrivilege().userPrivilegeIntersect(requiredPrivileges);
+	public boolean userPrivilegeIntersect(IUser user, Set<String> requiredPrivileges) {
+		return getUserPrivilege().userPrivilegeIntersect(user,requiredPrivileges);
 	}
 
 	/**
@@ -140,13 +138,13 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object... args) {
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, String methodName, Object... args) {
 
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.hasLength(methodName, "methodName may not be null or \"\"");
 
 		Method calledMethod = getMethod(clusterObject, methodName, args);
-		return userPrivilegeIntersect(clusterObject, calledMethod, args);
+		return userPrivilegeIntersect(user, clusterObject, calledMethod, args);
 	}
 
 	/**
@@ -158,13 +156,13 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param argTypes array of parameter class objects
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes) {
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, String methodName, Object[] args, Class[] argTypes) {
 
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.hasLength(methodName, "methodName may not be null or \"\"");
 
 		Method calledMethod = JDBClusterUtil.getMethod(clusterObject.getClass(), methodName, argTypes);
-		return userPrivilegeIntersect(clusterObject, calledMethod, args);
+		return userPrivilegeIntersect(user, clusterObject, calledMethod, args);
 	}
 
 	/**
@@ -175,12 +173,12 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedCluster clusterObject, Method method, Object... args) {
+	public boolean checkAccess(IUser user, PrivilegedCluster clusterObject, Method method, Object... args) {
 
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.notNull(method, "method may not be null");
 
-		return userPrivilegeIntersect(clusterObject, method, args);
+		return userPrivilegeIntersect(user, clusterObject, method, args);
 	}
 
 	/**
@@ -190,14 +188,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject, Method calledMethod, Object... args) {
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedCluster clusterObject, Method calledMethod, Object... args) {
 
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 		Assert.notNull(calledMethod, "calledMethod may not be null");
 
 		HashSet<String> privileges = getStaticPrivilegesCluster(calledMethod, clusterObject);
 		privileges.addAll(getDynamicPrivilegesCluster(clusterObject, calledMethod, args));
-		return userPrivilegeIntersect(privileges);
+		return userPrivilegeIntersect(user, privileges);
 	}
 
 	/**
@@ -207,11 +205,11 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param clusterObject cluster object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedCluster clusterObject) {
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedCluster clusterObject) {
 
 		Assert.notNull(clusterObject, "clusterObject may not be null");
 
-		return userPrivilegeIntersect(calcStaticClusterPrivileges(clusterObject.getClass()));
+		return userPrivilegeIntersect(user, calcStaticClusterPrivileges(clusterObject.getClass()));
 	}
 
 	/**
@@ -222,13 +220,13 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param args of method parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object... args) {
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, String serviceMethodName, Object... args) {
 
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.hasLength(serviceMethodName, "serviceMethodName may not be null or \"\"");
 
 		Method calledMethod = getMethod(serviceObject, serviceMethodName, args);
-		return userPrivilegeIntersect(serviceObject, calledMethod, args);
+		return userPrivilegeIntersect(user, serviceObject, calledMethod, args);
 	}
 
 	/**
@@ -240,13 +238,13 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param argTypes array of parameter class objects
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes) {
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, String serviceMethodName, Object[] args, Class[] argTypes) {
 
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.hasLength(serviceMethodName, "serviceMethodName may not be null or \"\"");
 
 		Method calledMethod = JDBClusterUtil.getMethod(serviceObject.getClass(), serviceMethodName, argTypes);
-		return userPrivilegeIntersect(serviceObject, calledMethod, args);
+		return userPrivilegeIntersect(user, serviceObject, calledMethod, args);
 	}
 
 	/**
@@ -257,12 +255,12 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param args array of parameter
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean checkAccess(PrivilegedService serviceObject, Method serviceMethod, Object... args) {
+	public boolean checkAccess(IUser user, PrivilegedService serviceObject, Method serviceMethod, Object... args) {
 
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.notNull(serviceMethod, "serviceMethodName may not be null");
 
-		return userPrivilegeIntersect(serviceObject, serviceMethod, args);
+		return userPrivilegeIntersect(user, serviceObject, serviceMethod, args);
 	}
 
 	/**
@@ -272,14 +270,14 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param serviceObject service object instance
 	 * @return true if the privileges are sufficient
 	 */
-	public boolean userPrivilegeIntersect(PrivilegedService serviceObject, Method calledMethod, Object... args) {
+	public boolean userPrivilegeIntersect(IUser user, PrivilegedService serviceObject, Method calledMethod, Object... args) {
 
 		Assert.notNull(serviceObject, "serviceObject may not be null");
 		Assert.notNull(calledMethod, "calledMethod may not be null");
 
 		HashSet<String> privileges = getStaticPrivilegesService(calledMethod, serviceObject);
 		privileges.addAll(getServiceMethodParameterPrivileges(calledMethod, args));
-		return userPrivilegeIntersect(privileges);
+		return userPrivilegeIntersect(user, privileges);
 	}
 
 	/**
@@ -326,7 +324,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @param value the value of the domain
 	 * @return true if the user rights are sufficient
 	 */
-	public boolean userPrivilegeIntersectDomain(String domainId, String value) {
+	public boolean userPrivilegeIntersectDomain(IUser user, String domainId, String value) {
 
 		Assert.hasLength(domainId, "domainId may not be null or \"\"");
 
@@ -339,7 +337,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		}
 
 		Set<String> neededRights = dpl.getDomainEntryPivilegeList(domainId, value);
-		return userPrivilegeIntersect(neededRights);
+		return userPrivilegeIntersect(user, neededRights);
 	}
 
 	/**

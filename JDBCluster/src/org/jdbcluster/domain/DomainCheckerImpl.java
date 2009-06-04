@@ -28,6 +28,7 @@ import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 import org.springframework.util.Assert;
@@ -317,7 +318,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			if (logger.isDebugEnabled())
 				logger.debug("getValidDomainEntries doing rightsIntersection for domain id[" + d.domainId() + "]" + " and Field [" + fSlave.getName() + "]");
 
-			return rightsIntersection(getPossibleDomainEntries(d.domainId()), d.domainId(), fSlave);
+			return rightsIntersection(cluster.getUser(), getPossibleDomainEntries(d.domainId()), d.domainId(), fSlave);
 		}
 		slaveDomainId = dd.domainId();
 
@@ -332,7 +333,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 				logger.debug("getValidDomainEntries doing rightsIntersection for master domain id[" + masterDomainId + "]" + " and masterValue [" + masterValue + "]" + " and slaveDomainId [" + slaveDomainId
 						+ "] and Field [" + fSlave.getName() + "]");
 
-			return rightsIntersection(getValidDomainEntries(masterDomainId, masterValue, slaveDomainId), slaveDomainId, fSlave);
+			return rightsIntersection(cluster.getUser(), getValidDomainEntries(masterDomainId, masterValue, slaveDomainId), slaveDomainId, fSlave);
 		}
 
 		AddDomainDependancy aDD = fSlave.getAnnotation(AddDomainDependancy.class);
@@ -351,7 +352,7 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 			logger.debug("getValidDomainEntries (additional master) doing rightsIntersection for master domain id[" + masterDomainId + "]" + " and masterValue [" + masterValue + "]"
 					+ " and slaveDomainId [" + slaveDomainId + "] and Field [" + fSlave.getName() + "]");
 
-		return rightsIntersection(getValidDomainEntries(masterDomainId, masterValue, slaveDomainId, addDomIdArr, addDomValArr), slaveDomainId, fSlave);
+		return rightsIntersection(cluster.getUser(), getValidDomainEntries(masterDomainId, masterValue, slaveDomainId, addDomIdArr, addDomValArr), slaveDomainId, fSlave);
 	}
 
 	/**
@@ -512,12 +513,12 @@ public class DomainCheckerImpl extends DomainBase implements DomainChecker {
 	 * @param domainId the domain id
 	 * @return
 	 */
-	ValidDomainEntries<String> rightsIntersection(ValidDomainEntries<String> vde, String domainId, Field f) {
+	ValidDomainEntries<String> rightsIntersection(IUser user, ValidDomainEntries<String> vde, String domainId, Field f) {
 		if (f.isAnnotationPresent(PrivilegesDomain.class)) {
 			PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 			ArrayList<String> al = new ArrayList<String>();
 			for (String value : vde) {
-				if (!pc.userPrivilegeIntersectDomain(domainId, value))
+				if (!pc.userPrivilegeIntersectDomain(user, domainId, value))
 					al.add(value);
 			}
 			vde.removeAll(al);

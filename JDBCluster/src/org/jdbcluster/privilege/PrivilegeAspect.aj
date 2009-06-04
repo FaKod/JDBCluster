@@ -22,6 +22,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.NoPrivilegeCheck;
 import org.jdbcluster.metapersistence.cluster.ClusterBase;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.service.PrivilegedService;
 
 /**
@@ -40,12 +41,15 @@ public aspect PrivilegeAspect {
 	
 	@SuppressAjWarnings("adviceDidNotMatch")
 	before(ClusterBase c) : execClusterMethod(c) {
-		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
+		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();
 		
-		if(!pc.userPrivilegeIntersect((PrivilegedCluster) c, m, thisJoinPoint.getArgs()))
+		IUser user = null;
+		
+			user = c.getUser();
+		if(!pc.userPrivilegeIntersect(user, (PrivilegedCluster) c, m, thisJoinPoint.getArgs()))
 			throw new PrivilegeException("unsufficient privileges on Cluster: " +
 					c.getClass().getName()+
 					" calling method: " +
@@ -54,12 +58,11 @@ public aspect PrivilegeAspect {
 	
 	@SuppressAjWarnings("adviceDidNotMatch")
 	before(PrivilegedService ser) : execServiceMethod(ser) {
-		PrivilegeCheckerImpl pc = PrivilegeCheckerImpl.getImplInstance();
+		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		
 		MethodSignature sig = (MethodSignature) thisJoinPoint.getSignature();
 		Method m = sig.getMethod();	
-		
-		if(!pc.userPrivilegeIntersect(ser, m, thisJoinPoint.getArgs())) 
+		if(!pc.userPrivilegeIntersect(ser.getUser(), ser, m, thisJoinPoint.getArgs())) 
 			throw new PrivilegeException("unsufficient privileges on Service: " +
 					ser.getClass().getName()+
 					" calling service method: " +

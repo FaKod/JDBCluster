@@ -17,6 +17,8 @@ package org.jdbcluster.privilege;
 
 import java.util.Set;
 
+import org.jdbcluster.metapersistence.security.user.IUser;
+
 /**
  * used be the privilege checker to validate privileges
  * @author FaKod
@@ -28,7 +30,8 @@ public interface UserPrivilegeChecker {
 	 * should do an intersection between the user privileges and
 	 * the privileges given through requiredPrivileges
 	 * @param requiredPrivileges the required privileges (<b>can be null</b>)
+	 * @param user the User which privileges are checked.
 	 * @return true if the privileges are sufficient
 	 */
-	public abstract boolean userPrivilegeIntersect(Set<String> requiredPrivileges);
+	public abstract boolean userPrivilegeIntersect(IUser user, Set<String> requiredPrivileges);
 }

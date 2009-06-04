@@ -26,10 +26,10 @@ import org.jdbcluster.exception.PrivilegeException;
 import org.jdbcluster.metapersistence.annotation.Domain;
 import org.jdbcluster.metapersistence.annotation.DomainDependancy;
 import org.jdbcluster.metapersistence.annotation.PrivilegesDomain;
-import org.jdbcluster.metapersistence.aspects.ClusterAttribute;
 import org.jdbcluster.metapersistence.cluster.AssocCluster;
 import org.jdbcluster.metapersistence.cluster.CSet;
 import org.jdbcluster.metapersistence.cluster.Cluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.privilege.PrivilegeChecker;
 import org.jdbcluster.privilege.PrivilegeCheckerImpl;
 
@@ -65,7 +65,7 @@ public aspect DomainCheck {
 		DomainDependancy dd = fField.getAnnotation(DomainDependancy.class);
 		
 		if(fField.isAnnotationPresent(PrivilegesDomain.class))
-			if(!checkPrivileges(dd.domainId(), s))
+			if(!checkPrivileges(c.getUser(), dd.domainId(), s))
 				throw new PrivilegeException("unsufficient privileges on Privileged Domain: " +
 						c.getClass().getName()+
 						" writing value "+ s + " to field: " +
@@ -88,8 +88,8 @@ public aspect DomainCheck {
 		Domain d = fField.getAnnotation(Domain.class);
 		
 		if(fField.isAnnotationPresent(PrivilegesDomain.class))
-			if(!checkPrivileges(d.domainId(), s))
-				throw new PrivilegeException("unsufficient privileges on Privileged Domain: " +
+			if(!checkPrivileges(c.getUser(), d.domainId(), s))
+				throw new PrivilegeException("user " + c.getUser() + " has unsufficient privileges on Privileged Domain: " +
 						c.getClass().getName()+
 						" writing value "+ s + " to field: " +
 						fField.getName());
@@ -103,7 +103,7 @@ public aspect DomainCheck {
 		return o;
 	}
 	
-	private static boolean checkPrivileges(String domainId, String value) {
+	private static boolean checkPrivileges(IUser user, String domainId, String value) {
 		DomainCheckerImpl dc = DomainCheckerImpl.getImplInstance();
 		PrivilegeChecker pc = PrivilegeCheckerImpl.getInstance();
 		DomainPrivilegeList dpl;
@@ -113,6 +113,6 @@ public aspect DomainCheck {
 			throw new ConfigurationException("privileged domain [" + domainId + "] needs implemented DomainPrivilegeList Interface", e);
 		}
 		Set<String> rights = dpl.getDomainEntryPivilegeList(domainId, value);
-		return pc.userPrivilegeIntersect(rights);
+		return pc.userPrivilegeIntersect(user, rights);
 	}
 }

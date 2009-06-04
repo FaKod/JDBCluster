@@ -17,6 +17,7 @@ package org.jdbcluster.privilege;
 
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.exception.ConfigurationException;
+import org.jdbcluster.metapersistence.security.user.IUser;
 
 /**
  * Base class for handling privileges
@@ -36,7 +37,7 @@ public abstract class PrivilegeBase {
 	 * get the configured instance of UserPrivilege
 	 * @return instance of Interface UserPrivilegeChecker
 	 */
-	public static UserPrivilegeChecker getUserPrivilege() {
+	public synchronized static UserPrivilegeChecker getUserPrivilege() {
 		if(privilegeConfig==null)
 			throw new ConfigurationException("missing configuration for privileges");
 		
@@ -44,7 +45,6 @@ public abstract class PrivilegeBase {
 		
 		if(path == null || path.length()==0)
 			throw new ConfigurationException("missing configuration tag <UserPrivilegeChecker...> for privileges.");
-		
 		if(userPrivilege==null) {
 			userPrivilege = (UserPrivilegeChecker)JDBClusterUtil.createClassObject(privilegeConfig.getUserPrivilegeCheckerPath());
 		}

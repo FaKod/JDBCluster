@@ -28,6 +28,7 @@ import org.jdbcluster.filter.CCFilter;
 import org.jdbcluster.metapersistence.cluster.Cluster;
 import org.jdbcluster.metapersistence.cluster.ClusterFactory;
 import org.jdbcluster.metapersistence.cluster.ICluster;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.template.QueryTemplate;
 import org.jdbcluster.template.SessionFactoryTemplate;
 import org.jdbcluster.template.SessionFilter;
@@ -47,17 +48,20 @@ public class HibernateSession implements SessionTemplate {
 	private Logger logger = Logger.getLogger(this.getClass());
 
 	protected Session hibernateSession;
+	
+	protected IUser user;
 
 	protected HibernateSessionFactory factory;
-
+	
 	protected HibernateTransaction tx;
 
-	public HibernateSession(HibernateSessionFactory factory) {
+	public HibernateSession(IUser user, HibernateSessionFactory factory) {
 		this.factory = factory;
+		this.user = user;
 	}
-
+	
 	public void finalize() {
-		if (factory != null)
+		if(factory!=null)
 			factory.removeSessionFromSessionList(this);
 	}
 
@@ -66,13 +70,14 @@ public class HibernateSession implements SessionTemplate {
 		tx.setTransaction(hibernateSession.beginTransaction());
 		return tx;
 	}
-
+	
 	public TransactionTemplate getTransactionTemplate() {
 		return tx;
 	}
 
 	public void save(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
+		cluster.setUser(user);
 		hibernateSession.save(cluster.getDao());
 	}
 
@@ -104,33 +109,37 @@ public class HibernateSession implements SessionTemplate {
 		if (logger.isDebugEnabled())
 			logger.debug("creating Query with queryString = " + queryString);
 		Query query = hibernateSession.createQuery(queryString);
-		return new HibernateQuery(query);
+		return new HibernateQuery(user, query);
 	}
 
 	public QueryTemplate getNamedQuery(String queryName) {
 		if (logger.isDebugEnabled())
 			logger.debug("creating NamedQuery with queryName = " + queryName);
 		Query query = hibernateSession.getNamedQuery(queryName);
-		return new HibernateQuery(query);
+		return new HibernateQuery(user, query);
 	}
 
 	public void delete(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
+		cluster.setUser(user);
 		hibernateSession.delete(cluster.getDao());
 	}
 
 	public void saveOrUpdate(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
+		cluster.setUser(user);
 		hibernateSession.saveOrUpdate(cluster.getDao());
 	}
 
 	public void update(ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
+		cluster.setUser(user);
 		hibernateSession.update(cluster.getDao());
 	}
 
 	public void save(String id, ICluster cluster) {
 		Assert.notNull(cluster, "Cluster may not be null");
+		cluster.setUser(user);
 		hibernateSession.save(id, cluster.getDao());
 	}
 
@@ -138,8 +147,7 @@ public class HibernateSession implements SessionTemplate {
 	 * creates a query with given parameters and saves the query object (to get
 	 * the result later on)
 	 * 
-	 * @param ccf
-	 *            the filter that contains the criteria for the select statement
+	 * @param ccf the filter that contains the criteria for the select statement
 	 * @return QueryTemplate the object holding the hibernate query
 	 */
 	public QueryTemplate createQuery(CCFilter ccf) {
@@ -147,12 +155,10 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(ccf, "CCFilter may not be null");
 
 		if (logger.isDebugEnabled())
-			logger.debug("creating Query with CCFilter = "
-					+ ccf.getClass().getName() + " and ClusterType = "
-					+ ccf.getClusterType().getName());
+			logger.debug("creating Query with CCFilter = " + ccf.getClass().getName() + " and ClusterType = " + ccf.getClusterType().getName());
 
 		Query query;
-		HibernateQuery queryTemplate = new HibernateQuery();
+		HibernateQuery queryTemplate = new HibernateQuery(user);
 		queryTemplate.setClusterType(ccf.getClusterType());
 
 		/**
@@ -175,12 +181,12 @@ public class HibernateSession implements SessionTemplate {
 		 * part after from before where
 		 */
 		StringBuilder qStr = new StringBuilder(alias);
-
+		
 		String fetch = ccf.getFetch();
 		if (fetch != null && fetch.length() > 0) {
 			qStr.append(fetch);
 		}
-
+				
 		String ext = ccf.getExt();
 		if (ext != null && ext.length() > 0)
 			qStr.append(", ").append(ext);
@@ -189,11 +195,7 @@ public class HibernateSession implements SessionTemplate {
 			logger.debug("using from ... statement [" + qStr + "]");
 
 		String select = "";
-		if (alias != null && alias.length() > 0) // sollte hier nich besser auf
-													// ext abgeprüft werden
-													// ("from Car c" geht, aber
-													// "from Car, Bike" ist
-													// anders als erwartet)
+		if (alias != null && alias.length() > 0) // sollte hier nich besser auf ext abgeprüft werden ("from Car c" geht, aber "from Car, Bike" ist anders als erwartet)
 			select = "select " + alias + " ";
 
 		/**
@@ -204,9 +206,7 @@ public class HibernateSession implements SessionTemplate {
 			orderBy = " order by " + orderBy;
 
 		if (whereStatement != null && whereStatement.length() > 0) {
-			String queryString = select + " from "
-					+ ccf.getSelectStatementDAO() + " " + qStr + " "
-					+ " where " + whereStatement + orderBy;
+			String queryString = select + " from " + ccf.getSelectStatementDAO() + " " + qStr + " " + " where " + whereStatement + orderBy;
 
 			if (logger.isDebugEnabled())
 				logger.debug("using query string [" + queryString + "]");
@@ -216,8 +216,7 @@ public class HibernateSession implements SessionTemplate {
 			ccf.doBindings(queryTemplate);
 
 		} else {
-			String queryString = " from " + ccf.getSelectStatementDAO() + " "
-					+ qStr + " " + orderBy;
+			String queryString = " from " + ccf.getSelectStatementDAO() + " " + qStr + " " + orderBy;
 
 			if (logger.isDebugEnabled())
 				logger.debug("using query string [" + queryString + "]");
@@ -248,15 +247,15 @@ public class HibernateSession implements SessionTemplate {
 	 * <li>after inserting a <tt>Blob</tt> or <tt>Clob</tt>
 	 * </ul>
 	 * 
-	 * @param object
-	 *            a persistent or detached cluster instance
+	 * @param object a persistent or detached cluster instance
 	 */
 	public void refresh(ICluster cluster) {
-
+		
 		Assert.notNull(cluster, "Cluster may not be null");
-
+		cluster.setUser(user);
+		
 		hibernateSession.refresh(cluster.getDao());
-
+		
 		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
@@ -265,17 +264,15 @@ public class HibernateSession implements SessionTemplate {
 	 * with the given identifier into the given instance. Assuming that the
 	 * instance exists. non-existence would be an actual error.
 	 * 
-	 * @param clusterClass
-	 *            class of cluster
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterClass class of cluster
+	 * @param id primary id of cluster
 	 */
 	public ICluster load(Class<? extends ICluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		ICluster cb = ClusterFactory.newInstance(clusterClass, null, true);
+		ICluster cb = ClusterFactory.newInstance(clusterClass, null, true, user);
 		hibernateSession.load(cb.getDao(), id);
 		return cb;
 	}
@@ -285,10 +282,8 @@ public class HibernateSession implements SessionTemplate {
 	 * given instance. Assuming that the instance exists. non-existence would be
 	 * an actual error.
 	 * 
-	 * @param cluster
-	 *            existing cluster object
-	 * @param id
-	 *            primary id of cluster
+	 * @param cluster existing cluster object
+	 * @param id primary id of cluster
 	 */
 	public ICluster load(ICluster cluster, Serializable id) {
 
@@ -296,26 +291,25 @@ public class HibernateSession implements SessionTemplate {
 		Assert.notNull(id, "id may not be null");
 
 		hibernateSession.load(cluster.getDao(), id);
-
+		cluster.setUser(user);
+		
 		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
-
+		
 		return cluster;
 	}
-
+	
 	/**
 	 * Read the persistent state associated with the given identifier into the
 	 * given instance. Assuming that the instance exists. non-existence would be
 	 * an actual error.
 	 * 
-	 * @param clusterType
-	 *            existing cluster object
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterType existing cluster object
+	 * @param id primary id of cluster
 	 */
 	public ICluster load(ClusterType clusterType, Serializable id) {
 
 		Assert.notNull(clusterType, "clusterType may not be null");
-
+		
 		return load(clusterType.getClusterClass(), id);
 	}
 
@@ -324,15 +318,13 @@ public class HibernateSession implements SessionTemplate {
 	 * given instance. Assuming that the instance exists. non-existence would be
 	 * an actual error.
 	 * 
-	 * @param clusterTypeName
-	 *            existing cluster object
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterTypeName existing cluster object
+	 * @param id primary id of cluster
 	 */
 	public ICluster load(String clusterTypeName, Serializable id) {
 
 		Assert.notNull(clusterTypeName, "clusterType may not be null");
-
+			
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterTypeName);
 		return load(ct.getClusterClass(), id);
 	}
@@ -341,21 +333,17 @@ public class HibernateSession implements SessionTemplate {
 	 * creates a new Cluster Object and return the persistent instance of the
 	 * given entity class with the given identifier, or null if there is no such
 	 * persistent instance. (If the instance, or a proxy for the instance, is
-	 * already associated with the session, return that instance or proxy). If
-	 * no entity with the given id exists in the database, it returns <b>null</b>.
+	 * already associated with the session, return that instance or proxy.)
 	 * 
-	 * @param clusterClass
-	 *            class of cluster
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterClass class of cluster
+	 * @param id primary id of cluster
 	 */
 	public ICluster get(Class<? extends ICluster> clusterClass, Serializable id) {
 
 		Assert.notNull(clusterClass, "clusterClass may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true);
-
+		Cluster cb = ClusterFactory.newInstance(clusterClass, null, true, user);
 		Object dao = hibernateSession.get(cb.getDao().getClass(), id);
 
 		if (dao != null) {
@@ -364,22 +352,20 @@ public class HibernateSession implements SessionTemplate {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * creates a new Cluster Object and return the persistent instance of the
 	 * given entity class with the given identifier, or null if there is no such
 	 * persistent instance. (If the instance, or a proxy for the instance, is
 	 * already associated with the session, return that instance or proxy.)
 	 * 
-	 * @param clusterType
-	 *            class of cluster
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterType class of cluster
+	 * @param id primary id of cluster
 	 */
 	public ICluster get(ClusterType clusterType, Serializable id) {
-
+		
 		Assert.notNull(clusterType, "clusterType may not be null");
-
+		
 		return get(clusterType.getClusterClass(), id);
 	}
 
@@ -387,20 +373,19 @@ public class HibernateSession implements SessionTemplate {
 	 * creates a new Cluster Object and return the persistent instance of the
 	 * given entity class with the given identifier, or null if there is no such
 	 * persistent instance. (If the instance, or a proxy for the instance, is
-	 * already associated with the session, return that instance or proxy).
+	 * already associated with the session, return that instance or proxy.)
 	 * 
-	 * @param clusterTypeName
-	 *            class of cluster
-	 * @param id
-	 *            primary id of cluster
+	 * @param clusterTypeName class of cluster
+	 * @param id primary id of cluster
 	 */
 	public ICluster get(String clusterTypeName, Serializable id) {
-
+		
 		Assert.notNull(clusterTypeName, "clusterTypeName may not be null");
-
+		
 		ClusterType ct = ClusterTypeFactory.newInstance(clusterTypeName);
 		return get(ct.getClusterClass(), id);
 	}
+
 
 	/**
 	 * Return the persistent instance of the given entity class with the given
@@ -408,21 +393,19 @@ public class HibernateSession implements SessionTemplate {
 	 * instance, or a proxy for the instance, is already associated with the
 	 * session, return that instance or proxy.)
 	 * 
-	 * @param cluster
-	 *            existing cluster object
-	 * @param id
-	 *            primary id of cluster
+	 * @param cluster existing cluster object
+	 * @param id primary id of cluster
 	 */
 	public ICluster get(ICluster cluster, Serializable id) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 		Assert.notNull(id, "id may not be null");
 
-		((Cluster) cluster).setDao(hibernateSession.get(cluster.getDao()
-				.getClass(), id));
-
+		((Cluster)cluster).setDao(hibernateSession.get(cluster.getDao().getClass(), id));
+		cluster.setUser(user);
+		
 		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
-
+		
 		return cluster;
 	}
 
@@ -435,90 +418,87 @@ public class HibernateSession implements SessionTemplate {
 	 * <br>
 	 * The semantics of this method are defined by JSR-220.
 	 * 
-	 * @param cluster
-	 *            cluster object
+	 * @param cluster cluster object
 	 */
 	public void merge(ICluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
 
 		Object dao = cluster.getDao();
-		((Cluster) cluster).setDao(hibernateSession.merge(dao));
-
+		((Cluster)cluster).setDao(hibernateSession.merge(dao));
+		cluster.setUser(user);
+		
 		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
 	/**
 	 * Remove this instance from the session cache. Changes to the instance will
-	 * not be synchronized with the database. This operation cascades to
-	 * associated instances if the association is mapped with
-	 * <tt>cascade="evict"</tt>.
-	 * 
-	 * @param object
-	 *            a persistent instance
+	 * not be synchronized with the database. This operation cascades to associated
+	 * instances if the association is mapped with <tt>cascade="evict"</tt>.
+	 *
+	 * @param object a persistent instance
 	 * @throws HibernateException
 	 */
 	public void evict(ICluster cluster) {
-
+		
 		Assert.notNull(cluster, "cluster may not be null");
-
+		cluster.setUser(user);
 		Object dao = cluster.getDao();
 		hibernateSession.evict(dao);
 	}
 
 	/**
-	 * Make a transient instance persistent. This operation cascades to
-	 * associated instances if the association is mapped with
-	 * <tt>cascade="persist"</tt>.<br>
+	 * Make a transient instance persistent. This operation cascades to associated 
+	 * instances if the association is mapped with <tt>cascade="persist"</tt>.<br>
 	 * <br>
 	 * The semantics of this method are defined by JSR-220.
 	 * 
-	 * @param object
-	 *            a transient instance to be made persistent
+	 * @param object a transient instance to be made persistent
 	 */
 	public void persist(ICluster cluster) {
 
 		Assert.notNull(cluster, "cluster may not be null");
-
+		cluster.setUser(user);
 		Object dao = cluster.getDao();
 		hibernateSession.persist(dao);
-
+		
 		ClusterFactory.getClusterInterceptor().clusterRefresh(cluster);
 	}
 
 	/**
-	 * Does this <tt>Session</tt> contain any changes which must be synchronized
-	 * with the database? Would any SQL be executed if we flushed this session?
-	 * 
+	 * Does this <tt>Session</tt> contain any changes which must be
+	 * synchronized with the database? Would any SQL be executed if
+	 * we flushed this session?
+	 *
 	 * @return boolean
 	 */
 	public boolean isDirty() {
 		return hibernateSession.isDirty();
 	}
 
+	
 	/**
-	 * activates the given Filter on the Session. The Filter contains the name,
-	 * parameter name
-	 * 
-	 * @param sessionFilter
-	 *            the filter with the given name will be activated on the
-	 *            session.
+	 * activates the given Filter on the Session. The Filter contains the name, parameter name 
+	 * @param sessionFilter the filter with the given name will be activated on the session.
 	 */
 	public void enableFilter(SessionFilter sessionFilter) {
-		Filter filter = hibernateSession.enableFilter(sessionFilter
-				.getFilterName());
+		Filter filter = hibernateSession.enableFilter(sessionFilter.getFilterName());
 		if (filter == null) {
-			throw new RuntimeException("Filter with name '"
-					+ sessionFilter.getFilterName()
-					+ "' is null - check your Hibernate filter configuration");
+			throw new RuntimeException("Filter with name '" + sessionFilter.getFilterName() + "' is null - check your Hibernate filter configuration");
 		}
 		for (Object value : sessionFilter.getValues()) {
-			if (sessionFilter.getParameterName() != null
-					&& !sessionFilter.getParameterName().equals("")
-					&& value != null) {
+			if (sessionFilter.getParameterName() != null && !sessionFilter.getParameterName().equals("") && value != null) {
 				filter.setParameter(sessionFilter.getParameterName(), value);
 			}
 		}
+	}
+
+	public IUser getUser() {
+		return user;
+	}
+
+	public boolean contains(ICluster cluster) {
+		return hibernateSession.contains(cluster.getDao());
 	}
 
 }
