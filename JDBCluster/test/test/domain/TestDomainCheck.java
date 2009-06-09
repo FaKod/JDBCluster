@@ -34,7 +34,7 @@ public class TestDomainCheck extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 
 		/**
 		 * 
@@ -108,7 +108,7 @@ public class TestDomainCheck extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		rad.setColorType("Color");
 		// following values are OK for "Color"
@@ -135,7 +135,7 @@ public class TestDomainCheck extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		rad.setColorType("Color");
 		// following values are OK for "Color"
@@ -155,7 +155,7 @@ public class TestDomainCheck extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		rad.setColorType("All");
 		// following values are OK for "Color"

@@ -31,7 +31,7 @@ public class TestDomainCheck2 extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		/*
 		 * set ColorType to null should be possible
@@ -92,7 +92,7 @@ public class TestDomainCheck2 extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		/**
 		 * Test for invalid tag. Everything in the vde list should be allowed,

@@ -37,7 +37,7 @@ public class TestDomainList extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		/*
 		 * Test for ColorType "Color"
@@ -84,7 +84,7 @@ public class TestDomainList extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 		
 		/*
 		 * test defined additional domain for "All" and "RED"

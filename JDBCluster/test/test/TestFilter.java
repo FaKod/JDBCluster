@@ -54,7 +54,7 @@ public class TestFilter extends TestCase {
 		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
 		// get a factory for sessions
 		sf = cf.buildSessionFactory();
-		session = sf.openSession();
+		session = sf.openSession(null);
 		super.setUp();
 	}
 
@@ -155,7 +155,7 @@ public class TestFilter extends TestCase {
 		TransactionTemplate tx = session.beginTransaction();
 		
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
-		CCar bmw = ClusterFactory.newInstance(cAutoType);
+		CCar bmw = ClusterFactory.newInstance(cAutoType, null);
 
 		bmw.setName("BMW");
 
@@ -213,7 +213,7 @@ public class TestFilter extends TestCase {
 		tx.commit();
 		session.close();
 		
-		session = sf.openSession();		
+		session = sf.openSession(null);		
 		// test mapping configuration first
 		List<?> l1 = session.createQuery(CCFilterFactory.newInstance("car", "simple")).list();
 		session.close();
@@ -224,7 +224,7 @@ public class TestFilter extends TestCase {
 			fail("spareparts shouldn't be initialized.");
 		} catch (LazyInitializationException ex) {}
 		
-		session = sf.openSession();
+		session = sf.openSession(null);
 		List<?> l2 = session.createQuery(CCFilterFactory.newInstance("car", "fetchFilter")).list();
 		session.close();
 		

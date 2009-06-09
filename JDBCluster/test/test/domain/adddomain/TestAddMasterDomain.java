@@ -40,7 +40,7 @@ public class TestAddMasterDomain extends TestCase {
 	*/
 	
 	public void testInValidDomains() {
-		AddDomainCluster cluster = ClusterFactory.newInstance("AddDomainCluster");
+		AddDomainCluster cluster = ClusterFactory.newInstance("AddDomainCluster", null);
 		try {
 			cluster.setCodes("A1", null, null, "A4");
 			fail("invalid catcodes A1, null, null, A4");
@@ -61,7 +61,7 @@ public class TestAddMasterDomain extends TestCase {
 	}
 	
 	public void testValidDomains() {
-		AddDomainCluster cluster = ClusterFactory.newInstance("AddDomainCluster");
+		AddDomainCluster cluster = ClusterFactory.newInstance("AddDomainCluster", null);
 		try {
 			cluster.setCodes(null, null, null, null);
 		} catch (DomainException ex) {

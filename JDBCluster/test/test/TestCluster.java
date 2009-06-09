@@ -35,13 +35,13 @@ public class TestCluster extends TestCase {
 		ConfigurationTemplate cf = ConfigurationFactory.getInstance();
 		//get a factory for sessions
 		sf = cf.buildSessionFactory();
-		session = sf.openSession();
+		session = sf.openSession(null);
 		super.setUp();
 	}
 	
 	public void testAssociations() {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
-		ICar cAuto = ClusterFactory.newInstance(cAutoType);
+		ICar cAuto = ClusterFactory.newInstance(cAutoType, null);
 
 		CSet<CSparePart> ersatzList = cAuto.getCsparepart();
 		CSparePart ersatz = new CSparePart();
@@ -64,7 +64,7 @@ public class TestCluster extends TestCase {
 
 	public void testAttributes() {
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
-		ICar cAuto = ClusterFactory.newInstance(cAutoType);
+		ICar cAuto = ClusterFactory.newInstance(cAutoType, null);
 		
 		cAuto.setName("Borg");
 		cAuto.getName();
@@ -79,7 +79,7 @@ public class TestCluster extends TestCase {
 
 	public void testFahrrad() {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
-		CBicycle cf = ClusterFactory.newInstance(cFahrradType);
+		CBicycle cf = ClusterFactory.newInstance(cFahrradType, null);
 
 		cf.setDurchmesser(10.0);
 		assertEquals(10.0, cf.getDurchmesser());

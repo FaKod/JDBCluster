@@ -29,7 +29,7 @@ public class TestClusterInterceptor extends TestCase {
 		ClusterType cFahrradType = ClusterTypeFactory.newInstance("bicycle");
 
 		// create a Cluster and persist it
-		CBicycle rad = ClusterFactory.newInstance(cFahrradType);
+		CBicycle rad = ClusterFactory.newInstance(cFahrradType, null);
 
 		// we use cluster auto now
 		ClusterType cAutoType = ClusterTypeFactory.newInstance("car");
@@ -37,7 +37,7 @@ public class TestClusterInterceptor extends TestCase {
 		// create a Cluster and persist it
 		// but interceptor returning false -> exception
 		try {
-			ICar bmw = ClusterFactory.newInstance(cAutoType);
+			ICar bmw = ClusterFactory.newInstance(cAutoType, null);
 			Assert.fail("bmw Interceptor should return false");
 		} catch (ConfigurationException e) {
 			System.out.println(e.getMessage());
