@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jdbcluster.metapersistence.security.user.IUser;
 import org.jdbcluster.privilege.UserPrivilegeChecker;
 
 public class UserPrivilege implements UserPrivilegeChecker {
@@ -31,7 +32,7 @@ public class UserPrivilege implements UserPrivilegeChecker {
 		privSet.clear();
 	}
 
-	public boolean userPrivilegeIntersect(Set<String> requiredPrivileges) {
+	public boolean userPrivilegeIntersect(IUser user, Set<String> requiredPrivileges) {
 		logger.info("needed privileges: " + requiredPrivileges);
 		
 		if(requiredPrivileges!=null)
