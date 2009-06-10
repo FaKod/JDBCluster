@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.exception.ConfigurationException;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyValue;
 
@@ -29,11 +30,6 @@ import org.springframework.beans.PropertyValue;
 public abstract class Dao {
 
 	private static DaoConfig daoConfig;
-	
-	/**
-	 * always reused instance of springs internal bean wrapper class
-	 */
-	static private BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
 	
 	static private HashMap<Class<?>, HashMap<String, String>> classToPropsMap = 
 		new HashMap<Class<?>, HashMap<String, String>>();
@@ -62,16 +58,20 @@ public abstract class Dao {
 	public static Object newInstance(Class<?> daoClass) {
 		Object dao = JDBClusterUtil.createClassObject(daoClass);
 		//get property of DAO and initial value from jdbcluster.dao.conf.xml
-		HashMap<String, String> hm = classToPropsMap.get(daoClass);
-		if(hm==null)
-			hm=putCacheMap(daoClass);
+		HashMap<String, String> hm;
+		synchronized (classToPropsMap) {
+			hm = classToPropsMap.get(daoClass);
+			if(hm==null)
+				hm=putCacheMap(daoClass);			
+		}
 		
+		BeanWrapper beanWrapper = new BeanWrapperImpl();
 		beanWrapper.setWrappedInstance(dao);
 
 		for(String prop : hm.keySet()) {
 			String value = hm.get(prop);
 			//get property of DAO
-			Class propClass = beanWrapper.getPropertyType(prop);
+			Class<?> propClass = beanWrapper.getPropertyType(prop);
 			//convert to Type if necessary
             Object o = beanWrapper.convertIfNecessary(value, propClass);
             //set the value of the predefined property read from jdbcluster.dao.conf.xml
