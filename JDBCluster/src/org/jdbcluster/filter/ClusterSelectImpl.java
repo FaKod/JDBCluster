@@ -38,13 +38,6 @@ import org.jdbcluster.exception.CCFilterException;
  */
 
 public class ClusterSelectImpl extends JDBClusterConfigurationBase implements ClusterSelect {
-
-	
-	/**
-	 * private Default constructor
-	 *
-	 */
-	private ClusterSelectImpl() {}
 		
 	/**
 	 * Constructor which sets the config file
@@ -87,9 +80,9 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 								if (extensionFilter.valueOf("@id").equals(rootFilter.valueOf("@id"))) {
 									rootNode.remove(rootFilter);
 								} 
-								extensionFilter.detach();
-								rootNode.add(extensionFilter);
 							}
+							extensionFilter.detach();
+							rootNode.add(extensionFilter);
 						}
 						break;
 					}
@@ -252,7 +245,7 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 		//xPath expression to get the classname
 		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + selID + "']" + "/FilterClass[@class='" + className + "']" + "/binding";
 
-		List list = document.selectNodes(xPath);
+		List<?> list = document.selectNodes(xPath);
 		
 		if (list.isEmpty()) {
 			return null;
