@@ -35,6 +35,8 @@ public abstract class CCFilterBase implements CCFilter {
 	static private ClusterSelect select;
 
 	private HashMap<String, String> binding;
+	
+	private String filterName;
 
 	private String className;
 
@@ -382,5 +384,13 @@ public abstract class CCFilterBase implements CCFilter {
 	 */
 	public void remove() {
 		setAppendedFilter(null);
+	}
+
+	public String getFilterName() {
+		return filterName;
+	}
+
+	public void setFilterName(String filterName) {
+		this.filterName = filterName;
 	}
 }

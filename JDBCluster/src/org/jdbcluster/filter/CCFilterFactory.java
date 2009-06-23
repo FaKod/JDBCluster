@@ -111,6 +111,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		filter.setFetch(fetch);
 		filter.setStaticStatementAttribute(staticStatement);
 		filter.setSelectStatementDAO(selectDAO);
+		filter.setFilterName(selId);
 		return (T) filter;
 	}
 		

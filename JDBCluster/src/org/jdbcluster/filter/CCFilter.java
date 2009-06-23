@@ -139,4 +139,10 @@ public interface CCFilter {
 	 */
 	public void doBindings(HibernateQuery queryTemplate);
 	
+	/**
+	 * returns the Name of the filter which is specified in jdbcluster.conf.xml.
+	 * @return the Name of the Filter
+	 */
+	public String getFilterName();
+	
 }
