@@ -3,13 +3,19 @@
 	<privileges>
 		<UserPrivilegeChecker class="mycluster.privilege.UserPrivilege"/>
 	</privileges>
+	
+	<hqlsnippets>
+		<snippet id="nnaammee" hql="NAME=:UNITNAME" />
+	</hqlsnippets>
+	
+	
 	<!-- Definition of available Cluster Objects-->
 	<clustertype>
 		<!--configure cluster CAuto-->
 		<cluster id="car" class="mycluster.CCar">
 			<!--special filter "name" for cluster CAuto is available-->
 			<!--select: ...where NAME=test.testfilter.NameFilter.getName()-->
-			<select id="name" hql="NAME=:UNITNAME">
+			<select id="name" hql="|nnaammee|">
 				<FilterClass class="test.testfilter.NameFilter">
 					<binding var="UNITNAME" attribute="name"/>
 				</FilterClass>
