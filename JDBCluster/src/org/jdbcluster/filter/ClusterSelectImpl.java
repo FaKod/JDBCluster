@@ -17,6 +17,8 @@ package org.jdbcluster.filter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -109,8 +111,37 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 
 		if (node == null)
 			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+		
+		return getHqlWithSnippets(node.valueOf("@hql"));	
+	}
 	
-		return node.valueOf("@hql");	
+	/**
+	 * inserts HQLSnippets to HQL query
+	 * @param hql hql statement to replace
+	 * @return resulting HQL query
+	 */
+	private String getHqlWithSnippets(String hql) {
+		
+		Pattern environment_pattern = Pattern.compile("\\|[^\\|]*\\|", Pattern.UNICODE_CASE);
+
+		Matcher environment_matcher = environment_pattern.matcher(hql);
+
+		StringBuffer sb = new StringBuffer();
+
+		while (environment_matcher.find()) {
+			String temp = environment_matcher.group();
+			String sId = temp.substring(1, temp.length() - 1);
+			final String xPath = "//jdbcluster/hqlsnippet[@id='" + sId + "']";
+			
+			Node node = document.selectSingleNode(xPath);
+			if (node == null)
+				throw new CCFilterException("cannot find filter configuration for HqlSnippet ["+sId+"]");
+
+			environment_matcher.appendReplacement(sb, node.valueOf("@hql"));
+		}
+
+		StringBuffer buffer = environment_matcher.appendTail(sb);
+		return buffer.toString();
 	}
 	
 	/**
