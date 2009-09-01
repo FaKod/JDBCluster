@@ -54,8 +54,8 @@
 	<xs:element name="jdbcluster">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="hqlsnippet" minOccurs="0"/>
 				<xs:element ref="privileges" minOccurs="0"/>
+				<xs:element ref="hqlsnippet" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element ref="clustertype" minOccurs="0"/>
 				<xs:element ref="daotype" minOccurs="0"/>
 				<xs:element ref="domaindependancy" minOccurs="0"/>
