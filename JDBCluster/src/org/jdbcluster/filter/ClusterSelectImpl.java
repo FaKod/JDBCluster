@@ -131,7 +131,7 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 		while (environment_matcher.find()) {
 			String temp = environment_matcher.group();
 			String sId = temp.substring(1, temp.length() - 1);
-			final String xPath = "//jdbcluster/hqlsnippet[@id='" + sId + "']";
+			final String xPath = "//jdbcluster/hqlsnippets/snippet[@id='" + sId + "']";
 			
 			Node node = document.selectSingleNode(xPath);
 			if (node == null)
