@@ -3,7 +3,7 @@
 	<xs:element name="snippet">
 	    <xs:complexType>
 	    	<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
-			<xs:attribute name="hql" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="hql" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="hqlsnippets">
