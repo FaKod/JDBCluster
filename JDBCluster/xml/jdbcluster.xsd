@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="hqlsnippet">
+	    <xs:complexType>
+			<xs:attribute name="hql" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="cluster">
 		<xs:complexType>
 			<xs:sequence>
