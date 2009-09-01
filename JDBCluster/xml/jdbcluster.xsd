@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="hqlsnippet">
+	<xs:element name="snippet">
 	    <xs:complexType>
 			<xs:attribute name="hql" type="xs:NMTOKEN" use="required"/>
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="hqlsnippets">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="snippet" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="cluster">
@@ -53,13 +60,13 @@
 	</xs:element>
 	<xs:element name="jdbcluster">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:all>
 				<xs:element ref="privileges" minOccurs="0"/>
-				<xs:element ref="hqlsnippet" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="hqlsnippets" minOccurs="0"/>
 				<xs:element ref="clustertype" minOccurs="0"/>
 				<xs:element ref="daotype" minOccurs="0"/>
 				<xs:element ref="domaindependancy" minOccurs="0"/>
-			</xs:sequence>
+			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="property">
