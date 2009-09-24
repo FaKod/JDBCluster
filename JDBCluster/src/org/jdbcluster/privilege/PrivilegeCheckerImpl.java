@@ -53,20 +53,18 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 
 	/** Logger available to subclasses */
 	protected final Logger logger = Logger.getLogger(getClass());
-	
-	private static PrivilegeChecker instance;
 
 	/**
 	 * always reused instance of springs internal bean wrapper class for Cluster
 	 * stuff
 	 */
-	private static BeanWrapperImpl beanWrapper = new BeanWrapperImpl(true);
+	private static ThreadLocal<BeanWrapperImpl> clusterBeanWrapperThreadLocal = new ThreadLocal<BeanWrapperImpl>();
 
 	/**
 	 * always reused instance of springs internal bean wrapper class for Service
 	 * stuff
 	 */
-	private static BeanWrapperImpl serviceBeanWrapper = new BeanWrapperImpl(true);
+	private static ThreadLocal<BeanWrapperImpl> serviceBeanWrapperThreadLocal = new ThreadLocal<BeanWrapperImpl>();
 
 	/**
 	 * maps: Class -> Method -> HashSet of privileges
@@ -85,15 +83,38 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	}
 
 	/**
-	 * public intance gettet
+	 * public intance getter
 	 * 
 	 * @return PrivilegeChecker
 	 */
 	public static PrivilegeChecker getInstance() {
-		if(instance == null) {
-			instance = new PrivilegeCheckerImpl();
+		return new PrivilegeCheckerImpl();
+	}
+	
+	/**
+	 * 
+	 * @return Cluster Bean Wrapper instance per thread
+	 */
+	private BeanWrapperImpl getBeanWrapper() {
+		BeanWrapperImpl bwi = clusterBeanWrapperThreadLocal.get();
+		if(bwi == null) {
+			bwi = new BeanWrapperImpl(true);
+			clusterBeanWrapperThreadLocal.set(bwi);
 		}
-		return instance;
+		return bwi;
+	}
+	
+	/**
+	 * 
+	 * @return Service Bean Wrapper instance per thread
+	 */
+	private BeanWrapperImpl getServiceBeanWrapper() {
+		BeanWrapperImpl bwi = serviceBeanWrapperThreadLocal.get();
+		if(bwi == null) {
+			bwi = new BeanWrapperImpl(true);
+			serviceBeanWrapperThreadLocal.set(bwi);
+		}
+		return bwi;
 	}
 
 	
@@ -304,17 +325,22 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return return reqired privileges
 	 */
 	private HashSet<String> getStaticPrivilegesCluster(Method calledMethod, PrivilegedCluster clusterObject) {
-		HashMap<Method, HashSet<String>> mp = privilegesCluster.get(clusterObject.getClass());
-		if (mp == null) {
-			mp = new HashMap<Method, HashSet<String>>();
-			privilegesCluster.put(clusterObject.getClass(), mp);
+		HashMap<Method, HashSet<String>> mp;
+		synchronized(privilegesCluster) {
+			mp = privilegesCluster.get(clusterObject.getClass());
+			if (mp == null) {
+				mp = new HashMap<Method, HashSet<String>>();
+				privilegesCluster.put(clusterObject.getClass(), mp);
+			}
 		}
-		HashSet<String> hs = mp.get(calledMethod);
-		if (hs == null) {
-			hs = calcClusterPrivileges(calledMethod, clusterObject);
-			mp.put(calledMethod, hs);
+		synchronized(mp) {
+			HashSet<String> hs = mp.get(calledMethod);
+			if (hs == null) {
+				hs = calcClusterPrivileges(calledMethod, clusterObject);
+				mp.put(calledMethod, hs);
+			}
+			return new HashSet<String>(hs);
 		}
-		return new HashSet<String>(hs);
 	}
 
 	/**
@@ -359,11 +385,11 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 		if (isGetMethodInRequiredProperty(pcAnno.property(), calledMethod))
 			return result;
 
-		beanWrapper.setWrappedInstance(clusterObject);
+		getBeanWrapper().setWrappedInstance(clusterObject);
 
 		for (String propertyPath : pcAnno.property()) {
 
-			PropertyDescriptor pd = getPropertyDescriptor(propertyPath, beanWrapper);
+			PropertyDescriptor pd = getPropertyDescriptor(propertyPath, getBeanWrapper());
 
 			if (pd != null) {
 				Field f = getPropertyField(propertyPath, pd);
@@ -375,7 +401,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 					throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 				}
 				if (!(pd.getReadMethod().equals(calledMethod) || pd.getWriteMethod().equals(calledMethod))) {
-					String value = getPropertyValue(propertyPath, beanWrapper);
+					String value = getPropertyValue(propertyPath, getBeanWrapper());
 					Set<String> setToAdd = dpl.getDomainEntryPivilegeList(domId, value);
 					if (setToAdd != null)
 						result.addAll(setToAdd);
@@ -440,9 +466,9 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 					Object arg = args[i];
 					if (arg != null) {
 						if (arg instanceof PrivilegedCluster) {
-							serviceBeanWrapper.setWrappedInstance(arg);
+							getServiceBeanWrapper().setWrappedInstance(arg);
 							for (String propertyPath : pp.property()) {
-								PropertyDescriptor pd = getPropertyDescriptor(propertyPath, serviceBeanWrapper);
+								PropertyDescriptor pd = getPropertyDescriptor(propertyPath, getServiceBeanWrapper());
 								if (pd != null) {
 									Field f = getPropertyField(propertyPath, pd);
 									String domId = getDomainIdFromField(f);
@@ -452,7 +478,7 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 									} catch (ClassCastException e) {
 										throw new ConfigurationException("privileged domain [" + domId + "] needs implemented DomainPrivilegeList Interface", e);
 									}
-									String value = getPropertyValue(propertyPath, serviceBeanWrapper);
+									String value = getPropertyValue(propertyPath, getServiceBeanWrapper());
 									result.addAll(dpl.getDomainEntryPivilegeList(domId, value));
 								}
 							}
@@ -531,17 +557,24 @@ public class PrivilegeCheckerImpl extends PrivilegeBase implements PrivilegeChec
 	 * @return reqired privileges
 	 */
 	private HashSet<String> getStaticPrivilegesService(Method calledServiceMethod, PrivilegedService serObject) {
-		HashMap<Method, HashSet<String>> mp = privilegesService.get(serObject.getClass());
-		if (mp == null) {
-			mp = new HashMap<Method, HashSet<String>>();
-			privilegesService.put(serObject.getClass(), mp);
+		HashMap<Method, HashSet<String>> mp;
+		synchronized(privilegesService) {
+			mp = privilegesService.get(serObject.getClass());
+			if (mp == null) {
+				mp = new HashMap<Method, HashSet<String>>();
+				privilegesService.put(serObject.getClass(), mp);
+			}
 		}
-		HashSet<String> hs = mp.get(calledServiceMethod);
-		if (hs == null) {
-			hs = calcServicePrivileges(calledServiceMethod, serObject);
-			mp.put(calledServiceMethod, hs);
+		
+		HashSet<String> hs;
+		synchronized(mp) {
+			hs = mp.get(calledServiceMethod);
+			if (hs == null) {
+				hs = calcServicePrivileges(calledServiceMethod, serObject);
+				mp.put(calledServiceMethod, hs);
+			}
+			return new HashSet<String>(hs);
 		}
-		return new HashSet<String>(hs);
 	}
 
 	/**
