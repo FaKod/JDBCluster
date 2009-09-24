@@ -15,7 +15,7 @@
  */
 package org.jdbcluster.metapersistence.aspects;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.lang.reflect.Method;
 import org.jdbcluster.metapersistence.aspects.XmlCache;
 import org.aspectj.lang.annotation.SuppressAjWarnings;
@@ -31,9 +31,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 public abstract aspect XmlCache {
 	
 	/**
-	 * intertype declaration on all XmlCachable interfaces
+	 * intertype declation on all XmlCachable interfaces
 	 */
-	private Hashtable<Method, Hashtable<String, Object>> XmlCachable.cache = new Hashtable<Method, Hashtable<String, Object>>(); 
+	private HashMap<Method, HashMap<String, Object>> XmlCachable.cache = new HashMap<Method, HashMap<String, Object>>(); 
 
 	public abstract pointcut xmlCache0(XmlCachable xmlc);
 	public abstract pointcut xmlCache1(XmlCachable xmlc, String str);
@@ -84,10 +84,10 @@ public abstract aspect XmlCache {
 	/**
 	 * filles cache with a concat. String as Key and a object as value
 	 */
-	protected void fillCache(XmlCachable xmlc, Method m, Object value, String... key) {
-		Hashtable<String, Object> hm = xmlc.cache.get(m);
+	protected synchronized void fillCache(XmlCachable xmlc, Method m, Object value, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
 		if(hm==null) {
-			hm = new Hashtable<String, Object>();
+			hm = new HashMap<String, Object>();
 			xmlc.cache.put(m, hm);
 		}
 		hm.put(doKey(key), value);
@@ -97,16 +97,16 @@ public abstract aspect XmlCache {
 	 * gets a Object from the cache
 	 * null is a valid value! Please check isInCache first
 	 */
-	protected Object getCache(XmlCachable xmlc, Method m, String... key) {
-		Hashtable<String, Object> hm = xmlc.cache.get(m);
+	protected synchronized Object getCache(XmlCachable xmlc, Method m, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
 		return hm.get(doKey(key)); 
 	}
 	
 	/**
 	 * checks if a value is inserted in the cache
 	 */
-	protected boolean isInCache(XmlCachable xmlc, Method m, String... key) {
-		Hashtable<String, Object> hm = xmlc.cache.get(m);
+	protected synchronized boolean isInCache(XmlCachable xmlc, Method m, String... key) {
+		HashMap<String, Object> hm = xmlc.cache.get(m);
 		if(hm==null) 
 			return false;
 		return hm.containsKey(doKey(key));
