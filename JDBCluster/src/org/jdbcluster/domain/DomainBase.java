@@ -16,6 +16,7 @@
 package org.jdbcluster.domain;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public abstract class DomainBase {
 	/**
 	 * Map for instances of domain list
 	 */
-	private Map<String, DomainList> domainListMap = new HashMap<String, DomainList>();
+	private Map<String, DomainList> domainListMap = Collections.synchronizedMap(new HashMap<String, DomainList>());
 
 
 	public static DomainConfig getDomainConfig() {
@@ -56,7 +57,7 @@ public abstract class DomainBase {
 	 * @param domainId configured domain id
 	 * @return singleton instance of DomainList
 	 */
-	public DomainList getDomainListInstance(String domainId) {
+	public synchronized DomainList getDomainListInstance(String domainId) {
 		DomainList dl = domainListMap.get(domainId);
 		if(dl==null) {
 			String domainClassString = domainConfig.getDomainListClass(domainId);
