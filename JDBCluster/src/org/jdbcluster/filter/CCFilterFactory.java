@@ -15,7 +15,10 @@
  */
 package org.jdbcluster.filter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.jdbcluster.JDBClusterUtil;
 import org.jdbcluster.clustertype.ClusterType;
@@ -77,6 +80,7 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		}
 		
 		String hql = CCFilterBase.getSelect().getWhere(ct, selId);
+		String annotation = CCFilterBase.getSelect().getAnnotation(ct, selId);
 		String alias = CCFilterBase.getSelect().getAlias(ct, selId);
 		String ext = CCFilterBase.getSelect().getExt(ct, selId);
 		String orderBy = CCFilterBase.getSelect().getOrderBy(ct, selId);
@@ -108,6 +112,14 @@ public abstract class CCFilterFactory extends CCFilterBase{
 		filter.setAlias(alias);
 		filter.setExt(ext);
 		filter.setOrderBy(orderBy);
+		
+		if(annotation!=null && annotation.length()>0) {
+			List<String> tmp = Arrays.asList(annotation.split("[,; ]"));
+			filter.setAnnotation((new ArrayList<String>(tmp)));
+		}
+		else
+			filter.setAnnotation((new ArrayList<String>()));
+		
 		filter.setFetch(fetch);
 		filter.setStaticStatementAttribute(staticStatement);
 		filter.setSelectStatementDAO(selectDAO);

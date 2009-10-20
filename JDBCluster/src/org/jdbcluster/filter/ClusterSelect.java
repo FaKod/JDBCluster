@@ -93,4 +93,12 @@ public interface ClusterSelect extends JDBClusterConfiguration{
 	 * @return a String like 'left join fetch cat.cittens', or an empty String if no fetch is defined.
 	 */
 	public String getFetch(ClusterType clusterType, String SelectID);
+
+	/**
+	 * Annotation part
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return String
+	 */
+	public String getAnnotation(ClusterType ct, String selId);
 }

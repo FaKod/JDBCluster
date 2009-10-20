@@ -12,6 +12,7 @@ package org.jdbcluster.filter;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jdbcluster.JDBClusterUtil;
@@ -51,6 +52,8 @@ public abstract class CCFilterBase implements CCFilter {
 	private String staticStatementAttribute;
 
 	private String orderBy;
+	
+	private List<String> annotation;
 
 	private String selectStatementDAO;
 	
@@ -235,6 +238,21 @@ public abstract class CCFilterBase implements CCFilter {
 		}
 		return ext;
 	}
+	
+	public List<String> getAnnotation() {
+		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
+		if (appendedFilter != null) {
+			List<String> tmp = appendedFilter.getAnnotation();
+			if (tmp != null && !tmp.isEmpty()) {
+				if(annotation != null && !annotation.isEmpty()) {	
+					annotation.addAll(tmp);
+				}else {
+					return tmp;
+				}
+			} 
+		}
+		return annotation;
+	}
 
 	public void setExt(String ext) {
 		this.ext = ext;
@@ -392,5 +410,9 @@ public abstract class CCFilterBase implements CCFilter {
 
 	public void setFilterName(String filterName) {
 		this.filterName = filterName;
+	}
+	
+	public void setAnnotation(List<String> annotation) {
+		this.annotation = annotation;
 	}
 }

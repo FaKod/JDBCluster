@@ -16,6 +16,7 @@
 package org.jdbcluster.filter;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.jdbcluster.clustertype.ClusterType;
 import org.jdbcluster.template.hibernate.HibernateQuery;
@@ -125,6 +126,12 @@ public interface CCFilter {
 	 * @return String
 	 */
 	public String getOrderBy();
+	
+	/**
+	 * annotation part
+	 * @return String
+	 */
+	public List<String> getAnnotation();
 	
 	/**
 	 * Returns the fetch statement (e.g. from Car c<b> join fetch c.parts</b>).

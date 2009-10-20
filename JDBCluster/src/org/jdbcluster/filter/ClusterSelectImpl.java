@@ -199,6 +199,24 @@ public class ClusterSelectImpl extends JDBClusterConfigurationBase implements Cl
 	}
 	
 	/**
+	 * annotation part
+	 * @param clusterType identifies the ClusterType
+	 * @param selId selects the SelectID
+	 * @return String
+	 */
+	public String getAnnotation(ClusterType clusterType, String SelectID) {
+		String clusterId = clusterType.getName();
+		String xPath = "//jdbcluster/clustertype/cluster[@id='" + clusterId + "']" + "/select[@id='" + SelectID + "']";
+		
+		Node node = document.selectSingleNode(xPath);
+
+		if (node == null)
+			throw new CCFilterException("cannot find filter configuration for ClusterID ["+clusterId+"] and select Id ["+SelectID+"]");
+			
+		return node.valueOf("@annotation");	
+	}
+	
+	/**
 	 * gets the classname from "selects.xml"
 	 * @param clusterType identifies the ClusterType
 	 * @param SelectID selects the SelectID
