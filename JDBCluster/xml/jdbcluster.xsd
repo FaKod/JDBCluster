@@ -91,6 +91,7 @@
 			<xs:attribute name="ext" type="xs:string" use="optional"/>
 			<xs:attribute name="orderby" type="xs:string" use="optional"/>
 			<xs:attribute name="id" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="annotation" type="xs:string" use="optional"/>
 			<!-- the hql statement (where clause)-->
 			<!-- settable alias for type of resultset-->
 			<!-- extension for part after "from" -->

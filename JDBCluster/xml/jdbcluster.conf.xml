@@ -15,13 +15,13 @@
 		<cluster id="car" class="mycluster.CCar">
 			<!--special filter "name" for cluster CAuto is available-->
 			<!--select: ...where NAME=test.testfilter.NameFilter.getName()-->
-			<select id="name" hql="|nnaammee|">
+			<select id="name" hql="|nnaammee|" annotation="anno1,anno2,anno3 anno4;anno5">
 				<FilterClass class="test.testfilter.NameFilter">
 					<binding var="UNITNAME" attribute="name"/>
 				</FilterClass>
 			</select>
 			<!--select for coordinates-->
-			<select id="position" alias="car" hql="LATITUDE=:LAT and LONGITUDE=:LONG">
+			<select id="position" alias="car" hql="LATITUDE=:LAT and LONGITUDE=:LONG" annotation="anno6 anno7">
 				<FilterClass class="test.testfilter.PositionFilter">
 					<binding var="LONG" attribute="longitude"/>
 					<binding var="LAT" attribute="latitude"/>
