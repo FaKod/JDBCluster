@@ -139,6 +139,17 @@ public class TestFilter extends TestCase {
 		
 		assertEquals("(LATITUDE=:LAT and LONGITUDE=:LONG) AND (NAME=:UNITNAME)", pos.getWhereStatement());
 		
+		List<String> annos = pos.getAnnotation();
+		assertTrue(annos.size()==7);
+		String[] sl = (String[]) annos.toArray(new String[0]);
+		assertTrue(sl[0].equals("anno6"));
+		assertTrue(sl[1].equals("anno7"));
+		assertTrue(sl[2].equals("anno1"));
+		assertTrue(sl[3].equals("anno2"));
+		assertTrue(sl[4].equals("anno3"));
+		assertTrue(sl[5].equals("anno4"));
+		assertTrue(sl[6].equals("anno5"));
+		
 		QueryTemplate q = session.createQuery(pos);
 		List list = q.list();
 		
