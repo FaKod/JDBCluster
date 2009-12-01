@@ -10,6 +10,7 @@
  */
 package org.jdbcluster.filter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -240,18 +241,19 @@ public abstract class CCFilterBase implements CCFilter {
 	}
 	
 	public List<String> getAnnotation() {
+		List<String> annotations = new ArrayList<String>();
+		
 		CCFilterBase appendedFilter = (CCFilterBase) getAppendedFilter();
 		if (appendedFilter != null) {
-			List<String> tmp = appendedFilter.getAnnotation();
-			if (tmp != null && !tmp.isEmpty()) {
-				if(annotation != null && !annotation.isEmpty()) {	
-					annotation.addAll(tmp);
-				}else {
-					return tmp;
-				}
-			} 
+			annotations.addAll(appendedFilter.getAnnotation()); 
 		}
-		return annotation;
+		
+		for (String tmp : annotation){
+			if (!annotations.contains(tmp)){
+				annotations.add(tmp);
+			}
+		}
+		return annotations;
 	}
 
 	public void setExt(String ext) {
