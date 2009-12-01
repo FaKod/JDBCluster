@@ -248,9 +248,11 @@ public abstract class CCFilterBase implements CCFilter {
 			annotations.addAll(appendedFilter.getAnnotation()); 
 		}
 		
-		for (String tmp : annotation){
-			if (!annotations.contains(tmp)){
-				annotations.add(tmp);
+		if (annotation != null){			
+			for (String tmp : annotation){
+				if (!annotations.contains(tmp)){
+					annotations.add(tmp);
+				}
 			}
 		}
 		return annotations;
